@@ -1,5 +1,4 @@
 ---
-name: dynamo-release-magazine
 description: turn Dynamo GitHub release notes into a polished magazine-style editorial summary. use when user provides a GitHub release URL, pasted release notes, or changelog and wants a readable narrative output instead of raw technical notes.
 ---
 
