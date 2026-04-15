@@ -6,7 +6,7 @@ A magazine-style release summary for the [Dynamo](https://github.com/DynamoDS/Dy
 
 | Issue | Release | Date |
 |-------|---------|------|
-| [01 — Dynamo 4.1.0](issues/2026-04-15-dynamo-410-dispatch.html) | 4.1.0 | April 2026 |
+| [01 — Dynamo 4.1.0](issues/2026-04-16-dynamo-410-dispatch.html) | 4.1.0 | April 2026 |
 
 ## Structure
 
