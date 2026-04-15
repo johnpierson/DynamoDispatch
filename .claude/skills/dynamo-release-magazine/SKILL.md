@@ -116,7 +116,7 @@ Each content page uses a **55/45 split layout** (flex row, full bleed):
 - Summary — Source Serif, `max(15px, 1.3vw)`, line-height 1.6, opacity 0.85; `overflow: hidden` — the summary IS the content. Write using the Feynman technique: explain *why* the problem existed and what the fix does, in plain terms. No bullet list follows — the summary must stand alone. Do not add a numbered or bulleted list to content pages.
 
 *Right column (45%):* `height: 100vh; max-height: 100vh; min-height: 0; overflow: hidden;` padding `4vw 6vw 5vh 4vw`. Same `min-height: 0` rule applies.
-- Key stat — Playfair Display, **6.5vw minimum**. Prefer outcome-based stats over raw counts. Stat label: IBM Plex Mono, 12px, caps.
+- Key stat — Playfair Display, **6.5vw minimum**. Stat label: IBM Plex Mono, 12px, caps. **Always frame as a user-facing outcome, not a raw count.** The number describes what the user now experiences — prefer `0` stats ("0 panels that forget your preferences", "0 tab switches to check installed version") or specific outcome counts ("6 connector pin bugs fixed", "Every template has a visual preview"). The number itself can be a word (e.g. `Every`). Avoid labels like "N Feature Additions" or "N Pipeline Updates" — describe the result, not the work.
 - Tech/stack tag — IBM Plex Mono pill (border, no fill). Show where the work happened (e.g. `CLR · Dispatcher · LibG`).
 - PR image (if available, no filter, no border-radius, no shadow, `width: 100%`, `max-height: 28vh`, `object-fit: cover`)
 - `<figcaption>` in IBM Plex Mono 11px below image
@@ -126,7 +126,7 @@ Each content page uses a **55/45 split layout** (flex row, full bleed):
 
 **Page N+1 — Verdict (dark):**
 - No split layout. Full-width centered editorial verdict.
-- Playfair Display italic headline, 5vw — one punchy sentence, not a summary
+- Playfair Display italic headline, 5vw — one punchy sentence, not a summary. **Always frame positively** — what the user gains, not what was broken. "The Release That Gives You Your Speed Back" not "The Release That Fixed What You Stopped Noticing."
 - Source Serif body, max(17px, 1.5vw), opacity 0.85, max-width 680px centered — **2–4 sentences maximum**. One sentence on what changed, one on who benefits most, one on whether to upgrade. No recap of individual features — the content pages covered those. Be direct.
 - Upgrade recommendation in IBM Plex Mono, large — a single terse verdict line, e.g. `UPGRADE — STABILITY FIXES JUSTIFY IT` or `HOLD — BREAKING CHANGES, REVIEW FIRST`
 

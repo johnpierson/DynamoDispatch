@@ -221,8 +221,8 @@
       <p class="page-summary">Dynamo's workspace and sidebar have historically been places where menus and panels appeared when called and disappeared when dismissed, with no memory of where you were. This release wires up the Extensions panel to remember its minimized state, promotes the Extensions menu to sit alongside every other top menu, and adds two keyboard shortcuts that jump straight to the canvas edges. Small changes to familiar controls, each closing a gap users had been routing around.</p>
     </div>
     <div class="col-right">
-      <div class="big-stat">21</div>
-      <div class="stat-label">Feature Additions</div>
+      <div class="big-stat">0</div>
+      <div class="stat-label">Panels That Forget Your Preferences</div>
       <div class="stack-tag">UX · Canvas · Extensions</div>
       <img src="https://github.com/user-attachments/assets/26dca8c3-d1aa-4229-84fe-4ffac6e35287" alt="Extensions menu in top menu bar" class="pr-image">
       <div class="pr-caption">#16771 — Extensions menu promoted to top menu bar alongside Help</div>
@@ -243,8 +243,8 @@
       <p class="page-summary">When third-party developers publish Dynamo nodes, they often need to declare what category their nodes belong to. But the attribute controlling this — NodeCategoryAttribute — lived in DynamoCore, forcing an unnecessary tight dependency on a heavy package. This release type-forwards it to DynamoServices. ActionGroupDisposable is also now nestable, so complex multi-step operations can compose their undo groups without conflicts. And the DYN file format gets its first machine-readable specification.</p>
     </div>
     <div class="col-right">
-      <div class="big-stat">11</div>
-      <div class="stat-label">API &amp; Platform Additions</div>
+      <div class="big-stat">1</div>
+      <div class="stat-label">Heavy Dependency Dropped from DynamoCore</div>
       <div class="stack-tag">API · DynamoServices · WebView2</div>
       <img src="https://github.com/user-attachments/assets/8d8b448a-2a33-419e-9298-d8388d03ebda" alt="Watch node deletion preserving connections" class="pr-image">
       <div class="pr-caption">#16884 — Inline Watch node deletion now rewires connected ports</div>
@@ -265,8 +265,8 @@
       <p class="page-summary">Template cards in the start page previously showed just a name — no visual hint of what the template does. From 4.1.0, each card shows a thumbnail. The File → Open → Template dialog has also been tightened: it no longer accepts DYF (custom node) files, which could be opened through it accidentally. Placeholder icons cover items that don't have custom thumbnails yet, so the grid never appears broken.</p>
     </div>
     <div class="col-right">
-      <div class="big-stat">5</div>
-      <div class="stat-label">Template Updates</div>
+      <div class="big-stat">Every</div>
+      <div class="stat-label">Template Has a Visual Preview</div>
       <div class="stack-tag">UI · Home Screen · DynamoHome</div>
       <img src="https://github.com/user-attachments/assets/010eec73-0009-4b05-9661-63c2219d274e" alt="Template thumbnail previews on start page" class="pr-image">
       <div class="pr-caption">#16981 — Template cards now show thumbnail previews on the start page</div>
@@ -287,8 +287,8 @@
       <p class="page-summary">Connector pins are the anchors you attach to wires to lock them in place. They're stored alongside the graph. Six separate ways this could go wrong were fixed in one release: position drift on reload, disappearing on Save As, missing from clipboard, undo not working, notes losing their pin, and a new transient-pin reconnection path that makes the whole system more robust under rapid edits.</p>
     </div>
     <div class="col-right">
-      <div class="big-stat">13</div>
-      <div class="stat-label">of 26 Bug Fixes</div>
+      <div class="big-stat">6</div>
+      <div class="stat-label">Connector Pin Bugs Fixed in One Release</div>
       <div class="stack-tag">Pins · Clipboard · Undo</div>
       <div class="callout" style="margin-top:auto;">
         <div class="callout-label">What This Means for You</div>
@@ -307,8 +307,8 @@
       <p class="page-summary">Two related rendering failures: the viewport camera slowly drifted when the user was zoomed in far, and the transform gizmo stopped redrawing correctly. Both traced to a shared WPF BitmapCache being reused across threads — a subtle race that corrupted the render state. Pan/zoom crashes on large graphs came from the same root. This second batch also closes geometry GC issues where CLR containers holding geometry pointers could be freed before consumers finished with them.</p>
     </div>
     <div class="col-right">
-      <div class="big-stat">13</div>
-      <div class="stat-label">of 26 Bug Fixes</div>
+      <div class="big-stat">26</div>
+      <div class="stat-label">Total Bugs Closed in 4.1</div>
       <div class="stack-tag">WPF · BitmapCache · Geometry GC</div>
       <div class="callout" style="margin-top:auto;">
         <div class="callout-label">What This Means for You</div>
@@ -327,8 +327,8 @@
       <p class="page-summary">Voronoi diagrams partition space by "which seed point is closest?" — Dynamo's implementation was failing on inputs where edge lengths varied widely. A relative edge-length filter now handles those cases. PolyCurve.ByPoints had undefined behavior at edge cases where it would return different types in different scenarios; the behavior is now unified and predictable. Periodic NURBS curves — closed smooth curves like circles — get new API exposure for their knot and control point topology.</p>
     </div>
     <div class="col-right">
-      <div class="big-stat">4</div>
-      <div class="stat-label">LibG NuGet Updates</div>
+      <div class="big-stat">0</div>
+      <div class="stat-label">Undefined PolyCurve Behaviors Remaining</div>
       <div class="stack-tag">LibG · NURBS · Tessellation</div>
       <img src="https://github.com/user-attachments/assets/281c9891-c181-4f81-b29f-a38c0943b4f6" alt="NurbsCurve periodic API icons" class="pr-image">
       <div class="pr-caption">#16931 — New node icons for NurbsCurve.PeriodicKnots and PeriodicControlPoints</div>
@@ -371,8 +371,8 @@
       <p class="page-summary">The Search tab in Dynamo's Package Manager previously showed what was available — but not what version you already had installed. To check that, you had to switch to the Installed tab and cross-reference manually. 4.1.0 puts the installed version inline in Search. Publishers also get a one-click button to copy version compatibility data forward from a previous release, saving the most tedious step of the publish workflow.</p>
     </div>
     <div class="col-right">
-      <div class="big-stat">3</div>
-      <div class="stat-label">Package Manager Improvements</div>
+      <div class="big-stat">0</div>
+      <div class="stat-label">Tab Switches to Check Your Installed Version</div>
       <div class="stack-tag">Package Manager · Publisher Tools</div>
       <img src="https://github.com/user-attachments/assets/b49df223-c085-4f09-9f3a-b71287f90998" alt="Installed version shown in Package Manager Search tab" class="pr-image">
       <div class="pr-caption">#16853 — Installed version now visible directly in the Search tab</div>
@@ -393,8 +393,8 @@
       <p class="page-summary">When Dynamo migrated its Python nodes to PythonNet3, the team added a distinctive purple syntax highlight as a visual signal: "this is the new runtime." That marker has served its purpose. 4.1.0 removes the purple highlighting — Python is now PythonNet3 by assumption, not by flag. The sample scripts bundled with Dynamo have been updated to match, replacing PythonNet2-style imports throughout.</p>
     </div>
     <div class="col-right">
-      <div class="big-stat">2</div>
-      <div class="stat-label">PythonNet3 Updates</div>
+      <div class="big-stat">0</div>
+      <div class="stat-label">Purple Migration Flags Remaining</div>
       <div class="stack-tag">PythonNet3 · Python · IronPython</div>
       <img src="https://github.com/user-attachments/assets/25a367ef-da00-49e4-91dd-dc63a6bdc06f" alt="Purple syntax highlighting removed from Python nodes" class="pr-image">
       <div class="pr-caption">#16615 — Purple syntax highlighting removed; PythonNet3 is now default</div>
@@ -415,8 +415,8 @@
       <p class="page-summary">Post-RC, master was bumped to 4.2.0 and the performance test suite was upgraded to .NET 10. A patch to global.json changes the SDK roll-forward policy: instead of requiring an exact SDK version match, builds now accept any newer patch. This means .NET publishes a patch update without breaking local builds or CI. The npm registry reachability check was rewritten to use a reliable WebClient call after the previous Invoke-WebRequest approach proved flaky in CI environments.</p>
     </div>
     <div class="col-right">
-      <div class="big-stat">8</div>
-      <div class="stat-label">Pipeline Updates</div>
+      <div class="big-stat">0</div>
+      <div class="stat-label">Builds Broken by SDK Patch Updates</div>
       <div class="stack-tag">.NET 10 · CI · NuGet</div>
       <div class="callout" style="margin-top:auto;">
         <div class="callout-label">What This Means for You</div>
@@ -436,7 +436,7 @@
     </div>
     <div class="col-right">
       <div class="big-stat">7</div>
-      <div class="stat-label">New Skills Added</div>
+      <div class="stat-label">AI Workflows Ready to Use Out of the Box</div>
       <div class="stack-tag">AI · CI · Claude · Copilot</div>
       <div class="callout" style="margin-top:auto;">
         <div class="callout-label">What This Means for You</div>
@@ -455,8 +455,8 @@
       <p class="page-summary">Two dependency updates close out the release. The dynamo-home npm package moves to 1.0.28, collecting the start-page thumbnail and placeholder icon work shipped earlier in this release. DynamoVisualProgramming.Analytics is updated for .NET 10 compatibility, completing the platform chain. Neither changes Dynamo's surface behavior — both ensure the pieces that downstream tools depend on are current.</p>
     </div>
     <div class="col-right">
-      <div class="big-stat">2</div>
-      <div class="stat-label">Dependency Updates</div>
+      <div class="big-stat">0</div>
+      <div class="stat-label">Known .NET 10 Compatibility Gaps Remaining</div>
       <div class="stack-tag">npm · NuGet · .NET 10</div>
       <div class="callout" style="margin-top:auto;">
         <div class="callout-label">What This Means for You</div>
@@ -468,7 +468,7 @@
   <!-- ══ PAGE 14: VERDICT (DARK) ══ -->
   <div class="page dark verdict-page">
     <div class="verdict-kicker">Editorial Verdict · Dynamo 4.1.0</div>
-    <div class="verdict-headline">The Release That Fixed What You Stopped Noticing</div>
+    <div class="verdict-headline">The Release That Gives You Your Speed Back</div>
     <div class="verdict-body">
       A quiet release that clears accumulated debt: 26 bugs closed (half of them pins), a geometry hash fix that eliminates a class of slowdowns, and PythonNet3 finally declared the baseline. Most impactful for teams running geometry-heavy graphs or maintaining custom node packages.
     </div>
