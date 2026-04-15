@@ -99,13 +99,13 @@ Alternate light/dark: page 2 = light, page 3 = dark, page 4 = light, etc.
 
 Each content page uses a **55/45 split layout** (flex row, full bleed):
 
-*Left column (55%):*
+*Left column (55%):* padding `4vw 3vw 5vh 6vw`. All flex children use `flex-shrink: 0` except the bullet list.
 - Giant ghosted section rank number — Playfair Display, ~30vw, opacity 0.06, positioned absolute behind content
-- Category tag — IBM Plex Mono, 11px, caps, letter-spacing 0.2em
-- Editorial headline — Playfair Display, **5vw minimum**, line-height 1.05
-- Section path — IBM Plex Mono, 13px, e.g. `DynamoDS/Dynamo → Features`
-- Summary — Source Serif, `max(17px, 1.5vw)`, opacity 0.85, 2–3 sentences
-- Bullet list of key items — Source Serif, same size, opacity 0.85
+- Category tag — IBM Plex Mono, 11px, caps, letter-spacing 0.2em; `margin-bottom: 1.2vh`
+- Editorial headline — Playfair Display, `clamp(24px, 4.5vw, 72px)`, line-height 1.05; `margin-bottom: 1.5vh`
+- Section path — IBM Plex Mono, 13px, e.g. `DynamoDS/Dynamo → Features`; `margin-bottom: 1.5vh`
+- Summary — Source Serif, `max(15px, 1.3vw)`, line-height 1.55, opacity 0.85; `margin-bottom: 1.5vh`
+- Bullet list of key items — Source Serif, `max(14px, 1.1vw)`, line-height 1.65, opacity 0.85; **`flex: 1; min-height: 0; overflow: hidden`** — this is the clip element that prevents overflow
 
 *Right column (45%):*
 - Key stat (PR count, fix count, or a notable number) — Playfair Display, **6.5vw minimum**
@@ -137,7 +137,7 @@ Each content page uses a **55/45 split layout** (flex row, full bleed):
 - Dots: small circles, filled = current page, outline = others. Adapt color to current page background.
 - Huge fonts everywhere. Nothing below 15px. No small text.
 - High contrast on dark pages. Body text opacity 0.85 minimum. Callout body 0.8 minimum.
-- Nothing overlapping. `margin-bottom` between every element. `padding-bottom: 10vh` on all pages.
+- Nothing overlapping. `margin-bottom` between every element. `padding-bottom: 5vh` on content columns.
 - Full-bleed edge-to-edge. No floating cards. No padding boxes around content areas.
 - All PR images: `filter: grayscale(100%) contrast(1.1)` to match e-ink aesthetic.
 
