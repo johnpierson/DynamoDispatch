@@ -44,7 +44,7 @@ Short editorial verdict.
 
 ### If asked for HTML
 
-Generate a single self-contained HTML file as a **14-page horizontal-swipe editorial magazine**.
+Generate a single self-contained HTML file as a **horizontal-swipe editorial magazine**. The page count is dynamic — one content page per release section, plus a fixed cover, verdict, and back cover.
 
 **Fonts** (Google Fonts via `<link>`):
 - `Playfair Display` — headlines
@@ -55,7 +55,12 @@ Generate a single self-contained HTML file as a **14-page horizontal-swipe edito
 
 ---
 
-#### Page Structure (14 pages total)
+#### Page Structure (dynamic total)
+
+**Total pages = 1 cover + N content pages + 1 verdict + 1 back cover.**
+Give every distinct release section its own page — do not merge or drop sections to hit a target count. If a release has 20 sections, the magazine has 23 pages. If it has 5, it has 8.
+
+Set `const TOTAL = <actual page count>` in the JS. Build `LIGHT_PAGES` as a `Set` of 0-indexed page numbers: page 0 = dark (cover), content pages alternate starting light at index 1, verdict = dark, back cover = dark.
 
 **Page 1 — Dark cover:**
 - `../assets/dynamo-logo.png` top-left, `width: clamp(160px, 22vw, 360px)`, **no CSS filter** (the logo is multicolored — display its natural colors)
@@ -84,8 +89,8 @@ Pause rendering (`requestAnimationFrame` still fires but clears and returns) whe
 
 Node colour throughout: `rgba(245,242,237, …)` (matches `--paper`).
 
-**Pages 2–13 — Content pages (one per release section):**
-Map each section of the release notes to one page. If the release has fewer than 12 sections, add a Verdict page and pad with a merged "Under the Hood" summary page if needed. Do not add a Watch-Outs page. If more than 12 sections, group minor ones together.
+**Pages 2–N — Content pages (one per release section):**
+Every distinct section in the release notes gets its own page. Do not merge sections to save space, and do not invent pages to pad. Do not add a Watch-Outs page.
 
 Alternate light/dark: page 2 = light, page 3 = dark, page 4 = light, etc.
 
@@ -112,13 +117,13 @@ Each content page uses a **55/45 split layout** (flex row, full bleed):
   - Label: `IBM Plex Mono 11px caps` — "WHAT THIS MEANS FOR YOU"
   - Body: Source Serif `max(15px, 1.3vw)`, opacity 0.8 — a personalized note for a senior Dynamo developer at Autodesk (C#/.NET, WPF, open-source AEC platform). Be specific: name the feature/fix and explain the concrete workflow or codebase implication.
 
-**Page 13 — Verdict (dark):**
+**Page N+1 — Verdict (dark):**
 - No split layout. Full-width centered editorial verdict.
 - Playfair Display italic headline, 5vw
 - Source Serif body, max(17px, 1.5vw), opacity 0.85, max-width 720px centered
 - Upgrade recommendation in IBM Plex Mono, large
 
-**Page 14 — Dark back cover:**
+**Page N+2 — Dark back cover (always last):**
 - Centered: "DYNAMO DISPATCH" in IBM Plex Mono caps, large
 - Issue number + date below in Source Serif italic
 - `../assets/dynamo-logo.png` centered, height 48px, `filter: brightness(0) invert(1)`, `opacity: 0.5` (white silhouette on dark)
