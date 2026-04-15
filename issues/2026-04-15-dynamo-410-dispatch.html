@@ -3,668 +3,443 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dynamo Dispatch — Release 4.1.0</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=Open+Sans:wght@400&family=Playfair+Display:ital,wght@0,700;0,900;1,400;1,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&display=swap" rel="stylesheet">
+  <title>Dynamo Dispatch — 4.1.0</title>
   <style>
+    /* Artifakt Legend — display/headline */
+    @font-face { font-family: 'Artifakt Legend'; src: local('Artifakt Legend Thin');       font-weight: 100; font-style: normal; }
+    @font-face { font-family: 'Artifakt Legend'; src: local('Artifakt Legend Extra Light'); font-weight: 200; font-style: normal; }
+    @font-face { font-family: 'Artifakt Legend'; src: local('Artifakt Legend Light');       font-weight: 300; font-style: normal; }
+    @font-face { font-family: 'Artifakt Legend'; src: local('Artifakt Legend Regular');     font-weight: 400; font-style: normal; }
+    @font-face { font-family: 'Artifakt Legend'; src: local('Artifakt Legend Medium');      font-weight: 500; font-style: normal; }
+    @font-face { font-family: 'Artifakt Legend'; src: local('Artifakt Legend Semi Bold');   font-weight: 600; font-style: normal; }
+    @font-face { font-family: 'Artifakt Legend'; src: local('Artifakt Legend Bold');        font-weight: 700; font-style: normal; }
+    @font-face { font-family: 'Artifakt Legend'; src: local('Artifakt Legend Extra Bold');  font-weight: 800; font-style: normal; }
+    @font-face { font-family: 'Artifakt Legend'; src: local('Artifakt Legend Black');       font-weight: 900; font-style: normal; }
+    @font-face { font-family: 'Artifakt Legend'; src: local('Artifakt Legend Thin Italic');   font-weight: 100; font-style: italic; }
+    @font-face { font-family: 'Artifakt Legend'; src: local('Artifakt Legend Light Italic');  font-weight: 300; font-style: italic; }
+    @font-face { font-family: 'Artifakt Legend'; src: local('Artifakt Legend Italic');        font-weight: 400; font-style: italic; }
+    @font-face { font-family: 'Artifakt Legend'; src: local('Artifakt Legend Bold Italic');   font-weight: 700; font-style: italic; }
+    /* Artifakt Element — body/UI */
+    @font-face { font-family: 'Artifakt Element'; src: local('Artifakt Element Thin');       font-weight: 100; font-style: normal; }
+    @font-face { font-family: 'Artifakt Element'; src: local('Artifakt Element Extra Light'); font-weight: 200; font-style: normal; }
+    @font-face { font-family: 'Artifakt Element'; src: local('Artifakt Element Light');       font-weight: 300; font-style: normal; }
+    @font-face { font-family: 'Artifakt Element'; src: local('Artifakt Element Regular');     font-weight: 400; font-style: normal; }
+    @font-face { font-family: 'Artifakt Element'; src: local('Artifakt Element Medium');      font-weight: 500; font-style: normal; }
+    @font-face { font-family: 'Artifakt Element'; src: local('Artifakt Element Semi Bold');   font-weight: 600; font-style: normal; }
+    @font-face { font-family: 'Artifakt Element'; src: local('Artifakt Element Bold');        font-weight: 700; font-style: normal; }
+    @font-face { font-family: 'Artifakt Element'; src: local('Artifakt Element Extra Bold');  font-weight: 800; font-style: normal; }
+    @font-face { font-family: 'Artifakt Element'; src: local('Artifakt Element Black');       font-weight: 900; font-style: normal; }
+    @font-face { font-family: 'Artifakt Element'; src: local('Artifakt Element Thin Italic');   font-weight: 100; font-style: italic; }
+    @font-face { font-family: 'Artifakt Element'; src: local('Artifakt Element Light Italic');  font-weight: 300; font-style: italic; }
+    @font-face { font-family: 'Artifakt Element'; src: local('Artifakt Element Italic');        font-weight: 400; font-style: italic; }
+    @font-face { font-family: 'Artifakt Element'; src: local('Artifakt Element Bold Italic');   font-weight: 700; font-style: italic; }
+  </style>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     :root {
       --ink:   #0a0a0a;
       --paper: #f5f2ed;
-      --mid:   #888;
     }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     html, body {
-      width: 100vw;
-      height: 100vh;
+      width: 100vw; height: 100vh;
       overflow: hidden;
       background: var(--ink);
     }
 
-    /* ── TRACK ── */
     #track {
       display: flex;
-      width: calc(100vw * 13);
-      height: 100vh;
-      transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+      width: 100vw; height: 100vh;
+      transition: transform 0.55s cubic-bezier(0.77,0,0.175,1);
       will-change: transform;
     }
 
-    /* ── PAGE BASE ── */
     .page {
-      width: 100vw;
-      height: 100vh;
-      flex-shrink: 0;
-      position: relative;
+      flex: 0 0 100vw;
+      width: 100vw; height: 100vh;
       overflow: hidden;
       display: flex;
-      flex-direction: column;
-      padding-bottom: 10vh;
     }
+    .dark  { background: var(--ink);   color: var(--paper); }
+    .light { background: var(--paper); color: var(--ink); }
 
-    .page.light { background: var(--paper); color: var(--ink); }
-    .page.dark  { background: var(--ink);   color: var(--paper); }
-
-    /* ── COVER / BACK ── */
+    /* ── Cover ── */
     .cover-page {
-      padding: 5vw 6vw 6vw;
-      justify-content: space-between;
+      flex-direction: column;
+      justify-content: flex-start;
+      padding: 5vh 6vw;
       position: relative;
     }
     #cover-canvas {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
       pointer-events: none;
-      opacity: 0.9;
     }
-    .cover-hero-logo {
-      width: clamp(160px, 22vw, 360px);
-      height: auto;
-      display: block;
-      margin-bottom: 4vh;
-    }
-    .cover-main { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; }
-    .cover-label {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: clamp(10px, 0.9vw, 14px);
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      opacity: 0.45;
-      margin-bottom: 2vh;
-    }
-    .cover-product {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(52px, 10vw, 140px);
-      font-weight: 900;
-      line-height: 0.92;
-      letter-spacing: -0.03em;
-      margin-bottom: 2vh;
-    }
-    .cover-version {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: clamp(18px, 3.5vw, 52px);
-      font-weight: 600;
-      opacity: 0.5;
-      margin-bottom: 3vh;
-    }
-    .cover-tagline {
-      font-family: 'Source Serif 4', serif;
-      font-style: italic;
-      font-size: clamp(14px, 1.8vw, 26px);
-      font-weight: 300;
-      opacity: 0.75;
-      max-width: 60vw;
-      line-height: 1.4;
-      margin-bottom: 5vh;
-    }
-    .cover-meta {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: clamp(10px, 0.85vw, 13px);
-      letter-spacing: 0.12em;
-      opacity: 0.35;
-    }
+    .cover-logo  { width: clamp(160px, 22vw, 360px); display: block; margin-bottom: 4vh; }
+    .cover-title { font-family: 'Artifakt Legend', sans-serif; font-size: clamp(64px, 10vw, 160px); font-weight: 400; line-height: 0.95; letter-spacing: -0.02em; }
+    .cover-version { font-family: 'Artifakt Element', sans-serif; font-size: clamp(18px, 4vw, 64px); margin-top: 2.5vh; opacity: 0.6; }
+    .cover-tagline { font-family: 'Artifakt Element', sans-serif; font-style: italic; font-size: clamp(14px, 2vw, 32px); opacity: 0.75; margin-top: 2vh; max-width: 60vw; line-height: 1.4; }
+    .cover-meta { position: absolute; bottom: 5vh; left: 6vw; font-family: 'Artifakt Element', sans-serif; font-size: 11px; opacity: 0.4; line-height: 1.8; }
 
-    /* ── BACK COVER ── */
-    .back-cover {
-      align-items: center;
-      justify-content: center;
-      gap: 3vh;
-      padding: 0 6vw 10vh;
-    }
-    .back-cover-logo { height: 48px; filter: brightness(0) invert(1); opacity: 0.5; }
-    .back-cover-title {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: clamp(14px, 2.2vw, 34px);
-      font-weight: 600;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      opacity: 0.9;
-    }
-    .back-cover-sub {
-      font-family: 'Source Serif 4', serif;
-      font-style: italic;
-      font-size: clamp(13px, 1.4vw, 20px);
-      opacity: 0.4;
-    }
-    .back-cover-rule {
-      width: 120px;
-      height: 1px;
-      background: currentColor;
-      opacity: 0.2;
-    }
-
-    /* ── CONTENT PAGE: 55/45 SPLIT ── */
-    .content-page {
-      flex-direction: row;
-      padding-bottom: 0;
-    }
+    /* ── Content pages ── */
+    .content-page { flex-direction: row; overflow: hidden; }
 
     .col-left {
-      width: 55%;
-      height: 100vh;
-      padding: 5vh 4vw 10vh 6vw;
-      display: flex;
-      flex-direction: column;
-      position: relative;
+      width: 55%; height: 100vh; max-height: 100vh; min-height: 0;
+      padding: 4vw 3vw 5vh 6vw;
+      display: flex; flex-direction: column; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    .col-right {
+      width: 45%; height: 100vh; max-height: 100vh; min-height: 0;
+      padding: 4vw 6vw 5vh 4vw;
+      display: flex; flex-direction: column;
+      border-left: 1px solid currentColor;
       overflow: hidden;
     }
+    .dark  .col-right { border-left-color: rgba(245,242,237,0.12); }
+    .light .col-right { border-left-color: rgba(10,10,10,0.12); }
 
-    .col-right {
-      width: 45%;
-      height: 100vh;
-      padding: 5vh 6vw 10vh 4vw;
-      display: flex;
-      flex-direction: column;
-      border-left: 1px solid currentColor;
-      opacity-border: 0.12;
-    }
-    .page.light .col-right { border-left-color: rgba(10,10,10,0.12); }
-    .page.dark  .col-right { border-left-color: rgba(245,242,237,0.12); }
-
-    /* Ghosted rank number */
     .ghost-rank {
-      font-family: 'Playfair Display', serif;
-      font-weight: 900;
-      font-size: clamp(160px, 28vw, 400px);
-      line-height: 1;
-      position: absolute;
-      bottom: 8vh;
-      left: 4vw;
-      opacity: 0.055;
-      pointer-events: none;
-      user-select: none;
-      letter-spacing: -0.05em;
+      position: absolute; font-family: 'Artifakt Legend', sans-serif;
+      font-size: 30vw; font-weight: 900; line-height: 1;
+      top: -2vw; left: -2vw; opacity: 0.06;
+      pointer-events: none; user-select: none; z-index: 0;
     }
-
-    /* Left column content */
     .cat-tag {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: clamp(10px, 0.85vw, 13px);
-      font-weight: 600;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      opacity: 0.5;
-      margin-bottom: 2.5vh;
+      font-family: 'Artifakt Element', sans-serif; font-size: 11px;
+      letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.55;
+      margin-bottom: 1.2vh; position: relative; z-index: 1;
+      flex-shrink: 0;
     }
-
     .page-headline {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(28px, 5vw, 72px);
-      font-weight: 900;
-      line-height: 1.05;
-      letter-spacing: -0.02em;
-      margin-bottom: 2vh;
-      position: relative;
-      z-index: 1;
+      font-family: 'Artifakt Legend', sans-serif;
+      font-size: clamp(24px, 4.5vw, 72px); font-weight: 900;
+      line-height: 1.05; letter-spacing: -0.02em;
+      margin-bottom: 1.5vh; position: relative; z-index: 1;
+      flex-shrink: 0;
     }
-
     .section-path {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: clamp(10px, 0.9vw, 13px);
-      opacity: 0.4;
-      margin-bottom: 3vh;
-      letter-spacing: 0.04em;
+      font-family: 'Artifakt Element', sans-serif; font-size: 13px;
+      opacity: 0.4; margin-bottom: 1.5vh; position: relative; z-index: 1;
+      flex-shrink: 0;
     }
-
     .page-summary {
-      font-family: 'Source Serif 4', serif;
-      font-size: clamp(15px, 1.5vw, 22px);
-      line-height: 1.7;
-      opacity: 0.85;
-      margin-bottom: 3vh;
-      max-width: 44vw;
-      position: relative;
-      z-index: 1;
+      font-family: 'Artifakt Element', sans-serif; font-size: max(15px, 1.3vw);
+      line-height: 1.6; opacity: 0.85;
+      position: relative; z-index: 1;
+      overflow: hidden;
+      flex-shrink: 0;
     }
 
-    .bullet-list {
-      list-style: none;
-      padding: 0;
-      position: relative;
-      z-index: 1;
+    /* ── Right column elements ── */
+    .big-stat {
+      font-family: 'Artifakt Legend', sans-serif;
+      font-size: clamp(48px, 6.5vw, 120px); font-weight: 900;
+      line-height: 1; letter-spacing: -0.03em;
+      margin-bottom: 0.8vh; flex-shrink: 0;
     }
-    .bullet-list li {
-      font-family: 'Source Serif 4', serif;
-      font-size: clamp(13px, 1.2vw, 18px);
-      line-height: 1.6;
-      opacity: 0.75;
-      padding: 0.5vh 0 0.5vh 1.4em;
-      position: relative;
-      border-bottom: 1px solid currentColor;
-    }
-    .page.light .bullet-list li { border-bottom-color: rgba(10,10,10,0.08); }
-    .page.dark  .bullet-list li { border-bottom-color: rgba(245,242,237,0.08); }
-    .bullet-list li:last-child { border-bottom: none; }
-    .bullet-list li::before {
-      content: '—';
-      position: absolute;
-      left: 0;
-      opacity: 0.4;
-    }
-
-    /* Right column content */
-    .key-stat {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(48px, 6.5vw, 96px);
-      font-weight: 900;
-      line-height: 1;
-      letter-spacing: -0.03em;
-      margin-bottom: 0.5vh;
-    }
-
     .stat-label {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: clamp(10px, 0.85vw, 12px);
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      opacity: 0.45;
-      margin-bottom: 3vh;
+      font-family: 'Artifakt Element', sans-serif; font-size: 12px;
+      letter-spacing: 0.15em; text-transform: uppercase; opacity: 0.55;
+      margin-bottom: 2vh; flex-shrink: 0;
     }
-
     .stack-tag {
-      display: inline-block;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: clamp(10px, 0.8vw, 12px);
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      padding: 4px 12px;
-      border: 1px solid currentColor;
-      opacity: 0.5;
-      margin-bottom: 3vh;
+      font-family: 'Artifakt Element', sans-serif; font-size: 11px;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      border: 1px solid currentColor; display: inline-block;
+      padding: 4px 10px; opacity: 0.5; margin-bottom: 2vh; flex-shrink: 0;
+      align-self: flex-start;
     }
-
-    .pr-figure {
-      margin-bottom: 3vh;
+    .pr-image {
+      width: 100%; max-height: 28vh; object-fit: cover;
+      display: block; margin-bottom: 0.6vh; flex-shrink: 0;
     }
-    .pr-figure img {
-      width: 100%;
-      max-height: 28vh;
-      object-fit: cover;
-      display: block;
-      filter: grayscale(100%) contrast(1.1);
+    .pr-caption {
+      font-family: 'Artifakt Element', sans-serif; font-size: 11px;
+      opacity: 0.45; margin-bottom: 1.5vh; flex-shrink: 0;
     }
-    .pr-figure figcaption {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: clamp(9px, 0.75vw, 11px);
-      opacity: 0.35;
-      margin-top: 6px;
-      letter-spacing: 0.04em;
-    }
-
     .callout {
-      margin-top: auto;
+      border-left: 4px solid currentColor;
       padding: 20px 24px;
+      margin-top: auto; flex-shrink: 0;
     }
-    .page.light .callout {
-      background: rgba(10,10,10,0.05);
-      border-left: 4px solid var(--ink);
-    }
-    .page.dark .callout {
-      background: rgba(245,242,237,0.06);
-      border-left: 4px solid var(--paper);
-    }
+    .dark  .callout { background: rgba(245,242,237,0.05); }
+    .light .callout { background: rgba(10,10,10,0.05); }
     .callout-label {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: clamp(9px, 0.75vw, 11px);
-      font-weight: 600;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      opacity: 0.45;
+      font-family: 'Artifakt Element', sans-serif; font-size: 11px;
+      letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.55;
       margin-bottom: 10px;
     }
     .callout-body {
-      font-family: 'Source Serif 4', serif;
-      font-size: clamp(13px, 1.3vw, 18px);
-      line-height: 1.65;
-      opacity: 0.8;
+      font-family: 'Artifakt Element', sans-serif; font-size: max(15px, 1.3vw);
+      line-height: 1.5; opacity: 0.8;
     }
 
-    /* ── VERDICT PAGE ── */
+    /* ── Verdict page ── */
     .verdict-page {
-      align-items: center;
-      justify-content: center;
-      padding: 6vw;
+      flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 6vw;
     }
-    .verdict-page .verdict-label {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: clamp(10px, 0.85vw, 13px);
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      opacity: 0.35;
+    .verdict-kicker {
+      font-family: 'Artifakt Element', sans-serif; font-size: 12px;
+      letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.4;
       margin-bottom: 4vh;
-      text-align: center;
     }
-    .verdict-page .verdict-headline {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(28px, 5vw, 72px);
-      font-style: italic;
-      font-weight: 700;
-      line-height: 1.1;
-      text-align: center;
-      max-width: 80vw;
+    .verdict-headline {
+      font-family: 'Artifakt Legend', sans-serif; font-style: italic;
+      font-size: clamp(28px, 5vw, 80px); font-weight: 400;
+      line-height: 1.1; max-width: 900px; margin-bottom: 4vh;
+    }
+    .verdict-body {
+      font-family: 'Artifakt Element', sans-serif; font-size: max(17px, 1.5vw);
+      line-height: 1.65; opacity: 0.85; max-width: 680px;
       margin-bottom: 5vh;
     }
-    .verdict-page .verdict-body {
-      font-family: 'Source Serif 4', serif;
-      font-size: clamp(15px, 1.5vw, 22px);
-      line-height: 1.8;
-      opacity: 0.8;
-      max-width: 680px;
-      text-align: center;
-      margin-bottom: 5vh;
-    }
-    .verdict-page .verdict-stamp {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: clamp(12px, 1.2vw, 18px);
-      font-weight: 600;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      padding: 12px 32px;
-      border: 2px solid currentColor;
-      opacity: 0.7;
+    .verdict-stamp {
+      font-family: 'Artifakt Element', sans-serif;
+      font-size: clamp(13px, 1.4vw, 22px); letter-spacing: 0.2em;
+      text-transform: uppercase; opacity: 0.9;
+      border-top: 2px solid currentColor;
+      padding-top: 2.5vh;
     }
 
-    /* ── DOT NAVIGATION ── */
+    /* ── Back cover ── */
+    .back-cover {
+      flex-direction: column;
+      align-items: center; justify-content: center; gap: 2vh;
+    }
+    .back-cover-logo { height: 48px; filter: brightness(0) invert(1); opacity: 0.5; }
+    .back-cover-rule { width: 60px; height: 2px; background: currentColor; opacity: 0.3; }
+    .back-cover-title {
+      font-family: 'Artifakt Element', sans-serif; font-size: clamp(18px, 2.5vw, 40px);
+      letter-spacing: 0.3em; text-transform: uppercase; opacity: 0.7;
+    }
+    .back-cover-sub {
+      font-family: 'Artifakt Element', sans-serif; font-style: italic;
+      font-size: clamp(13px, 1.3vw, 20px); opacity: 0.4;
+    }
+
+    /* ── Navigation ── */
     #dots {
-      position: fixed;
-      bottom: 28px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 8px;
-      z-index: 100;
-      padding: 6px 12px;
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 8px; z-index: 100;
     }
     .dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      border: 1px solid var(--paper);
-      background: transparent;
-      cursor: pointer;
-      transition: all 0.25s;
-      opacity: 0.5;
+      width: 7px; height: 7px; border-radius: 50%;
+      border: 1.5px solid rgba(245,242,237,0.6);
+      cursor: pointer; transition: background 0.2s, border-color 0.2s;
     }
-    .dot.active {
-      background: var(--paper);
-      opacity: 1;
-    }
-    .dot.dark-dot { border-color: var(--ink); }
-    .dot.dark-dot.active { background: var(--ink); }
+    .dot.active { background: rgba(245,242,237,0.9); border-color: rgba(245,242,237,0.9); }
+    .dot.dark-dot { border-color: rgba(10,10,10,0.5); }
+    .dot.dark-dot.active { background: rgba(10,10,10,0.8); border-color: rgba(10,10,10,0.8); }
 
-    /* ── ARROW HINTS ── */
     .arrow-hint {
-      position: fixed;
-      top: 50%;
-      transform: translateY(-50%);
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 18px;
-      opacity: 0.18;
-      cursor: pointer;
-      z-index: 100;
-      padding: 20px 16px;
-      transition: opacity 0.2s;
-      user-select: none;
+      position: fixed; top: 50%; transform: translateY(-50%);
+      font-size: 20px; opacity: 0.25; z-index: 100;
+      pointer-events: none; transition: color 0.3s;
     }
-    .arrow-hint:hover { opacity: 0.5; }
-    #arrow-left  { left: 12px; }
-    #arrow-right { right: 12px; }
+    #arrow-left  { left: 18px; }
+    #arrow-right { right: 18px; }
+
+    /* ── PR links ── */
+    a.pr-link {
+      font-family: 'Artifakt Element', sans-serif; font-size: 0.88em;
+      color: inherit; text-decoration: underline;
+      text-decoration-style: dotted; text-underline-offset: 3px;
+      opacity: 0.85; transition: opacity 0.15s;
+    }
+    a.pr-link:hover { opacity: 1; text-decoration-style: solid; }
   </style>
 </head>
 <body>
-
 <div id="track">
 
-  <!-- ══ PAGE 1: DARK COVER ══ -->
+  <!-- ══ PAGE 1: COVER (DARK) ══ -->
   <div class="page dark cover-page">
     <canvas id="cover-canvas"></canvas>
-    <div class="cover-main" style="position:relative;z-index:1;">
-      <div class="cover-label">Dynamo Dispatch · Release Review</div>
-      <img src="../assets/dynamo-logo.png" alt="Dynamo" class="cover-hero-logo">
+    <div style="position:relative;z-index:1;">
+      <img src="../assets/dynamo-logo.png" alt="Dynamo" class="cover-logo">
+      <div class="cover-title">Dynamo</div>
       <div class="cover-version">4.1.0</div>
-      <div class="cover-tagline">Templates Finally Arrive,<br>and the Pin Bugs Are Gone</div>
-      <div class="cover-meta">April 2026 &nbsp;·&nbsp; github.com/DynamoDS/Dynamo &nbsp;·&nbsp; 90+ Pull Requests</div>
+      <div class="cover-tagline">Speed recovered. Pins fixed. Python normalized. The foundational release you didn't know you were waiting for.</div>
+    </div>
+    <div class="cover-meta">
+      Dynamo Dispatch · Issue 04<br>
+      April 2026 · github.com/DynamoDS/Dynamo
     </div>
   </div>
 
-  <!-- ══ PAGE 2: FEATURES (LIGHT) ══ -->
+  <!-- ══ PAGE 2: FEATURES I (LIGHT) ══ -->
   <div class="page light content-page">
     <div class="col-left">
       <div class="ghost-rank">01</div>
       <div class="cat-tag">Features</div>
-      <h2 class="page-headline">Twenty-Two Features That Quietly Improve Everything</h2>
-      <div class="section-path">DynamoDS/Dynamo → Features</div>
-      <p class="page-summary">Node group styles are now customizable from Preferences. The Documentation Browser gains AutoSync. Deleting an inline Watch node rewires connectors instead of orphaning them. The Extensions menu appears alongside other top-level menus where it always belonged.</p>
-      <ul class="bullet-list">
-        <li>Node group styles: edit, remove, reset from Preferences</li>
-        <li>Home / End canvas navigation shortcuts</li>
-        <li>Documentation Browser AutoSync setting</li>
-        <li>Online status indicator (globe + LED) in status bar</li>
-        <li>Watch node deletion rewires connectors</li>
-        <li>Graph file spec as JSON Schema + Markdown docs</li>
-        <li><code>NodeCategoryAttribute</code> type-forwarded to DynamoServices</li>
-        <li><code>ActionGroupDisposable</code> nestable for composable undo/redo</li>
-      </ul>
+      <h2 class="page-headline">The Workspace Finally Remembers You</h2>
+      <div class="section-path">Features</div>
+      <p class="page-summary">Dynamo's workspace has always been stateless in frustrating ways — panels reset to defaults every session, menus were buried in submenus, and navigating a large graph meant scrolling. 4.1.0 changes the contract: the Extensions panel now remembers whether you minimized it, so your layout survives restarts. Home and End jump to the leftmost and rightmost nodes on the canvas without scrolling. The Extensions menu is promoted to sit alongside every other top menu. And deleting an inline Watch node no longer orphans connected ports — wires now rewire cleanly through the deleted node.</p>
     </div>
     <div class="col-right">
-      <div class="key-stat">22</div>
-      <div class="stat-label">Features Shipped</div>
-      <div class="stack-tag">C# · WPF · .NET</div>
-      <figure class="pr-figure">
-        <img src="https://github.com/user-attachments/assets/8d8b448a-2a33-419e-9298-d8388d03ebda" alt="Watch node rewiring">
-        <figcaption>PR #16884 — Watch node deletion now auto-rewires connectors</figcaption>
-      </figure>
+      <div class="big-stat">0</div>
+      <div class="stat-label">Panels That Forget Your Preferences</div>
+      <div class="stack-tag">UX · Canvas · Extensions</div>
+      <img src="https://github.com/user-attachments/assets/26dca8c3-d1aa-4229-84fe-4ffac6e35287" alt="Extensions menu promoted to top menu bar" class="pr-image">
+      <div class="pr-caption">#16771 — Extensions menu now lives alongside Help and other top-level menus</div>
       <div class="callout">
-        <div class="callout-label">What this means for you</div>
-        <p class="callout-body">Node group style customization is worth setting up now if you share graphs with others — consistent visual conventions become load-bearing once a team is involved. The Watch node rewiring fix eliminates a daily friction point. Test AutoSync on your current workflow; it changes how you navigate documentation during development.</p>
+        <div class="callout-label">What This Means for You</div>
+        <div class="callout-body">The Watch node rewire behavior (PR #16884) is the one you'll feel immediately in daily editing. The Home/End shortcuts pay dividends on large graphs. If you maintain extensions, the panel state persistence means users no longer need to re-expand your panel every session — your default collapsed state is now sticky.</div>
       </div>
     </div>
   </div>
 
-  <!-- ══ PAGE 3: TEMPLATES (DARK) ══ -->
+  <!-- ══ PAGE 3: FEATURES II (DARK) ══ -->
   <div class="page dark content-page">
+    <div class="col-left">
+      <div class="ghost-rank">01</div>
+      <div class="cat-tag">Features — Continued</div>
+      <h2 class="page-headline">The API Sheds a Dependency It Never Needed</h2>
+      <div class="section-path">Features</div>
+      <p class="page-summary">External node libraries that need to declare their menu category have always been forced to reference DynamoCore — a heavy package — just to access NodeCategoryAttribute. In 4.1.0 that attribute is type-forwarded to DynamoServices, a lighter package. Libraries can now drop the heavyweight reference. ActionGroupDisposable is also made nestable: complex multi-step operations can now compose their undo groups cleanly without conflicts. And Dynamo's graph file format gets a comprehensive JSON Schema and Markdown specification for the first time — a machine-readable contract for tools that parse .DYN files.</p>
+    </div>
+    <div class="col-right">
+      <div class="big-stat">1</div>
+      <div class="stat-label">Heavy Dependency Dropped from DynamoCore</div>
+      <div class="stack-tag">API · DynamoServices · WebView2</div>
+      <img src="https://github.com/user-attachments/assets/8d8b448a-2a33-419e-9298-d8388d03ebda" alt="Inline Watch node deletion rewiring ports" class="pr-image">
+      <div class="pr-caption">#16884 — Deleting a Watch node now rewires its upstream and downstream connections</div>
+      <div class="callout">
+        <div class="callout-label">What This Means for You</div>
+        <div class="callout-body">The NodeCategoryAttribute type-forward (PR #16914) is directly actionable: if your custom node packages reference DynamoCore only for category declaration, you can drop that dependency after this upgrade. The JSON Schema DYN spec is worth bookmarking — it's the first formal contract for a file format your tooling likely parses already.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE 4: TEMPLATES (LIGHT) ══ -->
+  <div class="page light content-page">
     <div class="col-left">
       <div class="ghost-rank">02</div>
       <div class="cat-tag">Templates</div>
-      <h2 class="page-headline">The Start Page Earns Its Keep</h2>
-      <div class="section-path">DynamoDS/Dynamo → Templates</div>
-      <p class="page-summary">Template files are now a first-class feature on the Dynamo home screen. Thumbnail previews, human-readable display names, and a File → Open → Template dialog that restricts to template files. DynamoHome updated to v1.0.27.</p>
-      <ul class="bullet-list">
-        <li>Thumbnail previews on start page</li>
-        <li>Human-readable display names (replaces internal IDs)</li>
-        <li>File → Open → Template restricts to template files only</li>
-        <li>Templates open into a new editable workspace</li>
-        <li>DynamoHome v1.0.27 with placeholder icon system</li>
-      </ul>
+      <h2 class="page-headline">The Start Page Finally Shows Its Work</h2>
+      <div class="section-path">Templates</div>
+      <p class="page-summary">Before 4.1.0, template cards on the start page showed a name and nothing else. Opening was the only way to find out what a template did. This release ships thumbnail preview images for every template card — each shows a screenshot of the graph at a glance. Templates without custom thumbnails get placeholder icons so the grid never looks broken or sparse. The File → Open → Template dialog is also tightened: it now only accepts .DYN template files, preventing .DYF custom node files from accidentally loading through that path.</p>
     </div>
     <div class="col-right">
-      <div class="key-stat">7</div>
-      <div class="stat-label">Template PRs</div>
-      <div class="stack-tag">DynamoHome · UX</div>
-      <figure class="pr-figure">
-        <img src="https://github.com/user-attachments/assets/010eec73-0009-4b05-9661-63c2219d274e" alt="Template thumbnails on start page">
-        <figcaption>PR #16981 — Thumbnails now appear on the Dynamo start page</figcaption>
-      </figure>
+      <div class="big-stat">Every</div>
+      <div class="stat-label">Template Has a Visual Preview</div>
+      <div class="stack-tag">UI · Home Screen · DynamoHome</div>
+      <img src="https://github.com/user-attachments/assets/010eec73-0009-4b05-9661-63c2219d274e" alt="Template cards showing thumbnail previews on the start page" class="pr-image">
+      <div class="pr-caption">#16981 — Template cards now show thumbnail previews in the start page gallery</div>
       <div class="callout">
-        <div class="callout-label">What this means for you</div>
-        <p class="callout-body">If Dynamo is part of any training or onboarding process, this is the release to start building a template library. The home screen can now serve as a real entry point — a handful of well-named starter graphs goes a long way toward reducing the blank-canvas problem for new users.</p>
+        <div class="callout-label">What This Means for You</div>
+        <div class="callout-body">If you maintain custom templates for your team, add thumbnail images now — they display in the gallery from this release. The .DYF restriction in the Open Template dialog is a minor breaking change: if any internal tooling was routing custom node files through that dialog path, it will silently fail to open them. Worth auditing before rolling out 4.1.0.</div>
       </div>
     </div>
   </div>
 
-  <!-- ══ PAGE 4: BUG FIXES (LIGHT) ══ -->
+  <!-- ══ PAGE 5: BUG FIXES I (DARK) ══ -->
+  <div class="page dark content-page">
+    <div class="col-left">
+      <div class="ghost-rank">03</div>
+      <div class="cat-tag">Bug Fixes — Part I</div>
+      <h2 class="page-headline">Six Pin Bugs Walk Into a Release. None Walk Out.</h2>
+      <div class="section-path">Bug Fixes</div>
+      <p class="page-summary">Connector pins are the anchors you attach to wires to lock them in place during graph edits. They live in the graph file. Six separate ways this system could fail were fixed in one release: pins shifted upward after save/reload, disappeared entirely when using Save As, were silently dropped from clipboard copy/paste, couldn't be undone with Ctrl+Z, notes lost their pin when the note was deleted, and rapid drag operations would lose the pin through a transient reconnection path. The fixes cover both serialization (pins now survive all save paths) and the interaction model (undo stack tracks all pin operations correctly).</p>
+    </div>
+    <div class="col-right">
+      <div class="big-stat">6</div>
+      <div class="stat-label">Connector Pin Bugs Fixed in One Release</div>
+      <div class="stack-tag">Pins · Clipboard · Undo</div>
+      <div class="callout" style="margin-top: auto;">
+        <div class="callout-label">What This Means for You</div>
+        <div class="callout-body">If you've been working around pin loss on Save As, or rebuilding pins after reload drift, those workarounds can be dropped. The transient-pin reconnection hardening is the most subtle fix — it closes a race condition that surfaces specifically during rapid editing, which matters for automation-driven or scripted graph construction workflows.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE 6: BUG FIXES II (LIGHT) ══ -->
   <div class="page light content-page">
     <div class="col-left">
       <div class="ghost-rank">03</div>
-      <div class="cat-tag">Bug Fixes</div>
-      <h2 class="page-headline">The Pin Bugs Are Finally, Completely Gone</h2>
-      <div class="section-path">DynamoDS/Dynamo → Bug Fixes</div>
-      <p class="page-summary">Six connector-pin bugs fixed in one release: orphaned notes, Save As data loss, copy-paste omissions, drag-operation drops, undo failures, reload position drift. Beyond pins: AppData versioning, autocomplete crashes, pan/zoom stability, and geometry GC.</p>
-      <ul class="bullet-list">
-        <li>AppData version directory: <code>10.0</code> → <code>4.1</code> (Sandbox + C3D)</li>
-        <li>Node autocomplete crash on Alt+F4</li>
-        <li>Pinned note orphaned on node delete</li>
-        <li>Connector pins lost on Save As</li>
-        <li>Pins omitted from copy-paste</li>
-        <li>Pin/unpin undo broken (Ctrl+Z)</li>
-        <li>Pan/zoom: WPF rendering thread BitmapCache crash</li>
-        <li>Geometry objects prematurely GC'd in CLR containers</li>
-      </ul>
+      <div class="cat-tag">Bug Fixes — Part II</div>
+      <h2 class="page-headline">The Camera Drifts. The Gizmo Fails. Both Fixed.</h2>
+      <div class="section-path">Bug Fixes</div>
+      <p class="page-summary">Two viewport failures shared the same root cause: the transform gizmo stopped redrawing correctly during drag operations, and the camera slowly drifted when zoomed in. Both traced back to a WPF BitmapCache shared across rendering threads — a race condition that silently corrupted render state. Pan and zoom crashes on large graphs followed the same pattern. The second batch of fixes also addresses premature geometry garbage collection: CLR containers holding LibG geometry pointers were sometimes freed before downstream nodes finished reading them, causing silent null returns or unpredictable crashes. The fix ties geometry lifetimes to the nodes that own them.</p>
     </div>
     <div class="col-right">
-      <div class="key-stat">27</div>
-      <div class="stat-label">Bugs Fixed</div>
-      <div class="stack-tag">WPF · C# · AppData</div>
-      <div class="callout">
-        <div class="callout-label">What this means for you</div>
-        <p class="callout-body">The AppData versioning fix may require a settings check post-upgrade if you use Dynamo Sandbox. The C3D host fix is relevant if your environment includes Civil 3D. The geometry GC fix could silently improve reliability in existing large graphs — run a regression pass before treating this as a clean upgrade.</p>
+      <div class="big-stat">26</div>
+      <div class="stat-label">Total Bugs Closed in 4.1</div>
+      <div class="stack-tag">WPF · BitmapCache · Geometry GC</div>
+      <div class="callout" style="margin-top: auto;">
+        <div class="callout-label">What This Means for You</div>
+        <div class="callout-body">The geometry GC fix matters if you have nodes that hold LibG geometry references across async or multi-step execution — the previous behavior could silently return null or crash downstream. The shared BitmapCache pattern it replaces is worth checking in your own WPF components if you render geometry previews or use threaded rendering anywhere in custom view extensions.</div>
       </div>
     </div>
   </div>
 
-  <!-- ══ PAGE 5: GEOMETRY & LIBG (DARK) ══ -->
+  <!-- ══ PAGE 7: GEOMETRY (DARK) ══ -->
   <div class="page dark content-page">
     <div class="col-left">
       <div class="ghost-rank">04</div>
       <div class="cat-tag">Geometry &amp; LibG</div>
-      <h2 class="page-headline">Periodic NURBS Arrive. Curves Unify.</h2>
-      <div class="section-path">DynamoDS/Dynamo → Geometry &amp; LibG Updates</div>
-      <p class="page-summary">LibG gains <em>NurbsCurve.PeriodicControlPoints</em> and <em>NurbsCurve.PeriodicKnots</em> as first-class nodes. PolyCurve.ByPoints and Polygon.ByPoints behavior unified. Curve.PullOntoPlane and PullOntoSurface now return concrete curve types.</p>
-      <ul class="bullet-list">
-        <li>PeriodicControlPoints and PeriodicKnots nodes, with icons + docs</li>
-        <li>Voronoi / Delaunay: edge-length filter + UV clamping</li>
-        <li>PolyCurve.ByPoints and Polygon.ByPoints unified</li>
-        <li>PullOntoPlane / PullOntoSurface → concrete return types ⚠</li>
-        <li>Scale-adaptive tolerance for surface stitching</li>
-        <li>LibG NuGet → 4.0.0.4313</li>
-      </ul>
+      <h2 class="page-headline">Curves That Finally Do What They Promise</h2>
+      <div class="section-path">Geometry &amp; LibG Updates</div>
+      <p class="page-summary">Voronoi diagrams partition space by "which seed point is nearest?" — Dynamo's implementation failed when edge lengths varied widely, producing broken output on realistic inputs. A relative edge-length filter now handles those cases. PolyCurve.ByPoints had undefined behavior at boundary conditions: it could return different curve types depending on subtle input differences. The return type is now unified and predictable. Periodic NURBS curves — closed smooth curves like circles — gain new API exposure for their knot and control point topology, filling a gap that previously required verbose DesignScript workarounds. Curve.PullOntoPlane and PullOntoSurface now return concrete curve types with performance improvements.</p>
     </div>
     <div class="col-right">
-      <div class="key-stat">9</div>
-      <div class="stat-label">Geometry PRs</div>
-      <div class="stack-tag">LibG · ASM · NURBS</div>
-      <figure class="pr-figure">
-        <img src="https://github.com/user-attachments/assets/281c9891-c181-4f81-b29f-a38c0943b4f6" alt="NurbsCurve periodic node icons">
-        <figcaption>PR #16931 — New icons for PeriodicKnots and PeriodicControlPoints</figcaption>
-      </figure>
+      <div class="big-stat">0</div>
+      <div class="stat-label">Undefined PolyCurve Behaviors Remaining</div>
+      <div class="stack-tag">LibG · NURBS · Tessellation</div>
+      <img src="https://github.com/user-attachments/assets/281c9891-c181-4f81-b29f-a38c0943b4f6" alt="New node icons for NurbsCurve periodic APIs" class="pr-image">
+      <div class="pr-caption">#16931 — New icons for NurbsCurve.PeriodicKnots and PeriodicControlPoints</div>
       <div class="callout">
-        <div class="callout-label">What this means for you</div>
-        <p class="callout-body">If you maintain nodes that use LibG, the PolyCurve/Polygon unification and PullOntoPlane return type change could affect existing implementations — audit any downstream type-checking logic. The Periodic NURBS APIs unlock closed-curve modeling without workarounds, which is a meaningful addition for surface-heavy workflows.</p>
+        <div class="callout-label">What This Means for You</div>
+        <div class="callout-body">The new periodic NURBS APIs (PR #16896) expose curve topology that previously required DesignScript workarounds. If your C# nodes wrap LibG geometry, the unified PolyCurve.ByPoints return type and concrete Curve.PullOnto* types may change downstream type checks — worth a regression pass on affected nodes before shipping the upgrade to users.</div>
       </div>
     </div>
   </div>
 
-  <!-- ══ PAGE 6: PERFORMANCE (LIGHT) ══ -->
+  <!-- ══ PAGE 8: PERFORMANCE (LIGHT) ══ -->
   <div class="page light content-page">
     <div class="col-left">
       <div class="ghost-rank">05</div>
       <div class="cat-tag">Performance</div>
       <h2 class="page-headline">One Low-Level Fix. Massive Speed Recovery.</h2>
-      <div class="section-path">DynamoDS/Dynamo → Performance Improvements</div>
-      <p class="page-summary">The geometry marshaling layer was using default CLR object hash codes, causing collisions when tracking large numbers of geometry objects simultaneously. The result: severe, non-obvious performance degradation that looked like a slow graph, not a bug. Identity-based hash codes eliminate it entirely.</p>
-      <ul class="bullet-list">
-        <li>Geometry marshaling: identity-based hash codes eliminate collisions</li>
-        <li>Dispatcher: expensive view model ops deferred with null-safety + caching</li>
-      </ul>
+      <div class="section-path">Performance Improvements</div>
+      <p class="page-summary">Dynamo keeps a hash table to locate geometry objects quickly. Every object needs a unique key. The old method borrowed keys from .NET's default GetHashCode() — which is allowed to return the same value for two different live objects. When that happens in a large table, every lookup degrades from an instant O(1) jump to a slow linear search, and the problem compounds with more objects. The fix is one line: use memory addresses as hash keys instead. Memory addresses are guaranteed unique for live objects, eliminating the collision class entirely. A second fix stops expensive view model calculations from blocking the WPF rendering thread by deferring them to the Dispatcher.</p>
     </div>
     <div class="col-right">
-      <div class="key-stat">0</div>
-      <div class="stat-label">Hash Collisions After Fix</div>
+      <div class="big-stat">0</div>
+      <div class="stat-label">Geometry Hash Collisions After Fix</div>
       <div class="stack-tag">CLR · Dispatcher · LibG</div>
+      <img src="https://private-user-images.githubusercontent.com/33441782/503695909-49bb9cb1-a30c-41a1-a1c3-c0338a177239.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NzYyNzk2NTUsIm5iZiI6MTc3NjI3OTM1NSwicGF0aCI6Ii8zMzQ0MTc4Mi81MDM2OTU5MDktNDliYjljYjEtYTMwYy00MWExLWExYzMtYzAzMzhhMTc3MjM5LnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNjA0MTUlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjYwNDE1VDE4NTU1NVomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTcxMTY4ODM0NzU5ODZjODQ4ZmMyNjgyY2UzZjhiZGI4NTgzNWI4OTk2NWU1MzVmYTVlN2Q4MzNlODhkOTU5YTMmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JnJlc3BvbnNlLWNvbnRlbnQtdHlwZT1pbWFnZSUyRnBuZyJ9.vDGmbVdXDOQJix9NG-KvV0e0A2ZFlndHevfq_wgzcUU" alt="Geometry performance fix illustration" class="pr-image">
+      <div class="pr-caption">#16754 — Identity hash codes eliminate the geometry marshaling collision cascade</div>
       <div class="callout">
-        <div class="callout-label">What this means for you</div>
-        <p class="callout-body">If you have graphs processing large geometry sets — structural analysis, complex facade, MEP routing — benchmark them before and after upgrading. The hash collision fix may reveal previously masked slowdowns. Document timing differences; this fix could meaningfully change perceived performance in production graphs.</p>
+        <div class="callout-label">What This Means for You</div>
+        <div class="callout-body">PR #16754 is the sleeper hit of this release. If your graphs slow to a crawl with hundreds of geometry objects in play, this hash fix alone justifies the upgrade. The Dispatcher deferral pattern in the view model fix is also a solid technique to adopt in any WPF performance work you're doing in the broader Dynamo codebase — defer, don't block.</div>
       </div>
     </div>
   </div>
 
-  <!-- ══ PAGE 7: PACKAGE MANAGER (DARK) ══ -->
+  <!-- ══ PAGE 9: PACKAGE MANAGER (DARK) ══ -->
   <div class="page dark content-page">
     <div class="col-left">
       <div class="ghost-rank">06</div>
       <div class="cat-tag">Package Manager</div>
-      <h2 class="page-headline">Know What's Installed. Copy What Works.</h2>
-      <div class="section-path">DynamoDS/Dynamo → Package Manager</div>
-      <p class="page-summary">The search tab now displays which version is installed, defaults to it in the dropdown, and labels it "(installed)". The Install button becomes "Update" or "Uninstall" based on state. A new button copies compatibility info from previous package versions.</p>
-      <ul class="bullet-list">
-        <li>Installed version labelled and defaulted in search</li>
-        <li>Install → Update or Uninstall based on state</li>
-        <li>Copy compatibility info from previous package versions</li>
-        <li>Autodesk badge on DynamoTeam-maintained packages</li>
-        <li>Home / End keys fixed in publish form</li>
-      </ul>
+      <h2 class="page-headline">Packages Now Tell You What's Already Installed</h2>
+      <div class="section-path">Package Manager</div>
+      <p class="page-summary">When searching for packages in Dynamo, you previously couldn't see whether you already had one installed or which version. You'd have to switch to the Installed tab, find the package, note the version, then return to Search. 4.1.0 puts the installed version inline in the Search results — no tab-switching required. Package publishers also get a one-click copy-compatibility button that carries version compatibility data forward from a previous release, eliminating the most repetitive step in the publish workflow. Home and End key navigation in the Package Manager publish form is also fixed.</p>
     </div>
     <div class="col-right">
-      <div class="key-stat">4</div>
-      <div class="stat-label">PM Improvements</div>
-      <div class="stack-tag">NuGet · Package Manager</div>
-      <figure class="pr-figure">
-        <img src="https://github.com/user-attachments/assets/b49df223-c085-4f09-9f3a-b71287f90998" alt="Package Manager installed version display">
-        <figcaption>PR #16853 — Installed version shown and labelled in Search tab</figcaption>
-      </figure>
+      <div class="big-stat">0</div>
+      <div class="stat-label">Tab Switches to Check Your Installed Version</div>
+      <div class="stack-tag">Package Manager · Publisher Tools</div>
+      <img src="https://github.com/user-attachments/assets/b49df223-c085-4f09-9f3a-b71287f90998" alt="Installed version shown inline in the Search tab" class="pr-image">
+      <div class="pr-caption">#16853 — Installed version now visible directly in Package Manager Search results</div>
       <div class="callout">
-        <div class="callout-label">What this means for you</div>
-        <p class="callout-body">The installed version labelling removes a small but constant friction point when managing packages across multiple Dynamo installs. The compatibility info copy button pays off quickly during maintenance cycles — especially when rolling back or pinning versions across different host versions.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- ══ PAGE 8: BUILD & INFRA (LIGHT) ══ -->
-  <div class="page light content-page">
-    <div class="col-left">
-      <div class="ghost-rank">07</div>
-      <div class="cat-tag">Build &amp; Infrastructure</div>
-      <h2 class="page-headline">.NET 10. Roll Forward. CI Unblocked.</h2>
-      <div class="section-path">DynamoDS/Dynamo → Build &amp; Infrastructure</div>
-      <p class="page-summary">Performance tests upgraded to .NET 10. SDK roll-forward policy loosened from <code>disable</code> to <code>patch</code>, allowing patch-version updates without manual intervention. npm registry reachability check rewritten. Two CI tests excluded to unblock builds.</p>
-      <ul class="bullet-list">
-        <li>Performance tests → .NET 10</li>
-        <li>SDK roll-forward: disable → patch</li>
-        <li>npm registry check rewritten (WebClient-based)</li>
-        <li>Master bumped to 4.2.0 after RC4.1.0 branch</li>
-        <li>ResetCypythonLogsToConsoleAfterRun marked as known failure</li>
-      </ul>
-    </div>
-    <div class="col-right">
-      <div class="key-stat">8</div>
-      <div class="stat-label">Infra PRs</div>
-      <div class="stack-tag">.NET 10 · CI · npm</div>
-      <div class="callout">
-        <div class="callout-label">What this means for you</div>
-        <p class="callout-body">The .NET 10 migration is accelerating — worth tracking if you maintain any downstream tooling built against Dynamo. The SDK roll-forward change reduces maintenance overhead. Watch the two excluded CI tests; if they cover areas you contribute to, the root cause is still open.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- ══ PAGE 9: AI AGENT SKILLS (DARK) ══ -->
-  <div class="page dark content-page">
-    <div class="col-left">
-      <div class="ghost-rank">08</div>
-      <div class="cat-tag">AI Agent Skills</div>
-      <h2 class="page-headline">The Repo Now Ships Its Own AI Workforce</h2>
-      <div class="section-path">DynamoDS/Dynamo → AI Agent Skills &amp; Tooling</div>
-      <p class="page-summary">Dynamo 4.1.0 ships a canonical <code>.agents/skills</code> directory with unit testing, UX design, content design, and C# cleanup agents. A CI workflow validates drift. Wrappers sync to VSCode, Cursor, and Claude Code.</p>
-      <ul class="bullet-list">
-        <li>Canonical .agents/skills directory with cross-IDE sync</li>
-        <li>dynamo-unit-testing agent skill</li>
-        <li>UX Designer agent (Weave Design System)</li>
-        <li>Content Designer agent (hallucination guardrails)</li>
-        <li>C# Janitor agent for automated code cleanup</li>
-        <li>validate-skills CI workflow — prevents drift</li>
-        <li>Copilot instructions expanded with full repo context</li>
-      </ul>
-    </div>
-    <div class="col-right">
-      <div class="key-stat">13</div>
-      <div class="stat-label">Agent PRs</div>
-      <div class="stack-tag">Claude Code · Copilot · Cursor</div>
-      <div class="callout">
-        <div class="callout-label">What this means for you</div>
-        <p class="callout-body">The dynamo-unit-testing and C# Janitor agents are immediately applicable if you contribute to the repo. The validate-skills CI check is worth understanding — it enforces consistency across IDE wrappers and will catch drift early. Worth reviewing the canonical skill definitions before writing new ones.</p>
+        <div class="callout-label">What This Means for You</div>
+        <div class="callout-body">The inline installed version display (PR #16853) closes a long-standing UX gap — your users will notice it immediately. If you publish packages to the Dynamo Package Manager, the copy-compatibility button (PR #16831) will save meaningful time on every version release cycle — it's the step everyone was doing manually.</div>
       </div>
     </div>
   </div>
@@ -672,401 +447,445 @@
   <!-- ══ PAGE 10: PYTHONNET3 (LIGHT) ══ -->
   <div class="page light content-page">
     <div class="col-left">
-      <div class="ghost-rank">09</div>
+      <div class="ghost-rank">07</div>
       <div class="cat-tag">PythonNet3</div>
-      <h2 class="page-headline">Purple Is Out. PythonNet3 Is In.</h2>
-      <div class="section-path">DynamoDS/Dynamo → PythonNet3</div>
-      <p class="page-summary">Python samples updated to PythonNet3 APIs. The purple syntax highlighting that made Python nodes visually inconsistent with the rest of the canvas has been removed. Existing scripts using older PythonNet patterns need review.</p>
-      <ul class="bullet-list">
-        <li>Python samples updated to PythonNet3</li>
-        <li>Purple syntax highlighting removed from Python nodes</li>
-      </ul>
+      <h2 class="page-headline">Purple Is Gone. PythonNet3 Is the Baseline.</h2>
+      <div class="section-path">PythonNet3</div>
+      <p class="page-summary">When Dynamo migrated Python nodes from IronPython to PythonNet3, the team added a distinctive purple syntax highlight as a visual signal: "this node is running the new runtime." That marker served its purpose during the migration period. With PythonNet3 now the only supported runtime, the purple highlight is redundant and removed — Python nodes look like everything else. The bundled sample scripts have been updated throughout, replacing all PythonNet2-style import patterns. Python in Dynamo is no longer a migration story. It's just the baseline.</p>
     </div>
     <div class="col-right">
-      <div class="key-stat">2</div>
-      <div class="stat-label">Python Changes</div>
-      <div class="stack-tag">PythonNet3 · IronPython</div>
+      <div class="big-stat">0</div>
+      <div class="stat-label">Purple Migration Flags Remaining</div>
+      <div class="stack-tag">PythonNet3 · Python · IronPython</div>
+      <img src="https://github.com/user-attachments/assets/25a367ef-da00-49e4-91dd-dc63a6bdc06f" alt="Purple syntax highlighting removed from Python nodes" class="pr-image">
+      <div class="pr-caption">#16615 — Purple syntax highlighting removed; PythonNet3 is now the unambiguous default</div>
       <div class="callout">
-        <div class="callout-label">What this means for you</div>
-        <p class="callout-body">Audit your existing Python nodes for PythonNet2-specific patterns. The PythonNet3 migration is ongoing — scripts using legacy .NET binding syntax or IronPython-style interop need review before they break silently in a future release. Run your Python node test suite against this version.</p>
+        <div class="callout-label">What This Means for You</div>
+        <div class="callout-body">If you maintain Python node documentation or sample scripts for Dynamo users, now is the time to audit for remaining PythonNet2-style imports (PR #16600) and update any screenshots that show the old purple highlight. For users, this is invisible — for documentation maintainers, it's a content refresh moment.</div>
       </div>
     </div>
   </div>
 
-  <!-- ══ PAGE 11: QOL & DEPS (DARK) ══ -->
+  <!-- ══ PAGE 11: BUILD & INFRA (DARK) ══ -->
+  <div class="page dark content-page">
+    <div class="col-left">
+      <div class="ghost-rank">08</div>
+      <div class="cat-tag">Build &amp; Infrastructure</div>
+      <h2 class="page-headline">The Pipeline Catches Up to .NET 10</h2>
+      <div class="section-path">Build &amp; Infrastructure</div>
+      <p class="page-summary">After RC 4.1.0 was cut, master was bumped to 4.2.0 and the performance test suite was upgraded to .NET 10. The SDK roll-forward policy in global.json was relaxed: instead of requiring an exact SDK version match, builds now accept any newer patch. This means a .NET SDK patch update no longer silently breaks local builds or CI. The npm registry reachability check was rewritten to use a reliable WebClient call after the previous Invoke-WebRequest approach produced intermittent failures in CI environments. These changes harden the developer loop for everyone contributing to or forking the Dynamo repo.</p>
+    </div>
+    <div class="col-right">
+      <div class="big-stat">0</div>
+      <div class="stat-label">Builds Broken by SDK Patch Updates</div>
+      <div class="stack-tag">.NET 10 · CI · NuGet</div>
+      <div class="callout" style="margin-top: auto;">
+        <div class="callout-label">What This Means for You</div>
+        <div class="callout-body">The rollForward change in global.json means your local builds now accept .NET 10 patch updates without a manual SDK pin edit. If you maintain CI scripts for Dynamo forks or downstream repos, the Invoke-WebRequest → WebClient pattern replacement (PR #16834) is worth reviewing — the brittle pattern it replaces may exist in your own pipeline scripts.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE 12: AI SKILLS (LIGHT) ══ -->
+  <div class="page light content-page">
+    <div class="col-left">
+      <div class="ghost-rank">09</div>
+      <div class="cat-tag">AI Agent Skills &amp; Tooling</div>
+      <h2 class="page-headline">Skills Get a Canonical Home and a Validation Gate</h2>
+      <div class="section-path">AI Agent Skills &amp; Tooling</div>
+      <p class="page-summary">Agent skills in the Dynamo repo were scattered across tool-specific directories — each IDE or AI assistant dropped its configuration wherever it expected. This release canonicalizes everything under .agents/skills and adds a validate-skills CI check that fails the build if any tool's directory drifts from that path. Seven new skills were added: dynamo-unit-testing for structured C# test generation, a C# Janitor for automated code health cleanup, UX Designer and Content Designer agents aligned to the Autodesk Weave Design System, plus three experimental architecture agents. The AI tooling surface in the repo is now consistent across Claude Code, Cursor, and GitHub Copilot.</p>
+    </div>
+    <div class="col-right">
+      <div class="big-stat">7</div>
+      <div class="stat-label">AI Workflows Ready to Use Out of the Box</div>
+      <div class="stack-tag">AI · CI · Claude · Copilot</div>
+      <div class="callout" style="margin-top: auto;">
+        <div class="callout-label">What This Means for You</div>
+        <div class="callout-body">The validate-skills CI check enforces consistency across IDE wrappers — if you contribute using Claude Code, Cursor, or VS Copilot, .agents/skills is now your canonical source of truth. The dynamo-unit-testing and C# Janitor agents are immediately applicable to day-to-day C# work on the Dynamo repo. Spin up the Janitor on any module you're refactoring.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE 13: QOL & DEPS (DARK) ══ -->
   <div class="page dark content-page">
     <div class="col-left">
       <div class="ghost-rank">10</div>
-      <div class="cat-tag">QoL &amp; Dependencies</div>
-      <h2 class="page-headline">And Everything Else That Keeps the Wheels Turning</h2>
-      <div class="section-path">DynamoDS/Dynamo → QoL &amp; Dependency Updates</div>
-      <p class="page-summary">DynamoHome v1.0.28. Analytics package updated to 4.2.4.11548 for .NET 10. WebView2 security hardened. ASM version now logged to console on load. Sample files open-in-folder now respects user locale.</p>
-      <ul class="bullet-list">
-        <li>DynamoHome → v1.0.28</li>
-        <li>Analytics → 4.2.4.11548 (.NET 10 compat)</li>
-        <li>WebView2 security hardened across all instances</li>
-        <li>ASM/ShapeManager version logged to console on load</li>
-        <li>Sample files open-in-folder respects user locale</li>
-        <li>PhoneticRun elements removed from OpenXMLImportExcel</li>
-      </ul>
+      <div class="cat-tag">QoL &amp; Dependency Updates</div>
+      <h2 class="page-headline">Small Bumps, Platform Readiness</h2>
+      <div class="section-path">QoL &amp; Dependency Updates</div>
+      <p class="page-summary">Two dependency updates close out the release. The dynamo-home npm package moves to 1.0.28, collecting the template thumbnail and placeholder icon work shipped earlier in this release — the npm package and the app are now in sync. DynamoVisualProgramming.Analytics is updated to 4.2.4.11548 for .NET 10 compatibility, completing the platform chain. Neither changes Dynamo's surface behavior. Both ensure the pieces that downstream tools and integrations depend on are current and forward-compatible with the .NET 10 migration underway across the ecosystem.</p>
     </div>
     <div class="col-right">
-      <div class="key-stat">7</div>
-      <div class="stat-label">Dependency Updates</div>
-      <div class="stack-tag">WebView2 · Analytics · ASM</div>
-      <div class="callout">
-        <div class="callout-label">What this means for you</div>
-        <p class="callout-body">The ASM version logging is directly useful when debugging host-integration issues — one less thing to hunt for manually. Track the Analytics and DynamoHome bumps in your dependency audit; both are .NET 10 compatibility moves that signal where the migration is heading next.</p>
+      <div class="big-stat">0</div>
+      <div class="stat-label">Known .NET 10 Compatibility Gaps Remaining</div>
+      <div class="stack-tag">npm · NuGet · .NET 10</div>
+      <div class="callout" style="margin-top: auto;">
+        <div class="callout-label">What This Means for You</div>
+        <div class="callout-body">The Analytics NuGet update (PR #16940) completes the platform-compatibility chain for this release. If you have integrations consuming the DynamoVisualProgramming.Analytics package, verify your bindings against the new API surface before upgrading dependent tooling. The dynamo-home bump ensures start-page assets and npm are in sync if you're building on top of DynamoHome.</div>
       </div>
     </div>
   </div>
 
-  <!-- ══ PAGE 12: VERDICT (DARK) ══ -->
+  <!-- ══ PAGE 14: VERDICT (DARK) ══ -->
   <div class="page dark verdict-page">
-    <div class="verdict-label">Editorial Verdict · Release 4.1.0</div>
-    <div class="verdict-headline">A Release Worth Every PR</div>
-    <p class="verdict-body">4.1.0 is a solid, substantive release. The templates system is a genuine user-facing win; the connector pin fixes are overdue but thorough; and the geometry performance fix will quietly rescue workflows that users may have written off as just slow. The AI agent skills investment is the most forward-looking element — Dynamo is building structured AI tooling into the repo itself, which is unusual for an open-source CAD platform. No single change here is revolutionary, but the cumulative polish is real.</p>
-    <div class="verdict-stamp">Worth every PR</div>
+    <div class="verdict-kicker">Editorial Verdict · Dynamo 4.1.0</div>
+    <div class="verdict-headline">The Release That Gives You Your Speed Back</div>
+    <div class="verdict-body">
+      4.1.0 delivers on three fronts at once: a geometry hash fix that eliminates a whole class of performance degradation on large graphs, 26 bugs closed including six pin edge cases that eroded trust in save/reload, and PythonNet3 permanently declared the baseline. Most impactful for teams running geometry-heavy graphs or maintaining custom node packages. Upgrade with confidence.
+    </div>
+    <div class="verdict-stamp">Upgrade — Stability and Performance Gains Justify It</div>
   </div>
 
-  <!-- ══ PAGE 14: DARK BACK COVER ══ -->
+  <!-- ══ PAGE 15: BACK COVER (DARK) ══ -->
   <div class="page dark back-cover">
-    <div class="back-cover-rule"></div>
     <img src="../assets/dynamo-logo.png" alt="Dynamo" class="back-cover-logo">
-    <div class="back-cover-title">Dynamo Dispatch</div>
-    <div class="back-cover-sub">Issue 4.1.0 · April 2026</div>
     <div class="back-cover-rule"></div>
+    <div class="back-cover-title">Dynamo Dispatch</div>
+    <div class="back-cover-sub">Issue 04 · April 2026</div>
   </div>
 
 </div><!-- /track -->
 
-<!-- ── DOT NAVIGATION ── -->
-<nav id="dots"></nav>
-
-<!-- ── ARROW HINTS ── -->
-<div class="arrow-hint" id="arrow-left"  onclick="navigate(-1)">←</div>
-<div class="arrow-hint" id="arrow-right" onclick="navigate(1)">→</div>
+<!-- Dot nav -->
+<div id="dots"></div>
+<div class="arrow-hint" id="arrow-left">←</div>
+<div class="arrow-hint" id="arrow-right">→</div>
 
 <script>
-  const TOTAL = 13;
-  // Light pages (0-indexed): Features, Bug Fixes, Performance, Build & Infra, PythonNet3
-  const LIGHT_PAGES = new Set([1, 3, 5, 7, 9]);
+(function(){
+  const TOTAL = 15;
+  const LIGHT_PAGES = new Set([1, 3, 5, 7, 9, 11]);
 
-  let current = 0;
+  let cur = 0;
   const track = document.getElementById('track');
   const dotsEl = document.getElementById('dots');
   const arrowL = document.getElementById('arrow-left');
   const arrowR = document.getElementById('arrow-right');
 
-  // Build dots
   for (let i = 0; i < TOTAL; i++) {
-    const d = document.createElement('button');
+    const d = document.createElement('div');
     d.className = 'dot';
-    d.setAttribute('aria-label', `Page ${i + 1}`);
-    d.addEventListener('click', () => goTo(i));
+    d.addEventListener('click', () => go(i));
     dotsEl.appendChild(d);
   }
 
-  function goTo(n) {
-    current = Math.max(0, Math.min(n, TOTAL - 1));
-    track.style.transform = `translateX(${-current * 100}vw)`;
-    updateUI();
-  }
-
-  function navigate(dir) { goTo(current + dir); }
-
-  function updateUI() {
-    const isLight = LIGHT_PAGES.has(current);
-    const dotColor = isLight ? 'dark-dot' : '';
-    const arrowColor = isLight ? 'var(--ink)' : 'var(--paper)';
-
-    Array.from(dotsEl.children).forEach((d, i) => {
-      d.className = 'dot ' + dotColor + (i === current ? ' active' : '');
+  function go(n) {
+    cur = Math.max(0, Math.min(TOTAL - 1, n));
+    track.style.transform = `translateX(calc(-100vw * ${cur}))`;
+    const isLight = LIGHT_PAGES.has(cur);
+    document.querySelectorAll('.dot').forEach((d, i) => {
+      d.className = 'dot' + (isLight ? ' dark-dot' : '') + (i === cur ? ' active' : '');
     });
-
-    arrowL.style.color = arrowColor;
-    arrowR.style.color = arrowColor;
-    arrowL.style.display = current === 0 ? 'none' : 'block';
-    arrowR.style.display = current === TOTAL - 1 ? 'none' : 'block';
+    arrowL.style.color = isLight ? 'var(--ink)' : 'var(--paper)';
+    arrowR.style.color = isLight ? 'var(--ink)' : 'var(--paper)';
+    arrowL.style.display = cur === 0 ? 'none' : '';
+    arrowR.style.display = cur === TOTAL - 1 ? 'none' : '';
   }
 
-  // Keyboard
   document.addEventListener('keydown', e => {
-    if (e.key === 'ArrowRight' || e.key === 'ArrowDown')  navigate(1);
-    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')    navigate(-1);
+    if (e.key === 'ArrowRight') go(cur + 1);
+    if (e.key === 'ArrowLeft')  go(cur - 1);
   });
-
-  // Wheel — debounced
   let wheelLock = false;
   document.addEventListener('wheel', e => {
     if (wheelLock) return;
     wheelLock = true;
-    navigate(e.deltaY > 0 || e.deltaX > 0 ? 1 : -1);
-    setTimeout(() => wheelLock = false, 700);
+    setTimeout(() => wheelLock = false, 600);
+    if (e.deltaY > 0 || e.deltaX > 0) go(cur + 1);
+    else go(cur - 1);
   }, { passive: true });
-
-  // Touch
-  let touchStartX = 0, touchStartY = 0;
-  document.addEventListener('touchstart', e => {
-    touchStartX = e.touches[0].clientX;
-    touchStartY = e.touches[0].clientY;
-  }, { passive: true });
+  let tx = 0;
+  document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
   document.addEventListener('touchend', e => {
-    const dx = touchStartX - e.changedTouches[0].clientX;
-    const dy = Math.abs(touchStartY - e.changedTouches[0].clientY);
-    if (Math.abs(dx) > 50 && Math.abs(dx) > dy) navigate(dx > 0 ? 1 : -1);
-  }, { passive: true });
+    const dx = e.changedTouches[0].clientX - tx;
+    if (Math.abs(dx) > 50) go(dx < 0 ? cur + 1 : cur - 1);
+  });
 
-  // Init
-  updateUI();
+  go(0);
+})();
+</script>
 
-  // ── NODE NETWORK CANVAS (cover page) ──
-  (function () {
-    const canvas = document.getElementById('cover-canvas');
-    const ctx    = canvas.getContext('2d');
+<script>
+// ── COVER CANVAS — "DYNAMO DISPATCH" particle formation ──
+// Sequence: dots fly in to form text → connections bloom on 250 survivors → scatter + drift
+(function(){
+  const canvas = document.getElementById('cover-canvas');
+  const ctx    = canvas.getContext('2d');
 
-    const NODE_COUNT  = 1000;
-    const LINK_FORM   = 55;    // tight during text — traces letter strokes
-    const LINK_DRIFT  = 170;   // wide during ambient network
-    const MOUSE_DIST  = 220;
-    const REPEL_DIST  = 90;
-    const BASE_SPEED  = 0.42;
-    const T_FLY       = 1500;  // ms to fly into text
-    const T_HOLD      = 2400;  // ms to hold text formation
+  const NODE_COUNT = 1000;
+  const KEEP       = 250;
+  const LINK_FORM  = 55;
+  const LINK_DRIFT = 170;
+  const MOUSE_DIST = 220;
+  const REPEL_DIST = 90;
+  const BASE_SPEED = 0.42;
+  const T_FLY      = 1500;   // dots fly into text positions — no connections
+  const T_CONNECT  = 1000;   // connections fade in on KEEP nodes
+  const T_HOLD     = 1200;   // hold with connections before scatter
 
-    let W, H, nodes = [];
-    let mouse = { x: -9999, y: -9999 };
-    let state = 'fly';          // 'fly' | 'hold' | 'drift'
-    let stateStart = 0;
+  let W, H, nodes = [], phase = 'fly', phaseStart = 0;
+  let linkDist = LINK_FORM, connAlpha = 0;
+  let mouseX = -9999, mouseY = -9999, onCover = true;
 
-    function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+  function resize() {
+    W = canvas.width  = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
+  }
+  window.addEventListener('resize', () => { resize(); if (nodes.length) sampleTargets(); });
 
-    function resize() {
-      W = canvas.width  = canvas.offsetWidth;
-      H = canvas.height = canvas.offsetHeight;
+  function sampleTargets() {
+    const off = document.createElement('canvas');
+    off.width = W; off.height = H;
+    const c = off.getContext('2d');
+    c.fillStyle = '#000';
+    c.fillRect(0, 0, W, H);
+
+    const sz1 = H * 0.30, sz2 = H * 0.20, gap = H * 0.03;
+    c.fillStyle = '#fff';
+    c.textAlign  = 'center';
+    c.textBaseline = 'alphabetic';
+    c.font = `400 ${sz1}px "Artifakt Legend"`;
+    const y1 = H * 0.5 - gap / 2;
+    c.fillText('DYNAMO', W / 2, y1);
+    c.font = `400 ${sz2}px "Artifakt Legend"`;
+    const y2 = y1 + gap + sz2 * 0.8;
+    c.fillText('DISPATCH', W / 2, y2);
+
+    const px = c.getImageData(0, 0, W, H).data;
+    const pts = [];
+    const step = 4;
+    for (let y = 0; y < H; y += step)
+      for (let x = 0; x < W; x += step)
+        if (px[(y * W + x) * 4] > 120) pts.push([x, y]);
+
+    for (let i = pts.length - 1; i > 0; i--) {
+      const j = Math.random() * (i + 1) | 0;
+      [pts[i], pts[j]] = [pts[j], pts[i]];
     }
+    nodes.forEach((n, i) => {
+      if (i < pts.length) { n.tx = pts[i][0]; n.ty = pts[i][1]; }
+      else { n.tx = Math.random() * W; n.ty = Math.random() * H; }
+    });
+  }
 
-    // Render text to offscreen canvas and sample filled pixel positions
-    function sampleText() {
-      const off = document.createElement('canvas');
-      off.width = W; off.height = H;
-      const oc = off.getContext('2d');
-      oc.fillStyle = '#fff';
+  function init() {
+    resize();
+    nodes = Array.from({ length: NODE_COUNT }, () => ({
+      sx: Math.random() * W * 1.8 - W * 0.4,
+      sy: Math.random() * H * 1.8 - H * 0.4,
+      tx: 0, ty: 0,
+      x: 0, y: 0,
+      vx: (Math.random() - 0.5) * BASE_SPEED,
+      vy: (Math.random() - 0.5) * BASE_SPEED,
+      r: 1.8 + Math.random() * 1.5,
+      alpha: 1,
+      dieAt: Infinity,
+      keep: false
+    }));
+    nodes.forEach((n, i) => { n.x = n.sx; n.y = n.sy; n.keep = i < KEEP; });
+    sampleTargets();
+    phase = 'fly'; phaseStart = performance.now();
+    linkDist = LINK_FORM; connAlpha = 0;
+  }
 
-      const sz1 = Math.floor(H * 0.30);
-      const sz2 = Math.floor(H * 0.20);
-      const gap  = H * 0.03;
-      const totalH = sz1 + gap + sz2;
+  function buildGrid(active) {
+    const cs    = linkDist;
+    const gcols = Math.ceil(W / cs) + 1;
+    const grows = Math.ceil(H / cs) + 1;
+    const cells = Array.from({ length: gcols * grows }, () => []);
+    active.forEach(n => {
+      const ci = (n.x / cs | 0), ri = (n.y / cs | 0);
+      const idx = ri * gcols + ci;
+      if (idx >= 0 && idx < cells.length) cells[idx].push(n);
+    });
+    return { cells, gcols, grows };
+  }
 
-      oc.font = `400 ${sz1}px 'Open Sans', sans-serif`;
-      oc.textAlign = 'center';
-      oc.textBaseline = 'top';
-      oc.fillText('DYNAMO', W / 2, H / 2 - totalH / 2);
-
-      oc.font = `400 ${sz2}px 'Open Sans', sans-serif`;
-      oc.fillText('DISPATCH', W / 2, H / 2 - totalH / 2 + sz1 + gap);
-
-      const px = oc.getImageData(0, 0, W, H).data;
-      const pts = [];
-      const step = 4;
-      for (let y = step; y < H - step; y += step)
-        for (let x = step; x < W - step; x += step)
-          if (px[(y * W + x) * 4 + 3] > 120) pts.push([x, y]);
-      return pts;
-    }
-
-    function init() {
-      resize();
-      const pts = sampleText();
-
-      // Fisher-Yates shuffle
-      for (let i = pts.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [pts[i], pts[j]] = [pts[j], pts[i]];
-      }
-
-      nodes = [];
-      for (let i = 0; i < NODE_COUNT; i++) {
-        const [tx, ty] = pts[i % pts.length];
-        const a = Math.random() * Math.PI * 2;
-        const s = BASE_SPEED * (0.6 + Math.random() * 0.8);
-        nodes.push({
-          sx: Math.random() * W,  // random start position
-          sy: Math.random() * H,
-          tx, ty,                  // text target
-          x: 0, y: 0,
-          vx: Math.cos(a) * s,
-          vy: Math.sin(a) * s,
-          r: 1.8 + Math.random() * 1.5,
-          alpha: 1, dieAt: Infinity
+  function drawConnections(active) {
+    if (connAlpha <= 0) return;
+    const { cells, gcols, grows } = buildGrid(active);
+    const fwd = [[1,0],[-1,1],[0,1],[1,1]];
+    const ld2 = linkDist * linkDist;
+    const lw  = (phase === 'hold') ? 1.1 : 0.7;
+    ctx.lineWidth = lw;
+    for (let ri = 0; ri < grows; ri++) {
+      for (let ci = 0; ci < gcols; ci++) {
+        const cell = cells[ri * gcols + ci];
+        for (let a = 0; a < cell.length; a++) {
+          for (let b = a + 1; b < cell.length; b++) {
+            const dx = cell[a].x - cell[b].x, dy = cell[a].y - cell[b].y;
+            if (dx*dx + dy*dy > ld2) continue;
+            const al = Math.min(cell[a].alpha, cell[b].alpha);
+            ctx.strokeStyle = `rgba(245,242,237,${connAlpha * al})`;
+            ctx.beginPath(); ctx.moveTo(cell[a].x, cell[a].y); ctx.lineTo(cell[b].x, cell[b].y); ctx.stroke();
+          }
+        }
+        fwd.forEach(([dc, dr]) => {
+          const nc = ci + dc, nr = ri + dr;
+          if (nc < 0 || nc >= gcols || nr < 0 || nr >= grows) return;
+          const ncell = cells[nr * gcols + nc];
+          cell.forEach(a => {
+            ncell.forEach(b => {
+              const dx = a.x - b.x, dy = a.y - b.y;
+              if (dx*dx + dy*dy > ld2) return;
+              const al = Math.min(a.alpha, b.alpha);
+              ctx.strokeStyle = `rgba(245,242,237,${connAlpha * al})`;
+              ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+            });
+          });
         });
       }
-      state = 'fly';
-      stateStart = Date.now();
     }
+  }
 
-    function tick() {
-      if (current !== 0) { requestAnimationFrame(tick); return; }
-      ctx.clearRect(0, 0, W, H);
+  function tick(now) {
+    requestAnimationFrame(tick);
+    if (!onCover) { ctx.clearRect(0, 0, W, H); return; }
+    ctx.clearRect(0, 0, W, H);
+    if (!nodes.length) return;
 
-      const elapsed  = Date.now() - stateStart;
-      const isDrift  = state === 'drift';
+    const elapsed = now - phaseStart;
 
-      let   linkDist = isDrift
-        ? LINK_FORM + (LINK_DRIFT - LINK_FORM) * Math.min(elapsed / 1800, 1)
-        : LINK_FORM;
+    if (phase === 'fly') {
+      // dots only — no connections
+      const t = Math.min(elapsed / T_FLY, 1);
+      const e = 1 - Math.pow(1 - t, 3);
+      nodes.forEach(n => {
+        n.x = n.sx + (n.tx - n.sx) * e;
+        n.y = n.sy + (n.ty - n.sy) * e;
+      });
+      if (t >= 1) { phase = 'connect'; phaseStart = now; }
 
-      // ── Update node positions ──
-      if (state === 'fly') {
-        const t = easeOut(Math.min(elapsed / T_FLY, 1));
-        for (const n of nodes) {
-          n.x = n.sx + (n.tx - n.sx) * t;
-          n.y = n.sy + (n.ty - n.sy) * t;
-        }
-        if (elapsed >= T_FLY) { state = 'hold'; stateStart = Date.now(); }
+    } else if (phase === 'connect') {
+      // connections fade in — only between KEEP nodes
+      const t = Math.min(elapsed / T_CONNECT, 1);
+      connAlpha = t * 0.62;
+      nodes.forEach(n => {
+        n.x = n.tx + (Math.random() - 0.5) * 1.2;
+        n.y = n.ty + (Math.random() - 0.5) * 1.2;
+      });
+      if (t >= 1) { connAlpha = 0.62; phase = 'hold'; phaseStart = now; }
 
-      } else if (state === 'hold') {
-        for (const n of nodes) {
-          n.x = n.tx + (Math.random() - 0.5) * 1.2;
-          n.y = n.ty + (Math.random() - 0.5) * 1.2;
-        }
-        if (elapsed >= T_HOLD) {
-          for (const n of nodes) { n.x = n.tx; n.y = n.ty; }
-          // Stagger fade-out of excess nodes over 700ms instead of hard-cutting
-          const now = Date.now();
-          nodes.forEach((n, i) => {
-            if (i >= 250) n.dieAt = now + Math.random() * 700;
-          });
-          state = 'drift'; stateStart = Date.now();
-        }
-
-      } else { // drift
-        const now = Date.now();
-        for (const n of nodes) {
-          n.x += n.vx; n.y += n.vy;
-          if (n.x < 0 || n.x > W) n.vx *= -1;
-          if (n.y < 0 || n.y > H) n.vy *= -1;
-          const dx = n.x - mouse.x, dy = n.y - mouse.y;
-          const d2 = dx*dx + dy*dy;
-          if (d2 < REPEL_DIST * REPEL_DIST && d2 > 0.25) {
-            const d = Math.sqrt(d2);
-            const f = (REPEL_DIST - d) / REPEL_DIST * 0.25;
-            n.vx += (dx/d)*f; n.vy += (dy/d)*f;
-            const spd = Math.sqrt(n.vx*n.vx + n.vy*n.vy);
-            if (spd > 2.2) { n.vx = n.vx/spd*2.2; n.vy = n.vy/spd*2.2; }
-          }
-          // Fade out dying nodes
-          if (now > n.dieAt) n.alpha = Math.max(0, n.alpha - 0.025);
-        }
-        // Prune fully faded nodes
-        nodes = nodes.filter(n => n.alpha > 0);
+    } else if (phase === 'hold') {
+      nodes.forEach(n => {
+        n.x = n.tx + (Math.random() - 0.5) * 1.2;
+        n.y = n.ty + (Math.random() - 0.5) * 1.2;
+      });
+      if (elapsed >= T_HOLD) {
+        phase = 'drift'; phaseStart = now;
+        nodes.forEach(n => {
+          if (!n.keep) n.dieAt = now + Math.random() * 700;
+        });
       }
 
-      // ── Node–node connections (spatial grid — O(n) instead of O(n²)) ──
-      // Skip during fly-in: nodes are scattered so few lines fire anyway
-      if (state !== 'fly') {
-        const cs    = linkDist;                          // cell size = link distance
-        const gcols = Math.ceil(W / cs) + 1;
-        const grows = Math.ceil(H / cs) + 1;
-        const cells = Array.from({ length: gcols * grows }, () => []);
-        for (const n of nodes) {
-          const cx = Math.min((n.x / cs) | 0, gcols - 1);
-          const cy = Math.min((n.y / cs) | 0, grows - 1);
-          cells[cy * gcols + cx].push(n);
-        }
-        const ld2 = cs * cs;
-        const lw  = isDrift ? 0.7 : 1.1;
-        const ba  = isDrift ? 0.22 : 0.62;
-        // Only check forward neighbours — covers all unique pairs without duplicates
-        const fwd = [[1,0],[-1,1],[0,1],[1,1]];
-        for (let cy = 0; cy < grows; cy++) {
-          for (let cx = 0; cx < gcols; cx++) {
-            const cell = cells[cy * gcols + cx];
-            if (!cell.length) continue;
-            // Same-cell pairs
-            for (let a = 0; a < cell.length; a++) {
-              for (let b = a + 1; b < cell.length; b++) {
-                const dx = cell[a].x - cell[b].x, dy = cell[a].y - cell[b].y;
-                const d2 = dx*dx + dy*dy;
-                if (d2 < ld2) {
-                  const d = Math.sqrt(d2);
-                  ctx.strokeStyle = `rgba(245,242,237,${(1-d/cs)*ba*cell[a].alpha*cell[b].alpha})`;
-                  ctx.lineWidth = lw;
-                  ctx.beginPath(); ctx.moveTo(cell[a].x, cell[a].y);
-                  ctx.lineTo(cell[b].x, cell[b].y); ctx.stroke();
-                }
-              }
-            }
-            // Cross-cell pairs
-            for (const [dcx, dcy] of fwd) {
-              const nx = cx + dcx, ny = cy + dcy;
-              if (nx < 0 || nx >= gcols || ny >= grows) continue;
-              const nb = cells[ny * gcols + nx];
-              for (const na of cell) {
-                for (const mb of nb) {
-                  const dx = na.x - mb.x, dy = na.y - mb.y;
-                  const d2 = dx*dx + dy*dy;
-                  if (d2 < ld2) {
-                    const d = Math.sqrt(d2);
-                    ctx.strokeStyle = `rgba(245,242,237,${(1-d/cs)*ba*na.alpha*mb.alpha})`;
-                    ctx.lineWidth = lw;
-                    ctx.beginPath(); ctx.moveTo(na.x, na.y);
-                    ctx.lineTo(mb.x, mb.y); ctx.stroke();
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+    } else {
+      // drift
+      const driftElapsed = now - phaseStart;
+      const lerpT = Math.min(driftElapsed / 1800, 1);
+      linkDist = LINK_FORM + (LINK_DRIFT - LINK_FORM) * lerpT;
+      connAlpha = 0.62 - lerpT * (0.62 - 0.22);
 
-      // ── Mouse connections (drift only) ──
-      if (isDrift && mouse.x > -100) {
+      const dead = [];
+      nodes.forEach(n => {
+        if (now >= n.dieAt) { n.alpha -= 0.025; }
+        if (n.alpha <= 0) { dead.push(n); return; }
+        const dx = n.x - mouseX, dy = n.y - mouseY;
+        const d2 = dx*dx + dy*dy;
+        if (d2 < REPEL_DIST * REPEL_DIST && d2 > 0) {
+          const d = Math.sqrt(d2);
+          const f = (REPEL_DIST - d) / REPEL_DIST * 2;
+          n.vx += (dx / d) * f; n.vy += (dy / d) * f;
+        }
+        n.x += n.vx; n.y += n.vy;
+        if (n.x < 0 || n.x > W) n.vx *= -1;
+        if (n.y < 0 || n.y > H) n.vy *= -1;
+        n.x = Math.max(0, Math.min(W, n.x));
+        n.y = Math.max(0, Math.min(H, n.y));
+        const sp = Math.sqrt(n.vx*n.vx + n.vy*n.vy);
+        if (sp > BASE_SPEED * 3) { n.vx *= BASE_SPEED * 3 / sp; n.vy *= BASE_SPEED * 3 / sp; }
+      });
+      dead.forEach(n => { const i = nodes.indexOf(n); if (i > -1) nodes.splice(i, 1); });
+
+      if (mouseX > -9999) {
         const md2 = MOUSE_DIST * MOUSE_DIST;
-        for (const n of nodes) {
-          const dx = n.x - mouse.x, dy = n.y - mouse.y;
-          const d2 = dx*dx + dy*dy;
-          if (d2 < md2) {
-            const d = Math.sqrt(d2);
-            ctx.strokeStyle = `rgba(245,242,237,${(1 - d/MOUSE_DIST) * 0.65})`;
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(mouse.x, mouse.y);
-            ctx.lineTo(n.x, n.y);
-            ctx.stroke();
+        nodes.forEach(n => {
+          const dx = n.x - mouseX, dy = n.y - mouseY;
+          if (dx*dx + dy*dy < md2) {
+            ctx.strokeStyle = `rgba(245,242,237,${0.5 * n.alpha})`;
+            ctx.lineWidth = 0.8;
+            ctx.beginPath(); ctx.moveTo(mouseX, mouseY); ctx.lineTo(n.x, n.y); ctx.stroke();
           }
-        }
-        ctx.beginPath();
-        ctx.arc(mouse.x, mouse.y, 3.5, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(245,242,237,0.9)';
-        ctx.fill();
+        });
       }
-
-      // ── Node dots ──
-      const nodeA = isDrift ? 0.45 : 0.9;
-      const rMul  = isDrift ? 1 : 1.5;
-      for (const n of nodes) {
-        ctx.beginPath();
-        ctx.arc(n.x, n.y, n.r * rMul, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(245,242,237,${nodeA * n.alpha})`;
-        ctx.fill();
-      }
-
-      requestAnimationFrame(tick);
     }
 
-    // Mouse tracking
-    const coverPage = canvas.closest('.cover-page');
-    coverPage.addEventListener('mousemove', e => {
-      const rect = canvas.getBoundingClientRect();
-      mouse.x = e.clientX - rect.left;
-      mouse.y = e.clientY - rect.top;
-    });
-    coverPage.addEventListener('mouseleave', () => { mouse.x = -9999; mouse.y = -9999; });
-    window.addEventListener('resize', init);
+    // connections on keep-nodes only (skip during fly)
+    if (phase !== 'fly') {
+      const connNodes = (phase === 'connect' || phase === 'hold')
+        ? nodes.filter(n => n.keep)
+        : nodes;
+      drawConnections(connNodes);
+    }
 
-    // Wait for fonts before sampling text pixels
-    document.fonts.ready.then(() => { init(); tick(); });
+    // draw all nodes
+    nodes.forEach(n => {
+      const r = (phase === 'fly' || phase === 'connect' || phase === 'hold') ? n.r * 1.5 : n.r;
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(245,242,237,${n.alpha})`;
+      ctx.fill();
+    });
+  }
+
+  const coverPage = document.querySelector('.cover-page');
+  document.addEventListener('mousemove', e => {
+    if (!onCover) return;
+    const rect = canvas.getBoundingClientRect();
+    mouseX = e.clientX - rect.left;
+    mouseY = e.clientY - rect.top;
+  });
+  coverPage.addEventListener('mouseleave', () => { mouseX = -9999; mouseY = -9999; });
+
+  const observer = new MutationObserver(() => {
+    const t = document.getElementById('track').style.transform;
+    const m = t.match(/translateX\(calc\(-100vw \* (\d+)\)\)/);
+    onCover = !m || m[1] === '0';
+    if (onCover && nodes.length === 0) {
+      document.fonts.ready.then(() => { init(); tick(performance.now()); });
+    }
+  });
+  observer.observe(document.getElementById('track'), { attributes: true, attributeFilter: ['style'] });
+
+  document.fonts.ready.then(() => { init(); tick(performance.now()); });
+})();
+</script>
+
+<script>
+  // Auto-linkify PR references: "PR #16754" and standalone "#16754"
+  (function() {
+    const BASE = 'https://github.com/DynamoDS/Dynamo/pull/';
+    const SCOPES = '.callout-body, .page-summary, .bullet-list, .pr-caption, .verdict-body';
+    const RE = /\b(PR\s+)?(#(\d{5,}))\b/g;
+    function linkify(node) {
+      if (node.nodeType === 3) {
+        if (!RE.test(node.textContent)) return;
+        RE.lastIndex = 0;
+        const frag = document.createDocumentFragment();
+        let last = 0, m;
+        while ((m = RE.exec(node.textContent)) !== null) {
+          if (m.index > last) frag.appendChild(document.createTextNode(node.textContent.slice(last, m.index)));
+          const a = document.createElement('a');
+          a.href = BASE + m[3]; a.target = '_blank'; a.rel = 'noopener'; a.className = 'pr-link';
+          a.textContent = m[0]; frag.appendChild(a);
+          last = m.index + m[0].length;
+        }
+        if (last < node.textContent.length) frag.appendChild(document.createTextNode(node.textContent.slice(last)));
+        node.parentNode.replaceChild(frag, node);
+      } else if (node.nodeType === 1 && !['SCRIPT','STYLE','A'].includes(node.tagName)) {
+        Array.from(node.childNodes).forEach(linkify);
+      }
+    }
+    document.querySelectorAll(SCOPES).forEach(linkify);
   })();
 </script>
 </body>

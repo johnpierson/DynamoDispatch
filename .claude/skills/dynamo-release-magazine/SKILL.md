@@ -58,7 +58,7 @@ Generate a single self-contained HTML file as a **horizontal-swipe editorial mag
 #### Page Structure (dynamic total)
 
 **Total pages = 1 cover + N content pages + 1 verdict + 1 back cover.**
-Give every distinct release section its own page — do not merge or drop sections to hit a target count. If a release has 20 sections, the magazine has 23 pages. If it has 5, it has 8.
+N = total content pages across all sections. Sections with many items may span multiple pages — count each page individually. If a release has 10 sections but 2 sections each need a continuation page, N = 12 and the magazine has 15 pages total.
 
 Set `const TOTAL = <actual page count>` in the JS. Build `LIGHT_PAGES` as a `Set` of 0-indexed page numbers: page 0 = dark (cover), content pages alternate starting light at index 1, verdict = dark, back cover = dark.
 
@@ -74,14 +74,15 @@ Set `const TOTAL = <actual page count>` in the JS. Build `LIGHT_PAGES` as a `Set
 
 Include `family=Open+Sans:wght@400` in the Google Fonts link.
 
-The canvas animates through three phases:
-1. **Fly-in (1.5s):** 1000 nodes scatter in from random positions and ease into pixel positions sampled from "DYNAMO DISPATCH" rendered in Open Sans 400 on an offscreen canvas. Font sizes: `H * 0.30` for "DYNAMO", `H * 0.20` for "DISPATCH", gap `H * 0.03`. Sample step: 4px, alpha threshold: 120. Connection distance during formation: 55px. Node radius × 1.5 during formation.
-2. **Hold (2.4s):** nodes hold their letter positions with 1.2px jitter. Connections bright (alpha 0.62, lineWidth 1.1).
-3. **Scatter → drift:** nodes beyond index 250 get staggered `dieAt` timestamps (random within 700ms) and fade out via `n.alpha -= 0.025` per frame until pruned. Remaining 250 nodes drift freely, bouncing off walls. Mouse on cover page repels nearby nodes (90px radius) and draws bright connection lines to nodes within 220px. Drift connections: 170px distance, alpha 0.22, lineWidth 0.7. Connection distance expands from 55 → 170px over 1800ms.
+1000 nodes animate through four phases:
+1. **Fly-in (1.5s):** 1000 nodes scatter in from random offscreen positions and ease into pixel positions sampled from "DYNAMO DISPATCH" rendered in Open Sans 400 on an offscreen canvas. Font sizes: `H * 0.30` for "DYNAMO", `H * 0.20` for "DISPATCH", gap `H * 0.03`. Sample step: 4px, alpha threshold: 120. **No connections during fly-in — dots only.**
+2. **Connect (1.0s):** connections fade in (alpha 0 → 0.62) between only the first KEEP=250 nodes (the "survivors"). Non-survivors are visible but unconnected. Nodes hold text positions with 1.2px jitter.
+3. **Hold (1.2s):** all nodes jitter at text positions. Connections bright (0.62) on the 250.
+4. **Scatter → drift:** non-keep nodes get staggered `dieAt` and fade out. Surviving 250 drift freely, bouncing off walls. Mouse repels nearby nodes (90px radius) and draws bright connection lines to nodes within 220px. `linkDist` expands from 55 → 170px over 1800ms; `connAlpha` falls from 0.62 → 0.22.
 
-**Use a spatial grid for connection drawing** (cell size = linkDist) — only check same-cell and 4 forward-neighbour cells `[1,0],[-1,1],[0,1],[1,1]`. Skip connection drawing entirely during fly-in. This keeps the loop O(n) instead of O(n²).
+**Use a spatial grid for connection drawing** (cell size = linkDist) — only check same-cell and 4 forward-neighbour cells `[1,0],[-1,1],[0,1],[1,1]`. This keeps the loop O(n) instead of O(n²).
 
-Each node shape: `{ sx, sy, tx, ty, x, y, vx, vy, r: 1.8–3.3, alpha: 1, dieAt: Infinity }`.
+Each node shape: `{ sx, sy, tx, ty, x, y, vx, vy, r: 1.8–3.3, alpha: 1, dieAt: Infinity, keep: bool }`.
 
 Use `document.fonts.ready.then(() => { init(); tick(); })` to ensure Open Sans is loaded before sampling text pixels.
 
@@ -89,29 +90,35 @@ Pause rendering (`requestAnimationFrame` still fires but clears and returns) whe
 
 Node colour throughout: `rgba(245,242,237, …)` (matches `--paper`).
 
-**Pages 2–N — Content pages (one per release section):**
-Every distinct section in the release notes gets its own page. Do not merge sections to save space, and do not invent pages to pad. Do not add a Watch-Outs page.
+**Pages 2–N — Content pages (one or more per release section):**
+Every distinct section gets at least one page. **If a section has more items than fit comfortably on one page, split it across multiple pages.** A section like "Bug Fixes" with 26 items should become two pages (e.g. "Bug Fixes — Part I" and "Bug Fixes — Part II"), each with its own headline, summary, and bullet subset. Do not cram — if the bullet list clips significantly, add a continuation page. Do not merge sections to save space, and do not invent pages to pad. Do not add a Watch-Outs page.
 
-Alternate light/dark: page 2 = light, page 3 = dark, page 4 = light, etc.
+Continuation pages for the same section:
+- Ghost rank number stays the same (e.g. both parts show `03`)
+- Cat tag stays the same
+- Headline adds "— Part II" (or "— Continued")
+- Section path stays the same
+- Summary briefly re-anchors ("The second half of bug fixes covers…") rather than repeating the opener
+- Stat on continuation page can show the subset count (e.g. "13 of 26")
+
+Alternate light/dark: page 2 = light, page 3 = dark, page 4 = light, etc. — continuation pages follow the same alternating sequence as any other page.
 
 - **Light page:** background `#f5f2ed`, text `#0a0a0a`
 - **Dark page:** background `#0a0a0a`, text `#f5f2ed`
 
 Each content page uses a **55/45 split layout** (flex row, full bleed):
 
-*Left column (55%):*
+*Left column (55%):* `height: 100vh; max-height: 100vh; min-height: 0; overflow: hidden;` padding `4vw 3vw 5vh 6vw`. Use `justify-content: center` to vertically center the content group. **Critical:** use `min-height: 0` — without it, the column as a flex item ignores `height: 100vh` and grows to content size, making `overflow: hidden` useless. All flex children use `flex-shrink: 0`.
 - Giant ghosted section rank number — Playfair Display, ~30vw, opacity 0.06, positioned absolute behind content
-- Category tag — IBM Plex Mono, 11px, caps, letter-spacing 0.2em
-- Editorial headline — Playfair Display, **5vw minimum**, line-height 1.05
-- Section path — IBM Plex Mono, 13px, e.g. `DynamoDS/Dynamo → Features`
-- Summary — Source Serif, `max(17px, 1.5vw)`, opacity 0.85, 2–3 sentences
-- Bullet list of key items — Source Serif, same size, opacity 0.85
+- Category tag — IBM Plex Mono, 11px, caps, letter-spacing 0.2em; `margin-bottom: 1.2vh`; `flex-shrink: 0`
+- Editorial headline — Playfair Display, `clamp(24px, 4.5vw, 72px)`, line-height 1.05; `margin-bottom: 1.5vh`; `flex-shrink: 0`
+- Section path — IBM Plex Mono, 13px, e.g. `Features` (section name only); `margin-bottom: 1.5vh`; `flex-shrink: 0`
+- Summary — Source Serif, `max(15px, 1.3vw)`, line-height 1.6, opacity 0.85; `overflow: hidden` — the summary IS the content. Write using the Feynman technique: explain *why* the problem existed and what the fix does, in plain terms. No bullet list follows — the summary must stand alone. Do not add a numbered or bulleted list to content pages.
 
-*Right column (45%):*
-- Key stat (PR count, fix count, or a notable number) — Playfair Display, **6.5vw minimum**
-- Stat label — IBM Plex Mono, 12px, caps
-- Tech/stack tag — IBM Plex Mono pill (border, no fill)
-- PR image (if available, filtered grayscale, no border-radius, no shadow, `width: 100%`, `max-height: 28vh`, `object-fit: cover`)
+*Right column (45%):* `height: 100vh; max-height: 100vh; min-height: 0; overflow: hidden;` padding `4vw 6vw 5vh 4vw`. Same `min-height: 0` rule applies.
+- Key stat — Playfair Display, **6.5vw minimum**. Stat label: IBM Plex Mono, 12px, caps. **Always frame as a user-facing outcome, not a raw count.** The number describes what the user now experiences — prefer `0` stats ("0 panels that forget your preferences", "0 tab switches to check installed version") or specific outcome counts ("6 connector pin bugs fixed", "Every template has a visual preview"). The number itself can be a word (e.g. `Every`). Avoid labels like "N Feature Additions" or "N Pipeline Updates" — describe the result, not the work.
+- Tech/stack tag — IBM Plex Mono pill (border, no fill). Show where the work happened (e.g. `CLR · Dispatcher · LibG`).
+- PR image (if available, no filter, no border-radius, no shadow, `width: 100%`, `max-height: 28vh`, `object-fit: cover`)
 - `<figcaption>` in IBM Plex Mono 11px below image
 - **Callout box** — background: 5% tint of text color; 4px solid left border (full text color); padding 20px 24px; `margin-top: auto`:
   - Label: `IBM Plex Mono 11px caps` — "WHAT THIS MEANS FOR YOU"
@@ -119,9 +126,9 @@ Each content page uses a **55/45 split layout** (flex row, full bleed):
 
 **Page N+1 — Verdict (dark):**
 - No split layout. Full-width centered editorial verdict.
-- Playfair Display italic headline, 5vw
-- Source Serif body, max(17px, 1.5vw), opacity 0.85, max-width 720px centered
-- Upgrade recommendation in IBM Plex Mono, large
+- Playfair Display italic headline, 5vw — one punchy sentence, not a summary. **Always frame positively** — what the user gains, not what was broken. "The Release That Gives You Your Speed Back" not "The Release That Fixed What You Stopped Noticing."
+- Source Serif body, max(17px, 1.5vw), opacity 0.85, max-width 680px centered — **2–4 sentences maximum**. One sentence on what changed, one on who benefits most, one on whether to upgrade. No recap of individual features — the content pages covered those. Be direct.
+- Upgrade recommendation in IBM Plex Mono, large — a single terse verdict line, e.g. `UPGRADE — STABILITY FIXES JUSTIFY IT` or `HOLD — BREAKING CHANGES, REVIEW FIRST`
 
 **Page N+2 — Dark back cover (always last):**
 - Centered: "DYNAMO DISPATCH" in IBM Plex Mono caps, large
@@ -137,9 +144,50 @@ Each content page uses a **55/45 split layout** (flex row, full bleed):
 - Dots: small circles, filled = current page, outline = others. Adapt color to current page background.
 - Huge fonts everywhere. Nothing below 15px. No small text.
 - High contrast on dark pages. Body text opacity 0.85 minimum. Callout body 0.8 minimum.
-- Nothing overlapping. `margin-bottom` between every element. `padding-bottom: 10vh` on all pages.
+- Nothing overlapping. `margin-bottom` between every element. `padding-bottom: 5vh` on content columns.
 - Full-bleed edge-to-edge. No floating cards. No padding boxes around content areas.
-- All PR images: `filter: grayscale(100%) contrast(1.1)` to match e-ink aesthetic.
+- All PR images: no filter — display in full color.
+- **PR references are always clickable links.** Do not manually wrap them in the HTML — instead include the auto-linkifier script below just before `</body>`. It finds every `PR #NNNNN` and `#NNNNN` pattern in `.callout-body`, `.page-summary`, `.bullet-list`, `.pr-caption`, and `.verdict-body` and wraps them in `<a class="pr-link">` tags pointing to `https://github.com/DynamoDS/Dynamo/pull/NNNNN`.
+
+```css
+a.pr-link {
+  font-family: 'IBM Plex Mono', monospace; font-size: 0.88em;
+  color: inherit; text-decoration: underline;
+  text-decoration-style: dotted; text-underline-offset: 3px;
+  opacity: 0.85; transition: opacity 0.15s;
+}
+a.pr-link:hover { opacity: 1; text-decoration-style: solid; }
+```
+
+```html
+<script>
+  (function() {
+    const BASE = 'https://github.com/DynamoDS/Dynamo/pull/';
+    const SCOPES = '.callout-body, .page-summary, .bullet-list, .pr-caption, .verdict-body';
+    const RE = /\b(PR\s+)?(#(\d{5,}))\b/g;
+    function linkify(node) {
+      if (node.nodeType === 3) {
+        if (!RE.test(node.textContent)) return;
+        RE.lastIndex = 0;
+        const frag = document.createDocumentFragment();
+        let last = 0, m;
+        while ((m = RE.exec(node.textContent)) !== null) {
+          if (m.index > last) frag.appendChild(document.createTextNode(node.textContent.slice(last, m.index)));
+          const a = document.createElement('a');
+          a.href = BASE + m[3]; a.target = '_blank'; a.rel = 'noopener'; a.className = 'pr-link';
+          a.textContent = m[0]; frag.appendChild(a);
+          last = m.index + m[0].length;
+        }
+        if (last < node.textContent.length) frag.appendChild(document.createTextNode(node.textContent.slice(last)));
+        node.parentNode.replaceChild(frag, node);
+      } else if (node.nodeType === 1 && !['SCRIPT','STYLE','A'].includes(node.tagName)) {
+        Array.from(node.childNodes).forEach(linkify);
+      }
+    }
+    document.querySelectorAll(SCOPES).forEach(linkify);
+  })();
+</script>
+```
 
 ---
 
