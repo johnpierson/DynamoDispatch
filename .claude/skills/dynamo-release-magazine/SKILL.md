@@ -58,7 +58,7 @@ Generate a single self-contained HTML file as a **horizontal-swipe editorial mag
 #### Page Structure (dynamic total)
 
 **Total pages = 1 cover + N content pages + 1 verdict + 1 back cover.**
-Give every distinct release section its own page — do not merge or drop sections to hit a target count. If a release has 20 sections, the magazine has 23 pages. If it has 5, it has 8.
+N = total content pages across all sections. Sections with many items may span multiple pages — count each page individually. If a release has 10 sections but 2 sections each need a continuation page, N = 12 and the magazine has 15 pages total.
 
 Set `const TOTAL = <actual page count>` in the JS. Build `LIGHT_PAGES` as a `Set` of 0-indexed page numbers: page 0 = dark (cover), content pages alternate starting light at index 1, verdict = dark, back cover = dark.
 
@@ -89,10 +89,18 @@ Pause rendering (`requestAnimationFrame` still fires but clears and returns) whe
 
 Node colour throughout: `rgba(245,242,237, …)` (matches `--paper`).
 
-**Pages 2–N — Content pages (one per release section):**
-Every distinct section in the release notes gets its own page. Do not merge sections to save space, and do not invent pages to pad. Do not add a Watch-Outs page.
+**Pages 2–N — Content pages (one or more per release section):**
+Every distinct section gets at least one page. **If a section has more items than fit comfortably on one page, split it across multiple pages.** A section like "Bug Fixes" with 26 items should become two pages (e.g. "Bug Fixes — Part I" and "Bug Fixes — Part II"), each with its own headline, summary, and bullet subset. Do not cram — if the bullet list clips significantly, add a continuation page. Do not merge sections to save space, and do not invent pages to pad. Do not add a Watch-Outs page.
 
-Alternate light/dark: page 2 = light, page 3 = dark, page 4 = light, etc.
+Continuation pages for the same section:
+- Ghost rank number stays the same (e.g. both parts show `03`)
+- Cat tag stays the same
+- Headline adds "— Part II" (or "— Continued")
+- Section path stays the same
+- Summary briefly re-anchors ("The second half of bug fixes covers…") rather than repeating the opener
+- Stat on continuation page can show the subset count (e.g. "13 of 26")
+
+Alternate light/dark: page 2 = light, page 3 = dark, page 4 = light, etc. — continuation pages follow the same alternating sequence as any other page.
 
 - **Light page:** background `#f5f2ed`, text `#0a0a0a`
 - **Dark page:** background `#0a0a0a`, text `#f5f2ed`
@@ -103,14 +111,13 @@ Each content page uses a **55/45 split layout** (flex row, full bleed):
 - Giant ghosted section rank number — Playfair Display, ~30vw, opacity 0.06, positioned absolute behind content
 - Category tag — IBM Plex Mono, 11px, caps, letter-spacing 0.2em; `margin-bottom: 1.2vh`
 - Editorial headline — Playfair Display, `clamp(24px, 4.5vw, 72px)`, line-height 1.05; `margin-bottom: 1.5vh`
-- Section path — IBM Plex Mono, 13px, e.g. `DynamoDS/Dynamo → Features`; `margin-bottom: 1.5vh`
-- Summary — Source Serif, `max(15px, 1.3vw)`, line-height 1.55, opacity 0.85; `margin-bottom: 1.5vh`
-- Bullet list of key items — Source Serif, `max(14px, 1.1vw)`, line-height 1.65, opacity 0.85; **`flex: 1; min-height: 0; overflow: hidden`** — this is the clip element that prevents overflow
+- Section path — IBM Plex Mono, 13px, e.g. `Features` (section name only — no repo prefix like "DynamoDS/Dynamo →"); `margin-bottom: 1.5vh`
+- Summary — Source Serif, `max(15px, 1.3vw)`, line-height 1.55, opacity 0.85; `margin-bottom: 1.5vh`. **Write using the Feynman technique**: explain *why* the problem existed and what the fix actually does, in plain terms. No jargon without an explanation. Imagine a smart reader who doesn't know this codebase — make the mechanism click.
+- Bullet list of key items — Source Serif, `max(14px, 1.1vw)`, line-height 1.65, opacity 0.85; **`flex: 1; min-height: 0; overflow: hidden`** — clip element that prevents overflow. Bullets also use Feynman framing: state the cause → effect → fix, not just the fix.
 
 *Right column (45%):*
-- Key stat (PR count, fix count, or a notable number) — Playfair Display, **6.5vw minimum**
-- Stat label — IBM Plex Mono, 12px, caps
-- Tech/stack tag — IBM Plex Mono pill (border, no fill)
+- Key stat — Playfair Display, **6.5vw minimum**. Prefer **outcome-based stats** over raw counts: "0 hash collisions after fix", "26 bugs closed", "5x faster startup". If a good outcome number exists, use it over a PR count. Stat label: IBM Plex Mono, 12px, caps — describes what the number measures.
+- Tech/stack tag — IBM Plex Mono pill (border, no fill). Show where the work happened (e.g. `CLR · Dispatcher · LibG`) — useful signal for technically savvy readers.
 - PR image (if available, filtered grayscale, no border-radius, no shadow, `width: 100%`, `max-height: 28vh`, `object-fit: cover`)
 - `<figcaption>` in IBM Plex Mono 11px below image
 - **Callout box** — background: 5% tint of text color; 4px solid left border (full text color); padding 20px 24px; `margin-top: auto`:
@@ -140,6 +147,47 @@ Each content page uses a **55/45 split layout** (flex row, full bleed):
 - Nothing overlapping. `margin-bottom` between every element. `padding-bottom: 5vh` on content columns.
 - Full-bleed edge-to-edge. No floating cards. No padding boxes around content areas.
 - All PR images: `filter: grayscale(100%) contrast(1.1)` to match e-ink aesthetic.
+- **PR references are always clickable links.** Do not manually wrap them in the HTML — instead include the auto-linkifier script below just before `</body>`. It finds every `PR #NNNNN` and `#NNNNN` pattern in `.callout-body`, `.page-summary`, `.bullet-list`, `.pr-caption`, and `.verdict-body` and wraps them in `<a class="pr-link">` tags pointing to `https://github.com/DynamoDS/Dynamo/pull/NNNNN`.
+
+```css
+a.pr-link {
+  font-family: 'IBM Plex Mono', monospace; font-size: 0.88em;
+  color: inherit; text-decoration: underline;
+  text-decoration-style: dotted; text-underline-offset: 3px;
+  opacity: 0.85; transition: opacity 0.15s;
+}
+a.pr-link:hover { opacity: 1; text-decoration-style: solid; }
+```
+
+```html
+<script>
+  (function() {
+    const BASE = 'https://github.com/DynamoDS/Dynamo/pull/';
+    const SCOPES = '.callout-body, .page-summary, .bullet-list, .pr-caption, .verdict-body';
+    const RE = /\b(PR\s+)?(#(\d{5,}))\b/g;
+    function linkify(node) {
+      if (node.nodeType === 3) {
+        if (!RE.test(node.textContent)) return;
+        RE.lastIndex = 0;
+        const frag = document.createDocumentFragment();
+        let last = 0, m;
+        while ((m = RE.exec(node.textContent)) !== null) {
+          if (m.index > last) frag.appendChild(document.createTextNode(node.textContent.slice(last, m.index)));
+          const a = document.createElement('a');
+          a.href = BASE + m[3]; a.target = '_blank'; a.rel = 'noopener'; a.className = 'pr-link';
+          a.textContent = m[0]; frag.appendChild(a);
+          last = m.index + m[0].length;
+        }
+        if (last < node.textContent.length) frag.appendChild(document.createTextNode(node.textContent.slice(last)));
+        node.parentNode.replaceChild(frag, node);
+      } else if (node.nodeType === 1 && !['SCRIPT','STYLE','A'].includes(node.tagName)) {
+        Array.from(node.childNodes).forEach(linkify);
+      }
+    }
+    document.querySelectorAll(SCOPES).forEach(linkify);
+  })();
+</script>
+```
 
 ---
 

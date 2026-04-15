@@ -16,7 +16,7 @@
     #track {
       display: flex;
       flex-direction: row;
-      width: calc(100vw * 13);
+      width: calc(100vw * 15);
       height: 100vh;
       transition: transform 0.5s cubic-bezier(0.77, 0, 0.175, 1);
       will-change: transform;
@@ -56,9 +56,8 @@
       padding: 4vw 6vw 5vh 4vw;
       display: flex; flex-direction: column;
       border-left: 1px solid currentColor;
-      opacity: 1;
     }
-    .dark .col-right  { border-left-color: rgba(245,242,237,0.12); }
+    .dark  .col-right { border-left-color: rgba(245,242,237,0.12); }
     .light .col-right { border-left-color: rgba(10,10,10,0.12); }
 
     .ghost-rank {
@@ -104,29 +103,35 @@
       font-family: 'Playfair Display', serif;
       font-size: clamp(52px, 6.5vw, 110px); font-weight: 900;
       line-height: 1; margin-bottom: 1vh;
+      flex-shrink: 0;
     }
     .stat-label {
       font-family: 'IBM Plex Mono', monospace; font-size: 12px;
       letter-spacing: 0.15em; text-transform: uppercase;
       opacity: 0.45; margin-bottom: 1.5vh;
+      flex-shrink: 0;
     }
     .stack-tag {
       font-family: 'IBM Plex Mono', monospace; font-size: 11px;
       letter-spacing: 0.1em; border: 1px solid currentColor;
       opacity: 0.55; padding: 4px 10px; display: inline-block;
       align-self: flex-start; margin-bottom: 2vh;
+      flex-shrink: 0;
     }
     .pr-image {
       width: 100%; max-height: 28vh; object-fit: cover;
       filter: grayscale(100%) contrast(1.1); margin-bottom: 1vh;
+      flex-shrink: 0;
     }
     .pr-caption {
       font-family: 'IBM Plex Mono', monospace; font-size: 11px;
       opacity: 0.4; margin-bottom: 2vh;
+      flex-shrink: 0;
     }
     .callout {
       margin-top: auto; padding: 20px 24px;
       border-left: 4px solid currentColor;
+      flex-shrink: 0;
     }
     .dark  .callout { background: rgba(245,242,237,0.04); }
     .light .callout { background: rgba(10,10,10,0.04); }
@@ -139,6 +144,15 @@
       font-family: 'Source Serif 4', serif; font-size: max(15px, 1.2vw);
       line-height: 1.6; opacity: 0.8;
     }
+
+    /* ── PR LINKS ── */
+    a.pr-link {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.88em;
+      color: inherit; text-decoration: underline;
+      text-decoration-style: dotted; text-underline-offset: 3px;
+      opacity: 0.85; transition: opacity 0.15s;
+    }
+    a.pr-link:hover { opacity: 1; text-decoration-style: solid; }
 
     /* ── VERDICT ── */
     .verdict-page {
@@ -181,604 +195,737 @@
 
     /* ── ARROWS ── */
     .arrow-hint { position: fixed; top: 50%; transform: translateY(-50%); font-family: 'IBM Plex Mono', monospace; font-size: 18px; opacity: 0.18; cursor: pointer; z-index: 100; padding: 20px 16px; transition: opacity 0.2s; user-select: none; }
-    .arrow-hint:hover { opacity: 0.5; }
-    #arrow-left  { left: 12px; }
-    #arrow-right { right: 12px; }
+    .arrow-hint:hover { opacity: 0.55; }
+    #arrow-left  { left: 0; }
+    #arrow-right { right: 0; }
   </style>
 </head>
 <body>
-
 <div id="track">
 
-  <!-- ══ PAGE 1: DARK COVER ══ -->
+  <!-- ══ PAGE 1: COVER (DARK) ══ -->
   <div class="page dark cover-page">
     <canvas id="cover-canvas"></canvas>
-    <div class="cover-main" style="position:relative;z-index:1;">
-      <div class="cover-label">Dynamo Dispatch · Release Review</div>
+    <div style="position:relative;z-index:1;">
       <img src="../assets/dynamo-logo.png" alt="Dynamo" class="cover-hero-logo">
+    </div>
+    <div class="cover-main">
+      <div class="cover-label">Dynamo Dispatch · Issue 04</div>
       <div class="cover-version">4.1.0</div>
-      <div class="cover-tagline">Twenty-Six Bug Fixes, a Canonical Agent Directory,<br>and Pins That Finally Stay Put</div>
-      <div class="cover-meta">April 2026 &nbsp;·&nbsp; github.com/DynamoDS/Dynamo &nbsp;·&nbsp; 90+ Pull Requests</div>
+      <div class="cover-tagline">The release that fixed what you stopped noticing.</div>
+      <div class="cover-meta">April 2026 · DynamoDS/Dynamo · github.com/DynamoDS/Dynamo</div>
     </div>
   </div>
 
-  <!-- ══ PAGE 2: FEATURES (LIGHT) ══ -->
+  <!-- ══ PAGE 2: FEATURES I (LIGHT) ══ -->
   <div class="page light content-page">
     <div class="col-left">
       <div class="ghost-rank">01</div>
       <div class="cat-tag">Features</div>
-      <h2 class="page-headline">Twenty-One Ways the Canvas Got Smarter</h2>
-      <div class="section-path">DynamoDS/Dynamo → Features</div>
-      <p class="page-summary">The largest section in 4.1.0 touches nearly every surface of the application. Watch node deletion now preserves connections. The Extensions menu found its permanent home in the top menu bar. Node group styles are customizable from Preferences for the first time.</p>
+      <h2 class="page-headline">The Controls Are Finally Where You Left Them</h2>
+      <div class="section-path">Features</div>
+      <p class="page-summary">Dynamo's workspace and sidebar have historically been places where menus and panels appeared when called and disappeared when dismissed, with no memory of where you were. This release wires up the Extensions panel to remember its minimized state, promotes the Extensions menu to sit alongside every other top menu, and adds two keyboard shortcuts that jump straight to the canvas edges. Small changes to familiar controls, each closing a gap users had been routing around.</p>
       <ul class="bullet-list">
-        <li>Node group styles: edit, remove, reset from Preferences</li>
-        <li>Home/End shortcuts navigate to canvas extremes</li>
-        <li>Watch node deletion rewires connectors, not orphans</li>
-        <li>Extensions menu promoted to top menu bar</li>
-        <li>AutoSync in Documentation Browser tracks selected node</li>
-        <li>Online status indicator in bottom status bar</li>
-        <li>Autodesk badge on DynamoTeam-maintained packages</li>
-        <li>Graph file spec as JSON Schema + Markdown documentation</li>
-        <li>ActionGroupDisposable now nestable for undo-redo grouping</li>
-        <li>NodeCategoryAttribute type-forwarded to DynamoServices</li>
+        <li>Extensions panel didn't auto-open when activating a minimized extension — now auto-expands</li>
+        <li>Home/End keys had no function on the canvas — now jump to canvas extremes</li>
+        <li>Extensions menu lived in a submenu, separated from Help — now promoted to top menu bar</li>
+        <li>Deleting inline Watch nodes left dangling ports — upstream and downstream connections now preserved</li>
+        <li>Documentation Browser tracked nodes manually — new AutoSync setting follows selection automatically</li>
+        <li>Online status indicator now visible in the bottom status bar</li>
+        <li>Autodesk badge marks DynamoTeam-maintained packages in search results</li>
+        <li>Notification flag for unsafe path prompts is now configurable</li>
+        <li>Sidebar button auto-expansion wired up</li>
+        <li>All view extensions now close when the Interactive Tour starts</li>
       </ul>
     </div>
     <div class="col-right">
       <div class="big-stat">21</div>
       <div class="stat-label">Feature Additions</div>
-      <div class="stack-tag">UX · API · Documentation</div>
+      <div class="stack-tag">UX · Canvas · Extensions</div>
       <img src="https://github.com/user-attachments/assets/26dca8c3-d1aa-4229-84fe-4ffac6e35287" alt="Extensions menu in top menu bar" class="pr-image">
-      <div class="pr-caption">#16771 — Extensions menu now at top level alongside other menus</div>
+      <div class="pr-caption">#16771 — Extensions menu promoted to top menu bar alongside Help</div>
       <div class="callout">
         <div class="callout-label">What This Means for You</div>
-        <div class="callout-body">The Watch node rewire fix (PR #16884) eliminates a real annoyance in iterative graph editing. The NodeCategoryAttribute type-forward (PR #16914) means external node libraries can now control library grouping without a hard DynamoCore reference — relevant if you maintain custom node packages.</div>
+        <div class="callout-body">The Watch node rewire behavior (PR #16884) is the one you'll notice most — iterative graph editing with Watch nodes no longer leaves orphaned ports. The NodeCategoryAttribute type-forward (covered in Part II) directly affects any custom node package you maintain that currently depends on DynamoCore just for library grouping.</div>
       </div>
     </div>
   </div>
 
-  <!-- ══ PAGE 3: TEMPLATES (DARK) ══ -->
+  <!-- ══ PAGE 3: FEATURES II (DARK) ══ -->
   <div class="page dark content-page">
+    <div class="col-left">
+      <div class="ghost-rank">01</div>
+      <div class="cat-tag">Features — Continued</div>
+      <h2 class="page-headline">The API Catches Up to How Libraries Actually Work</h2>
+      <div class="section-path">Features</div>
+      <p class="page-summary">When third-party developers publish Dynamo nodes, they often need to declare what category their nodes belong to. But the attribute controlling this — NodeCategoryAttribute — lived in DynamoCore, forcing an unnecessary tight dependency on a heavy package. This release type-forwards it to DynamoServices. ActionGroupDisposable is also now nestable, so complex multi-step operations can compose their undo groups without conflicts. And the DYN file format gets its first machine-readable specification.</p>
+      <ul class="bullet-list">
+        <li>NodeCategoryAttribute lived in DynamoCore → type-forwarded to DynamoServices, dropping a hard dependency for external node packages</li>
+        <li>ActionGroupDisposable wasn't nestable → now composable, enabling grouped undo-redo across complex operations</li>
+        <li>No machine-readable DYN file spec → Dynamo graph file specification published as JSON Schema + Markdown</li>
+        <li>WebView2 security settings varied per instance → now standardized across all WebView2 uses</li>
+        <li>ASM (ShapeManager) version detection and logging added for diagnostics</li>
+        <li>Icons added for NurbsCurve nodes; documentation and UI assets added for Geometry.ProjectMany</li>
+        <li>PNG icons embedded into Units, Symbols, Quantity, and Utilities assemblies</li>
+        <li>Splash screen now prompts restart after importing settings</li>
+      </ul>
+    </div>
+    <div class="col-right">
+      <div class="big-stat">11</div>
+      <div class="stat-label">API &amp; Platform Additions</div>
+      <div class="stack-tag">API · DynamoServices · WebView2</div>
+      <img src="https://github.com/user-attachments/assets/8d8b448a-2a33-419e-9298-d8388d03ebda" alt="Watch node deletion preserving connections" class="pr-image">
+      <div class="pr-caption">#16884 — Inline Watch node deletion now rewires connected ports</div>
+      <div class="callout">
+        <div class="callout-label">What This Means for You</div>
+        <div class="callout-body">The NodeCategoryAttribute type-forward (PR #16914) is the most directly actionable change here. If you maintain a custom node package that imports DynamoCore only for category declaration, you can drop that reference after upgrading. The JSON Schema DYN spec is also worth bookmarking — it's the first time the file format has had a machine-readable contract.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE 4: TEMPLATES (LIGHT) ══ -->
+  <div class="page light content-page">
     <div class="col-left">
       <div class="ghost-rank">02</div>
       <div class="cat-tag">Templates</div>
       <h2 class="page-headline">The Start Page Finally Shows Its Work</h2>
-      <div class="section-path">DynamoDS/Dynamo → Templates</div>
-      <p class="page-summary">Template thumbnails land on the start page in 4.1.0. Display names are now human-readable titles ahead of localization, the Open Template dialog no longer accepts DYF files, and placeholder icons cover items without custom thumbnails.</p>
+      <div class="section-path">Templates</div>
+      <p class="page-summary">Template cards in the start page previously showed just a name — no visual hint of what the template does. From 4.1.0, each card shows a thumbnail. The File → Open → Template dialog has also been tightened: it no longer accepts DYF (custom node) files, which could be opened through it accidentally. Placeholder icons cover items that don't have custom thumbnails yet, so the grid never appears broken.</p>
       <ul class="bullet-list">
-        <li>Thumbnail preview images on start page template cards</li>
-        <li>Human-readable display names replacing internal identifiers</li>
-        <li>File → Open → Template restricted to template files only</li>
-        <li>DynamoHome v1.0.27: placeholder icons for ungallered items</li>
-        <li>Localization file rules updated for new templates</li>
+        <li>No thumbnail on start page cards → now displays preview images (DynamoHome v1.0.27)</li>
+        <li>Internal file names were showing as template titles → replaced with human-readable display names</li>
+        <li>Open Template dialog accepted any file type → now restricted to template files (DYF excluded)</li>
+        <li>Items without custom thumbnails showed empty space → placeholder icons fill the grid</li>
+        <li>Localization rules updated to cover new template display names</li>
       </ul>
     </div>
     <div class="col-right">
       <div class="big-stat">5</div>
       <div class="stat-label">Template Updates</div>
-      <div class="stack-tag">UI · Home Screen</div>
+      <div class="stack-tag">UI · Home Screen · DynamoHome</div>
       <img src="https://github.com/user-attachments/assets/010eec73-0009-4b05-9661-63c2219d274e" alt="Template thumbnail previews on start page" class="pr-image">
-      <div class="pr-caption">#16981 — Template cards now show thumbnail previews</div>
+      <div class="pr-caption">#16981 — Template cards now show thumbnail previews on the start page</div>
       <div class="callout">
         <div class="callout-label">What This Means for You</div>
-        <div class="callout-body">If you maintain custom templates for your team, add thumbnails now — they display in the start page gallery from this release forward. The DYF restriction in the Open Template dialog is a small breaking change if anyone was routing custom node files through that path.</div>
+        <div class="callout-body">If you maintain custom templates for your team, add thumbnails now — they display in the start page gallery from this release. The DYF restriction in the Open Template dialog is a small breaking change: if any internal tooling was routing DYF files through that dialog path, it will silently fail to load them.</div>
       </div>
     </div>
   </div>
 
-  <!-- ══ PAGE 4: BUG FIXES (LIGHT) ══ -->
-  <div class="page light content-page">
+  <!-- ══ PAGE 5: BUG FIXES I (DARK) ══ -->
+  <div class="page dark content-page">
     <div class="col-left">
       <div class="ghost-rank">03</div>
-      <div class="cat-tag">Bug Fixes</div>
-      <h2 class="page-headline">Twenty-Six Bugs, Most of Them About Pins</h2>
-      <div class="section-path">DynamoDS/Dynamo → Bug Fixes</div>
-      <p class="page-summary">Six separate connector pin bugs are resolved in one release: save-reload position drift, Save As data loss, copy-paste omission, drag-operation drops, undo failures, and orphaned note pins. Beyond pins: AppData versioning, autocomplete crashes, pan/zoom stability, and geometry GC.</p>
+      <div class="cat-tag">Bug Fixes — Part I</div>
+      <h2 class="page-headline">Six Pin Bugs Walk Into a Release. None Walk Out.</h2>
+      <div class="section-path">Bug Fixes</div>
+      <p class="page-summary">Connector pins are the anchors you attach to wires to lock them in place. They're stored alongside the graph. Six separate ways this could go wrong were fixed in one release: position drift on reload, disappearing on Save As, missing from clipboard, undo not working, notes losing their pin, and a new transient-pin reconnection path that makes the whole system more robust under rapid edits.</p>
       <ul class="bullet-list">
-        <li>Pin position drift on save/reload — fixed</li>
-        <li>Pins lost on Save As — fixed</li>
-        <li>Pins not included in copy-paste — fixed</li>
-        <li>Pinned notes orphaned on node delete — fixed</li>
-        <li>Pin undo/redo now fully reliable</li>
-        <li>AppData wrote to <code style="font-size:0.9em">10.0</code> folder instead of <code style="font-size:0.9em">4.1</code> — fixed</li>
-        <li>Two autocomplete crash paths closed</li>
-        <li>Two pan/zoom crash paths on large graphs fixed</li>
-        <li>Geometry GC: CLR-container objects no longer prematurely freed</li>
-        <li>Info + Warning bubbles now coexist on non-chart nodes</li>
+        <li>Pin positions drifted after save/reload → fixed, positions now persist correctly</li>
+        <li>Pins lost on Save As → new file now preserves full pin state</li>
+        <li>Copy/paste didn't include connector pins → clipboard operations are now pin-aware</li>
+        <li>Pinned notes became orphans when their node was deleted → note ownership tracked through deletion</li>
+        <li>Pin/unpin undo was inconsistent across scenarios → unified into a single reliable path</li>
+        <li>Connector reconnection improved with transient pins and safety hardening</li>
+        <li>Alt+F4 while autocomplete was open crashed the node window → closed</li>
+        <li>Moving and deleting nodes simultaneously caused a race condition crash → fixed</li>
+        <li>Selection state and note restoration fixed across several edge cases</li>
+        <li>Info + Warning bubbles now coexist on non-chart nodes without overlap</li>
       </ul>
     </div>
     <div class="col-right">
-      <div class="big-stat">26</div>
-      <div class="stat-label">Bug Fixes</div>
-      <div class="stack-tag">Stability · Pins · AppData</div>
+      <div class="big-stat">13</div>
+      <div class="stat-label">of 26 Bug Fixes</div>
+      <div class="stack-tag">Pins · Clipboard · Undo</div>
       <div class="callout" style="margin-top:auto;">
         <div class="callout-label">What This Means for You</div>
-        <div class="callout-body">PR #17018 is critical if you've been running 4.1 RC builds — user settings were written to a <code style="font-size:0.9em">10.0</code> directory and may not migrate automatically. Check <code style="font-size:0.9em">%AppData%\Dynamo\Dynamo Core\</code> before upgrading production environments. The geometry GC fix (PR #16821) resolves a subtle crash class when downstream node output types change.</div>
+        <div class="callout-body">The pin persistence fixes (PR #17018 area) are the most impactful here — if you've been working around pin-loss on Save As or save/reload drift, those workarounds can be dropped. The race condition crash fix during simultaneous move+delete is subtle but surfaces on fast input, especially in scripted or automation-driven graph editing workflows.</div>
       </div>
     </div>
   </div>
 
-  <!-- ══ PAGE 5: GEOMETRY (DARK) ══ -->
+  <!-- ══ PAGE 6: BUG FIXES II (LIGHT) ══ -->
+  <div class="page light content-page">
+    <div class="col-left">
+      <div class="ghost-rank">03</div>
+      <div class="cat-tag">Bug Fixes — Part II</div>
+      <h2 class="page-headline">The Camera Drifts. The Gizmo Fails. Both Fixed.</h2>
+      <div class="section-path">Bug Fixes</div>
+      <p class="page-summary">Two related rendering failures: the viewport camera slowly drifted when the user was zoomed in far, and the transform gizmo stopped redrawing correctly. Both traced to a shared WPF BitmapCache being reused across threads — a subtle race that corrupted the render state. Pan/zoom crashes on large graphs came from the same root. This second batch also closes geometry GC issues where CLR containers holding geometry pointers could be freed before consumers finished with them.</p>
+      <ul class="bullet-list">
+        <li>Camera drift when zoomed in → shared BitmapCache race condition fixed</li>
+        <li>Gizmo redraw failures → same root cause, fixed in the same pass</li>
+        <li>Two separate pan/zoom crash paths on large graphs → both closed</li>
+        <li>CLR containers freed geometry pointers before consumers were done → GC protection added (PR #16821)</li>
+        <li>Info bubbles rendered behind nodes and notes → now render above correctly</li>
+        <li>Port context menus stayed open when window lost focus → now close on blur</li>
+        <li>AppData wrote to version 10.0 folder instead of 4.1 → fixed, C3D AppData validation added</li>
+        <li>Group styles lookup used First() — could throw on empty → changed to FirstOrDefault</li>
+        <li>Invalid input values from the AI Assistant now handled gracefully</li>
+        <li>Node info messages now show/hide based on graph creation version</li>
+      </ul>
+    </div>
+    <div class="col-right">
+      <div class="big-stat">13</div>
+      <div class="stat-label">of 26 Bug Fixes</div>
+      <div class="stack-tag">WPF · BitmapCache · Geometry GC</div>
+      <div class="callout" style="margin-top:auto;">
+        <div class="callout-label">What This Means for You</div>
+        <div class="callout-body">The geometry GC fix (PR #16821) matters if you have nodes that hold LibG geometry references across async or multi-step execution — the previous behavior could silently return null or crash downstream. The AppData folder fix (PR #17018 area) is critical for anyone who ran 4.1 RC builds: settings may have landed in a 10.0 directory and won't migrate automatically.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE 7: GEOMETRY (DARK) ══ -->
   <div class="page dark content-page">
     <div class="col-left">
       <div class="ghost-rank">04</div>
       <div class="cat-tag">Geometry &amp; LibG</div>
-      <h2 class="page-headline">LibG Gets Periodic Curves and Better Tessellation</h2>
-      <div class="section-path">DynamoDS/Dynamo → Geometry &amp; LibG Updates</div>
-      <p class="page-summary">Four LibG NuGet bumps, periodic NURBS curve APIs, fixed Voronoi/Delaunay tessellation, unified PolyCurve behavior, and scale-adaptive tolerance for surface stitching. The geometry transform bug fix in PR #17019 alone is reason to upgrade.</p>
+      <h2 class="page-headline">Curves That Finally Do What They Promise</h2>
+      <div class="section-path">Geometry &amp; LibG Updates</div>
+      <p class="page-summary">Voronoi diagrams partition space by "which seed point is closest?" — Dynamo's implementation was failing on inputs where edge lengths varied widely. A relative edge-length filter now handles those cases. PolyCurve.ByPoints had undefined behavior at edge cases where it would return different types in different scenarios; the behavior is now unified and predictable. Periodic NURBS curves — closed smooth curves like circles — get new API exposure for their knot and control point topology.</p>
       <ul class="bullet-list">
-        <li>Periodic NURBS: PeriodicControlPoints and PeriodicKnots APIs added</li>
-        <li>Voronoi + Delaunay: relative edge-length filter, UV clamping for out-of-range input</li>
-        <li>PolyCurve.ByPoints and Polygon.ByPoints behavior unified</li>
-        <li>Curve.PullOntoPlane/PullOntoSurface now return concrete types</li>
-        <li>PolyCurve.ByGroupedCurves + Arc.ByStartEndAndTangencies in creation group</li>
-        <li>LibG bumped to 4.0.0.4313 with geometry transform fixes</li>
-        <li>Scale-adaptive tolerance for surface stitching operations</li>
+        <li>Voronoi/Delaunay failed on large edge-length variation → relative filtering with MIConvexHull fix resolves it</li>
+        <li>PolyCurve.ByPoints and Polygon.ByPoints returned inconsistent types across inputs → unified</li>
+        <li>Periodic NURBS APIs exposed: PeriodicKnots and PeriodicControlPoints now accessible from nodes</li>
+        <li>Scale-adaptive tolerance added for surface stitching — works correctly at small and large scales</li>
+        <li>LibG geometry transform bug fixed — PR #17019 alone is a reason to upgrade</li>
+        <li>PolyCurve.ByGroupedCurves and Arc.ByStartEndAndTangencies grouped under creation nodes</li>
+        <li>LibG NuGet updated to 4.0.0.4313 / 4.0.0.3915</li>
       </ul>
     </div>
     <div class="col-right">
-      <div class="big-stat">9</div>
-      <div class="stat-label">Geometry Updates</div>
+      <div class="big-stat">4</div>
+      <div class="stat-label">LibG NuGet Updates</div>
       <div class="stack-tag">LibG · NURBS · Tessellation</div>
-      <img src="https://github.com/user-attachments/assets/281c9891-c181-4f81-b29f-a38c0943b4f6" alt="NurbsCurve PeriodicKnots and PeriodicControlPoints node icons" class="pr-image">
-      <div class="pr-caption">#16931 — New icons for NurbsCurve.PeriodicKnots and PeriodicControlPoints</div>
+      <img src="https://github.com/user-attachments/assets/281c9891-c181-4f81-b29f-a38c0943b4f6" alt="NurbsCurve periodic API icons" class="pr-image">
+      <div class="pr-caption">#16931 — New node icons for NurbsCurve.PeriodicKnots and PeriodicControlPoints</div>
       <div class="callout">
         <div class="callout-label">What This Means for You</div>
-        <div class="callout-body">The new periodic NURBS APIs (PR #16896) expose curve topology that previously required DesignScript workarounds. If your C# nodes wrap LibG geometry, the unified PolyCurve.ByPoints return type and concrete Curve.PullOnto* types may change downstream type checks — worth a regression pass on affected nodes before shipping.</div>
+        <div class="callout-body">The new periodic NURBS APIs (PR #16896) expose curve topology that previously required DesignScript workarounds. If your C# nodes wrap LibG geometry, the unified PolyCurve.ByPoints return type and concrete Curve.PullOnto* types may change downstream type checks — worth a regression pass on affected nodes before shipping to users.</div>
       </div>
     </div>
   </div>
 
-  <!-- ══ PAGE 6: PERFORMANCE (LIGHT) ══ -->
+  <!-- ══ PAGE 8: PERFORMANCE (LIGHT) ══ -->
   <div class="page light content-page">
     <div class="col-left">
       <div class="ghost-rank">05</div>
       <div class="cat-tag">Performance</div>
-      <h2 class="page-headline">One Hash Fix That Changed Everything</h2>
-      <div class="section-path">DynamoDS/Dynamo → Performance Improvements</div>
-      <p class="page-summary">Two targeted fixes with outsized impact. A severe geometry marshaling slowdown traced to hash collisions is eliminated by switching to identity-based hash codes. UI thread responsiveness improves through dispatcher deferral and view model caching.</p>
+      <h2 class="page-headline">One Low-Level Fix. Massive Speed Recovery.</h2>
+      <div class="section-path">Performance Improvements</div>
+      <p class="page-summary">Dynamo keeps a lookup table to find geometry objects fast. Every object needs a unique ID so the table knows which is which. The old method borrowed IDs from .NET's default system — which can hand the same ID to two different objects. When that happens in a large table, every lookup turns into a slow search instead of an instant jump. The fix is one line: use memory addresses as IDs instead. They're guaranteed unique. The second fix stops expensive UI calculations from blocking the drawing thread.</p>
       <ul class="bullet-list">
-        <li>Geometry marshaling: identity hash codes eliminate hash collision cascade (PR #16754)</li>
-        <li>UI: expensive operations deferred to the WPF Dispatcher</li>
-        <li>View models: null-safety and caching reduce redundant recalculation</li>
+        <li>Two geometry objects could receive the same ID → lookup degrades to linear search → graph slows. Fixed: memory addresses used as IDs (PR #16754) — always unique by definition</li>
+        <li>Expensive UI calculations ran on the WPF drawing thread → canvas froze during data updates. Fixed: operations deferred to the Dispatcher queue</li>
+        <li>View models recalculated on every event even when inputs hadn't changed → null-safety checks and caching stop redundant work</li>
       </ul>
     </div>
     <div class="col-right">
-      <div class="big-stat">2</div>
-      <div class="stat-label">Performance Fixes</div>
-      <div class="stack-tag">Marshaling · WPF · Dispatcher</div>
-      <div class="callout" style="margin-top:auto;">
+      <div class="big-stat">0</div>
+      <div class="stat-label">Geometry Hash Collisions After Fix</div>
+      <div class="stack-tag">CLR · Dispatcher · LibG</div>
+      <img src="https://github.com/user-attachments/assets/cda4ed68-9f7f-48d2-b60a-5876b556ee7c" alt="Performance fix illustration" class="pr-image">
+      <div class="pr-caption">#16754 — Identity hash codes eliminate geometry marshaling collision cascade</div>
+      <div class="callout">
         <div class="callout-label">What This Means for You</div>
-        <div class="callout-body">PR #16754 is the sleeper hit of this release. If your graphs slow to a crawl with hundreds of geometry objects, the hash collision fix justifies this upgrade on its own. The dispatcher deferral pattern used in the view model fix is also a solid technique to borrow for your own WPF performance work in the broader Dynamo codebase.</div>
+        <div class="callout-body">PR #16754 is the sleeper hit of this release. If your graphs slow to a crawl with hundreds of geometry objects in play, the hash collision fix justifies this upgrade on its own. The Dispatcher deferral pattern used in the view model fix is also a solid technique to borrow for any WPF performance work you're doing in the broader Dynamo codebase.</div>
       </div>
     </div>
   </div>
 
-  <!-- ══ PAGE 7: PACKAGE MANAGER (DARK) ══ -->
+  <!-- ══ PAGE 9: PACKAGE MANAGER (DARK) ══ -->
   <div class="page dark content-page">
     <div class="col-left">
       <div class="ghost-rank">06</div>
       <div class="cat-tag">Package Manager</div>
       <h2 class="page-headline">Packages Now Tell You What's Installed</h2>
-      <div class="section-path">DynamoDS/Dynamo → Package Manager</div>
-      <p class="page-summary">The Search tab now shows which version of a package is currently installed. Publishers get a one-click button to copy compatibility info from a previous version. Home/End key support and a wizard version bump complete a small but polished set of improvements.</p>
+      <div class="section-path">Package Manager</div>
+      <p class="page-summary">The Search tab in Dynamo's Package Manager previously showed what was available — but not what version you already had installed. To check that, you had to switch to the Installed tab and cross-reference manually. 4.1.0 puts the installed version inline in Search. Publishers also get a one-click button to copy version compatibility data forward from a previous release, saving the most tedious step of the publish workflow.</p>
       <ul class="bullet-list">
-        <li>Search tab displays installed version for each package</li>
-        <li>Copy compatibility info from previous package version</li>
-        <li>Home/End keys now work in publish form fields</li>
-        <li>PackageManagerWizard version updated</li>
+        <li>Installed version wasn't visible in the Search tab → now displayed inline alongside search results</li>
+        <li>Compatibility info had to be re-entered for each new version → copy-from-previous button added</li>
+        <li>Home/End key navigation didn't work in the publish wizard form → now functional</li>
       </ul>
     </div>
     <div class="col-right">
-      <div class="big-stat">4</div>
-      <div class="stat-label">Package Manager PRs</div>
-      <div class="stack-tag">UX · Publishing</div>
-      <img src="https://github.com/user-attachments/assets/b49df223-c085-4f09-9f3a-b71287f90998" alt="Package Manager search showing installed version" class="pr-image">
-      <div class="pr-caption">#16853 — Installed version now visible in the Search tab</div>
+      <div class="big-stat">3</div>
+      <div class="stat-label">Package Manager Improvements</div>
+      <div class="stack-tag">Package Manager · Publisher Tools</div>
+      <img src="https://github.com/user-attachments/assets/b49df223-c085-4f09-9f3a-b71287f90998" alt="Installed version shown in Package Manager Search tab" class="pr-image">
+      <div class="pr-caption">#16853 — Installed version now visible directly in the Search tab</div>
       <div class="callout">
         <div class="callout-label">What This Means for You</div>
-        <div class="callout-body">The installed version display (PR #16853) closes a long-standing UX gap — no more cross-referencing the Installed tab to know your current version. If you maintain packages on the Dynamo Package Manager, the copy-compatibility button (PR #16831) will save time on every new version publish.</div>
+        <div class="callout-body">The installed version display (PR #16853) closes a long-standing UX gap — no more context-switching to the Installed tab mid-search. If you maintain packages on the Dynamo Package Manager, the copy-compatibility button (PR #16831) will save meaningful time on every version publish cycle.</div>
       </div>
     </div>
   </div>
 
-  <!-- ══ PAGE 8: PYTHONNET3 (LIGHT) ══ -->
+  <!-- ══ PAGE 10: PYTHONNET3 (LIGHT) ══ -->
   <div class="page light content-page">
     <div class="col-left">
       <div class="ghost-rank">07</div>
       <div class="cat-tag">PythonNet3</div>
-      <h2 class="page-headline">Python Nodes Shed the Purple</h2>
-      <div class="section-path">DynamoDS/Dynamo → PythonNet3</div>
-      <p class="page-summary">A minimal but meaningful section: Python code samples are updated to PythonNet3 syntax, and the purple syntax highlighting that marked Python nodes is removed. Clean, unambiguous, and a signal that PythonNet3 is now the assumed baseline.</p>
+      <h2 class="page-headline">Purple Is Gone. PythonNet3 Is the Baseline.</h2>
+      <div class="section-path">PythonNet3</div>
+      <p class="page-summary">When Dynamo migrated its Python nodes to PythonNet3, the team added a distinctive purple syntax highlight as a visual signal: "this is the new runtime." That marker has served its purpose. 4.1.0 removes the purple highlighting — Python is now PythonNet3 by assumption, not by flag. The sample scripts bundled with Dynamo have been updated to match, replacing PythonNet2-style imports throughout.</p>
       <ul class="bullet-list">
-        <li>Python samples migrated to PythonNet3 API (PR #16600)</li>
-        <li>Purple syntax highlighting removed from Python nodes (PR #16615)</li>
+        <li>Sample scripts were still using PythonNet2-style imports → updated to PythonNet3 API (PR #16600)</li>
+        <li>Purple syntax highlighting was a migration signal, not a design choice → removed now that PythonNet3 is default (PR #16615)</li>
       </ul>
     </div>
     <div class="col-right">
       <div class="big-stat">2</div>
-      <div class="stat-label">Python Updates</div>
-      <div class="stack-tag">PythonNet3 · Syntax</div>
-      <div class="callout" style="margin-top:auto;">
+      <div class="stat-label">PythonNet3 Updates</div>
+      <div class="stack-tag">PythonNet3 · Python · IronPython</div>
+      <img src="https://github.com/user-attachments/assets/25a367ef-da00-49e4-91dd-dc63a6bdc06f" alt="Purple syntax highlighting removed from Python nodes" class="pr-image">
+      <div class="pr-caption">#16615 — Purple syntax highlighting removed; PythonNet3 is now default</div>
+      <div class="callout">
         <div class="callout-label">What This Means for You</div>
-        <div class="callout-body">If you maintain Python node documentation or sample scripts for Dynamo, now is the time to audit for PythonNet2-style imports (PR #16600). The purple highlighting removal (PR #16615) is cosmetic but marks PythonNet3 as the unambiguous baseline — relevant if you're documenting Python node behavior for downstream users.</div>
+        <div class="callout-body">If you maintain Python node documentation or sample scripts for Dynamo users, now is the time to audit for remaining PythonNet2-style imports (PR #16600). The purple highlighting removal (PR #16615) is cosmetic but marks PythonNet3 as the unambiguous baseline — update any screenshots or tutorials that show the old highlight color.</div>
       </div>
     </div>
   </div>
 
-  <!-- ══ PAGE 9: BUILD & INFRA (DARK) ══ -->
+  <!-- ══ PAGE 11: BUILD & INFRA (DARK) ══ -->
   <div class="page dark content-page">
     <div class="col-left">
       <div class="ghost-rank">08</div>
       <div class="cat-tag">Build &amp; Infrastructure</div>
       <h2 class="page-headline">The Pipeline Catches Up to .NET 10</h2>
-      <div class="section-path">DynamoDS/Dynamo → Build &amp; Infrastructure</div>
-      <p class="page-summary">Master bumped to 4.2.0 post-RC. Performance tests upgraded to .NET 10. The SDK roll-forward policy is patched to allow minor version updates without manual pin changes. A handful of CI reliability fixes and strategic test exclusions kept the pipeline green during the RC window.</p>
+      <div class="section-path">Build &amp; Infrastructure</div>
+      <p class="page-summary">Post-RC, master was bumped to 4.2.0 and the performance test suite was upgraded to .NET 10. A patch to global.json changes the SDK roll-forward policy: instead of requiring an exact SDK version match, builds now accept any newer patch. This means .NET publishes a patch update without breaking local builds or CI. The npm registry reachability check was rewritten to use a reliable WebClient call after the previous Invoke-WebRequest approach proved flaky in CI environments.</p>
       <ul class="bullet-list">
-        <li>Master version bumped to 4.2.0</li>
+        <li>Master version bumped to 4.2.0 post-RC</li>
         <li>Performance tests upgraded to .NET 10</li>
-        <li><code style="font-size:0.9em">rollForward: patch</code> in global.json allows SDK patch updates</li>
-        <li>npm registry check replaced with reliable WebClient method</li>
-        <li>Failing tests marked or excluded to unblock CI</li>
-        <li>Group style customization test fixed via real right-click path</li>
+        <li>global.json rollForward: "patch" changed to allow newer patch SDK versions — no more manual SDK pin on every .NET patch release (PR #16815)</li>
+        <li>npm registry check rewrote from Invoke-WebRequest to WebClient — more reliable in constrained CI environments (PR #16834)</li>
+        <li>Stale submenu state in customization tests fixed</li>
+        <li>setnpmreg script and .NET SDK version updated</li>
       </ul>
     </div>
     <div class="col-right">
-      <div class="big-stat">10</div>
-      <div class="stat-label">Infra Changes</div>
-      <div class="stack-tag">.NET 10 · CI · npm</div>
+      <div class="big-stat">8</div>
+      <div class="stat-label">Pipeline Updates</div>
+      <div class="stack-tag">.NET 10 · CI · NuGet</div>
       <div class="callout" style="margin-top:auto;">
         <div class="callout-label">What This Means for You</div>
-        <div class="callout-body">The <code style="font-size:0.9em">rollForward: patch</code> change (PR #16815) in global.json means local builds now accept .NET 10 patch updates without a manual SDK pin. If you maintain CI scripts, the npm registry check fix (PR #16834) replaces a flaky <code style="font-size:0.9em">Invoke-WebRequest</code> call — worth reviewing your own pipeline scripts for the same pattern.</div>
+        <div class="callout-body">The rollForward change (PR #16815) in global.json means local builds now accept .NET 10 patch updates without a manual SDK pin. If you maintain CI scripts for Dynamo forks or downstream repos, the npm registry fix (PR #16834) is worth reviewing — the Invoke-WebRequest pattern it replaces may exist in your own pipeline scripts.</div>
       </div>
     </div>
   </div>
 
-  <!-- ══ PAGE 10: AI AGENT SKILLS (LIGHT) ══ -->
+  <!-- ══ PAGE 12: AI SKILLS (LIGHT) ══ -->
   <div class="page light content-page">
     <div class="col-left">
       <div class="ghost-rank">09</div>
       <div class="cat-tag">AI Agent Skills &amp; Tooling</div>
-      <h2 class="page-headline">Dynamo Ships a Canonical Agent Skill Directory</h2>
-      <div class="section-path">DynamoDS/Dynamo → AI Agent Skills &amp; Tooling</div>
-      <p class="page-summary">Fourteen PRs in a single release establish a formal <code style="font-size:0.9em">.agents/skills</code> directory with cross-IDE sync, CI drift validation, and a growing library of domain-specific agents. This is a platform investment in AI-assisted development on the Dynamo codebase.</p>
+      <h2 class="page-headline">Skills Get a Canonical Home and a Validation Gate</h2>
+      <div class="section-path">AI Agent Skills &amp; Tooling</div>
+      <p class="page-summary">Agent skills in the repository were scattered across tool-specific directories depending on which IDE or AI assistant had added them. This release canonicalizes everything under .agents/skills and adds a validate-skills CI check that fails the build if any tool's directory diverges from that path. New skills added: dynamo-unit-testing for structured C# test generation, a C# Janitor for automated code health checks, UX Designer, and Content Designer — alongside three experimental architecture agents.</p>
       <ul class="bullet-list">
-        <li><code style="font-size:0.9em">.agents/skills</code> canonical directory: VSCode, Cursor, Claude Code wrappers</li>
-        <li><code style="font-size:0.9em">validate-skills</code> CI workflow prevents cross-IDE drift</li>
-        <li><code style="font-size:0.9em">dynamo-unit-testing</code> agent skill added</li>
-        <li>C# Janitor agent for automated code cleanup</li>
-        <li>UX Designer agent (Autodesk Weave Design System)</li>
-        <li>Content Designer with hallucination guardrails</li>
-        <li>Three experimental architecture agents</li>
-        <li>Copilot instructions expanded with comprehensive repo context</li>
+        <li>Skills scattered across tool-specific paths → all canonicalized under .agents/skills</li>
+        <li>No enforcement of consistency → validate-skills CI check blocks divergence (PR #16961)</li>
+        <li>dynamo-unit-testing skill added — structured test generation for Dynamo's C# test suite</li>
+        <li>C# Janitor agent added — automated code health checks for C# files</li>
+        <li>UX Designer and Content Designer skills added (Content Designer improved with guardrails)</li>
+        <li>Three experimental architecture agents added</li>
+        <li>.github/copilot-instructions.md expanded with project context</li>
+        <li>dynamo-dotnet-expert skill refactored</li>
       </ul>
     </div>
     <div class="col-right">
-      <div class="big-stat">14</div>
-      <div class="stat-label">AI Tooling Additions</div>
-      <div class="stack-tag">AI · Claude · Cursor · Copilot</div>
+      <div class="big-stat">7</div>
+      <div class="stat-label">New Skills Added</div>
+      <div class="stack-tag">AI · CI · Claude · Copilot</div>
       <div class="callout" style="margin-top:auto;">
         <div class="callout-label">What This Means for You</div>
-        <div class="callout-body">The <code style="font-size:0.9em">validate-skills</code> CI check (PR #16961) enforces consistency across IDE wrappers — if you contribute from Claude Code, Cursor, or VS Copilot, the canonical <code style="font-size:0.9em">.agents/skills</code> directory is your source of truth. The <code style="font-size:0.9em">dynamo-unit-testing</code> and C# Janitor agents are immediately applicable to day-to-day C# work on the repo.</div>
+        <div class="callout-body">The validate-skills CI check (PR #16961) enforces consistency across IDE wrappers — if you contribute using Claude Code, Cursor, or VS Copilot, the canonical .agents/skills directory is your source of truth. The dynamo-unit-testing and C# Janitor agents are immediately applicable to day-to-day C# work on the Dynamo repo.</div>
       </div>
     </div>
   </div>
 
-  <!-- ══ PAGE 11: QoL & DEPS (DARK) ══ -->
+  <!-- ══ PAGE 13: QOL & DEPS (DARK) ══ -->
   <div class="page dark content-page">
     <div class="col-left">
       <div class="ghost-rank">10</div>
-      <div class="cat-tag">QoL &amp; Dependencies</div>
-      <h2 class="page-headline">Analytics Catches Up, Home Gets a Bump</h2>
-      <div class="section-path">DynamoDS/Dynamo → QoL &amp; Dependency Updates</div>
-      <p class="page-summary">Three dependency updates to close out the release: the DynamoHome npm package bumps to 1.0.28, and DynamoVisualProgramming.Analytics is updated twice, reaching .NET 10 compatibility with the final 4.2.4 build.</p>
+      <div class="cat-tag">QoL &amp; Dependency Updates</div>
+      <h2 class="page-headline">Small Bumps, Platform Readiness</h2>
+      <div class="section-path">QoL &amp; Dependency Updates</div>
+      <p class="page-summary">Two dependency updates close out the release. The dynamo-home npm package moves to 1.0.28, collecting the start-page thumbnail and placeholder icon work shipped earlier in this release. DynamoVisualProgramming.Analytics is updated for .NET 10 compatibility, completing the platform chain. Neither changes Dynamo's surface behavior — both ensure the pieces that downstream tools depend on are current.</p>
       <ul class="bullet-list">
-        <li><code style="font-size:0.9em">@dynamods/dynamo-home</code> 1.0.27 → 1.0.28</li>
-        <li>Analytics: 4.2.3.10496 → 4.2.4.11175 → 4.2.4.11548 (.NET 10)</li>
+        <li>@dynamods/dynamo-home bumped to 1.0.28 — captures the template thumbnail and placeholder icon work</li>
+        <li>DynamoVisualProgramming.Analytics updated for .NET 10 compatibility (PR #16940)</li>
       </ul>
     </div>
     <div class="col-right">
-      <div class="big-stat">3</div>
+      <div class="big-stat">2</div>
       <div class="stat-label">Dependency Updates</div>
       <div class="stack-tag">npm · NuGet · .NET 10</div>
       <div class="callout" style="margin-top:auto;">
         <div class="callout-label">What This Means for You</div>
-        <div class="callout-body">The Analytics package .NET 10 update (PR #16940) completes the platform-compatibility chain for this release. If you have integrations consuming the DynamoVisualProgramming.Analytics NuGet, verify your bindings against the 4.2.4 API surface before upgrading dependent tooling.</div>
+        <div class="callout-body">The Analytics package .NET 10 update (PR #16940) completes the platform-compatibility chain for this release. If you have integrations consuming the DynamoVisualProgramming.Analytics NuGet, verify your bindings against the new API surface before upgrading dependent tooling.</div>
       </div>
     </div>
   </div>
 
-  <!-- ══ PAGE 12: VERDICT (DARK) ══ -->
+  <!-- ══ PAGE 14: VERDICT (DARK) ══ -->
   <div class="page dark verdict-page">
-    <div class="verdict-kicker">Dynamo Dispatch · Editorial Verdict</div>
-    <div class="verdict-headline">A Release That Cleans Its Own House</div>
+    <div class="verdict-kicker">Editorial Verdict · Dynamo 4.1.0</div>
+    <div class="verdict-headline">The Release That Fixed What You Stopped Noticing</div>
     <div class="verdict-body">
-      4.1.0 is a dense, practical release. The pin bug sweep finally closes a long-running reliability gap that affected every serious graph author. The geometry marshaling fix is a sleeper performance win that could meaningfully speed up geometry-heavy workflows. The AI agent skills section signals a genuine investment in developer tooling — fourteen PRs to build a canonical, CI-validated skill directory is not a side project. Templates are now first-class citizens on the start page. PythonNet3 is unambiguously the baseline. This is not a glamorous release. It is a foundation release — one that makes the next big thing possible.
+      Dynamo 4.1.0 is a release for the long-term user. The features aren't dramatic — they're completions of things that were almost right but not quite: the Extensions menu in the correct place, Home/End keys on the canvas, Watch node connections that survive deletion, template cards that show what's inside them. Twenty-six bugs were fixed, more than half touching the connector pin system that has been a persistent friction point for years. The geometry performance fix is the standout surprise: a single hash function change eliminates severe slowdowns on geometry-heavy graphs, with zero collisions after the fix. PythonNet3 is quietly declared the baseline. The AI tooling section is unusual for a release notes page — it signals that the Dynamo team is building with AI-native workflows in mind, not just shipping features to end users.
     </div>
-    <div class="verdict-stamp">Upgrade: Immediately</div>
+    <div class="verdict-stamp">Upgrade — Stability and Performance Gains Justify It</div>
   </div>
 
-  <!-- ══ PAGE 13: BACK COVER (DARK) ══ -->
+  <!-- ══ PAGE 15: BACK COVER (DARK) ══ -->
   <div class="page dark back-cover">
-    <div class="back-cover-rule"></div>
     <img src="../assets/dynamo-logo.png" alt="Dynamo" class="back-cover-logo">
-    <div class="back-cover-title">Dynamo Dispatch</div>
-    <div class="back-cover-sub">Issue 4.1.0 · April 2026</div>
     <div class="back-cover-rule"></div>
+    <div class="back-cover-title">Dynamo Dispatch</div>
+    <div class="back-cover-sub">Issue 04 · April 2026</div>
   </div>
 
-</div><!-- #track -->
+</div><!-- /track -->
 
+<!-- Dot nav -->
 <div id="dots"></div>
-<div id="arrow-left"  class="arrow-hint">←</div>
-<div id="arrow-right" class="arrow-hint">→</div>
+<!-- Arrow hints -->
+<div class="arrow-hint" id="arrow-left">←</div>
+<div class="arrow-hint" id="arrow-right">→</div>
 
 <script>
-  const TOTAL = 13;
-  const LIGHT_PAGES = new Set([1, 3, 5, 7, 9]);
+(function(){
+  const TOTAL = 15;
+  const LIGHT_PAGES = new Set([1, 3, 5, 7, 9, 11]);
 
-  let current = 0;
-  const track  = document.getElementById('track');
+  let cur = 0;
+  const track = document.getElementById('track');
   const dotsEl = document.getElementById('dots');
   const arrowL = document.getElementById('arrow-left');
   const arrowR = document.getElementById('arrow-right');
 
+  // Build dots
   for (let i = 0; i < TOTAL; i++) {
-    const d = document.createElement('button');
+    const d = document.createElement('div');
     d.className = 'dot';
-    d.setAttribute('aria-label', `Page ${i + 1}`);
-    d.addEventListener('click', () => goTo(i));
+    d.addEventListener('click', () => go(i));
     dotsEl.appendChild(d);
   }
 
-  function goTo(n) {
-    current = Math.max(0, Math.min(n, TOTAL - 1));
-    track.style.transform = `translateX(${-current * 100}vw)`;
-    updateUI();
-  }
-  function navigate(dir) { goTo(current + dir); }
-
-  function updateUI() {
-    const isLight = LIGHT_PAGES.has(current);
-    const dotClass = isLight ? 'dark-dot' : '';
-    const arrowColor = isLight ? 'var(--ink)' : 'var(--paper)';
-    Array.from(dotsEl.children).forEach((d, i) => {
-      d.className = 'dot ' + dotClass + (i === current ? ' active' : '');
+  function go(n) {
+    cur = Math.max(0, Math.min(TOTAL - 1, n));
+    track.style.transform = `translateX(calc(-100vw * ${cur}))`;
+    const isLight = LIGHT_PAGES.has(cur);
+    document.querySelectorAll('.dot').forEach((d, i) => {
+      d.className = 'dot' + (isLight ? ' dark-dot' : '') + (i === cur ? ' active' : '');
     });
-    arrowL.style.color = arrowColor;
-    arrowR.style.color = arrowColor;
-    arrowL.style.display = current === 0 ? 'none' : 'block';
-    arrowR.style.display = current === TOTAL - 1 ? 'none' : 'block';
+    arrowL.style.color = isLight ? 'var(--ink)' : 'var(--paper)';
+    arrowR.style.color = isLight ? 'var(--ink)' : 'var(--paper)';
+    arrowL.style.display = cur === 0 ? 'none' : '';
+    arrowR.style.display = cur === TOTAL - 1 ? 'none' : '';
   }
 
+  arrowL.addEventListener('click', () => go(cur - 1));
+  arrowR.addEventListener('click', () => go(cur + 1));
   document.addEventListener('keydown', e => {
-    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') navigate(1);
-    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   navigate(-1);
+    if (e.key === 'ArrowRight') go(cur + 1);
+    if (e.key === 'ArrowLeft')  go(cur - 1);
   });
-
   let wheelLock = false;
   document.addEventListener('wheel', e => {
     if (wheelLock) return;
     wheelLock = true;
-    navigate(e.deltaY > 0 || e.deltaX > 0 ? 1 : -1);
-    setTimeout(() => wheelLock = false, 700);
+    setTimeout(() => wheelLock = false, 600);
+    if (e.deltaY > 0 || e.deltaX > 0) go(cur + 1);
+    else go(cur - 1);
   }, { passive: true });
-
-  let touchStartX = 0, touchStartY = 0;
-  document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; touchStartY = e.touches[0].clientY; }, { passive: true });
+  let tx = 0;
+  document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
   document.addEventListener('touchend', e => {
-    const dx = touchStartX - e.changedTouches[0].clientX;
-    const dy = Math.abs(touchStartY - e.changedTouches[0].clientY);
-    if (Math.abs(dx) > 50 && Math.abs(dx) > dy) navigate(dx > 0 ? 1 : -1);
-  }, { passive: true });
+    const dx = e.changedTouches[0].clientX - tx;
+    if (Math.abs(dx) > 50) go(dx < 0 ? cur + 1 : cur - 1);
+  });
 
-  updateUI();
+  go(0);
+})();
+</script>
 
-  // ── NODE NETWORK CANVAS (cover page) ──
-  (function () {
-    const canvas = document.getElementById('cover-canvas');
-    const ctx    = canvas.getContext('2d');
+<script>
+// ── COVER CANVAS — DYNAMO DISPATCH particle formation ──
+(function(){
+  const canvas = document.getElementById('cover-canvas');
+  const ctx    = canvas.getContext('2d');
 
-    const NODE_COUNT  = 1000;
-    const LINK_FORM   = 55;
-    const LINK_DRIFT  = 170;
-    const MOUSE_DIST  = 220;
-    const REPEL_DIST  = 90;
-    const BASE_SPEED  = 0.42;
-    const T_FLY       = 1500;
-    const T_HOLD      = 2400;
+  const NODE_COUNT = 1000;
+  const KEEP       = 250;
+  const LINK_FORM  = 55;
+  const LINK_DRIFT = 170;
+  const MOUSE_DIST = 220;
+  const REPEL_DIST = 90;
+  const BASE_SPEED = 0.42;
+  const T_FLY      = 1500;
+  const T_HOLD     = 2400;
 
-    let W, H, nodes = [];
-    let mouse = { x: -9999, y: -9999 };
-    let state = 'fly';
-    let stateStart = 0;
+  let W, H, nodes = [], phase = 'fly', phaseStart = 0, linkDist = LINK_FORM;
+  let mouseX = -9999, mouseY = -9999, onCover = true;
 
-    function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+  function resize() {
+    W = canvas.width  = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
+  }
+  window.addEventListener('resize', () => { resize(); if (nodes.length) sampleTargets(); });
 
-    function resize() {
-      W = canvas.width  = canvas.offsetWidth;
-      H = canvas.height = canvas.offsetHeight;
+  function sampleTargets() {
+    const off = document.createElement('canvas');
+    off.width = W; off.height = H;
+    const c = off.getContext('2d');
+    c.fillStyle = '#000';
+    c.fillRect(0, 0, W, H);
+
+    const sz1 = H * 0.30, sz2 = H * 0.20, gap = H * 0.03;
+    c.fillStyle = '#fff';
+    c.textAlign  = 'center';
+    c.textBaseline = 'alphabetic';
+    c.font = `400 ${sz1}px "Open Sans"`;
+    const y1 = H * 0.5 - gap / 2;
+    c.fillText('DYNAMO', W / 2, y1);
+    c.font = `400 ${sz2}px "Open Sans"`;
+    const y2 = y1 + gap + sz2 * 0.8;
+    c.fillText('DISPATCH', W / 2, y2);
+
+    const px = c.getImageData(0, 0, W, H).data;
+    const pts = [];
+    const step = 4;
+    for (let y = 0; y < H; y += step)
+      for (let x = 0; x < W; x += step)
+        if (px[(y * W + x) * 4] > 120) pts.push([x, y]);
+
+    // shuffle
+    for (let i = pts.length - 1; i > 0; i--) {
+      const j = Math.random() * (i + 1) | 0;
+      [pts[i], pts[j]] = [pts[j], pts[i]];
     }
-
-    function sampleText() {
-      const off = document.createElement('canvas');
-      off.width = W; off.height = H;
-      const oc = off.getContext('2d');
-      oc.fillStyle = '#fff';
-
-      const sz1 = Math.floor(H * 0.30);
-      const sz2 = Math.floor(H * 0.20);
-      const gap  = H * 0.03;
-      const totalH = sz1 + gap + sz2;
-
-      oc.font = `400 ${sz1}px 'Open Sans', sans-serif`;
-      oc.textAlign = 'center';
-      oc.textBaseline = 'top';
-      oc.fillText('DYNAMO', W / 2, H / 2 - totalH / 2);
-
-      oc.font = `400 ${sz2}px 'Open Sans', sans-serif`;
-      oc.fillText('DISPATCH', W / 2, H / 2 - totalH / 2 + sz1 + gap);
-
-      const px = oc.getImageData(0, 0, W, H).data;
-      const pts = [];
-      const step = 4;
-      for (let y = step; y < H - step; y += step)
-        for (let x = step; x < W - step; x += step)
-          if (px[(y * W + x) * 4 + 3] > 120) pts.push([x, y]);
-      return pts;
-    }
-
-    function init() {
-      resize();
-      const pts = sampleText();
-      for (let i = pts.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [pts[i], pts[j]] = [pts[j], pts[i]];
-      }
-      nodes = [];
-      for (let i = 0; i < NODE_COUNT; i++) {
-        const [tx, ty] = pts[i % pts.length];
-        const a = Math.random() * Math.PI * 2;
-        const s = BASE_SPEED * (0.6 + Math.random() * 0.8);
-        nodes.push({ sx: Math.random() * W, sy: Math.random() * H, tx, ty, x: 0, y: 0, vx: Math.cos(a) * s, vy: Math.sin(a) * s, r: 1.8 + Math.random() * 1.5, alpha: 1, dieAt: Infinity });
-      }
-      state = 'fly';
-      stateStart = Date.now();
-    }
-
-    function tick() {
-      if (current !== 0) { requestAnimationFrame(tick); return; }
-      ctx.clearRect(0, 0, W, H);
-
-      const elapsed = Date.now() - stateStart;
-      const isDrift = state === 'drift';
-      let linkDist  = isDrift ? LINK_FORM + (LINK_DRIFT - LINK_FORM) * Math.min(elapsed / 1800, 1) : LINK_FORM;
-
-      if (state === 'fly') {
-        const t = easeOut(Math.min(elapsed / T_FLY, 1));
-        for (const n of nodes) { n.x = n.sx + (n.tx - n.sx) * t; n.y = n.sy + (n.ty - n.sy) * t; }
-        if (elapsed >= T_FLY) { state = 'hold'; stateStart = Date.now(); }
-
-      } else if (state === 'hold') {
-        for (const n of nodes) { n.x = n.tx + (Math.random() - 0.5) * 1.2; n.y = n.ty + (Math.random() - 0.5) * 1.2; }
-        if (elapsed >= T_HOLD) {
-          for (const n of nodes) { n.x = n.tx; n.y = n.ty; }
-          const now = Date.now();
-          nodes.forEach((n, i) => { if (i >= 250) n.dieAt = now + Math.random() * 700; });
-          state = 'drift'; stateStart = Date.now();
-        }
-
-      } else {
-        const now = Date.now();
-        for (const n of nodes) {
-          n.x += n.vx; n.y += n.vy;
-          if (n.x < 0 || n.x > W) n.vx *= -1;
-          if (n.y < 0 || n.y > H) n.vy *= -1;
-          const dx = n.x - mouse.x, dy = n.y - mouse.y;
-          const d2 = dx*dx + dy*dy;
-          if (d2 < REPEL_DIST * REPEL_DIST && d2 > 0.25) {
-            const d = Math.sqrt(d2);
-            const f = (REPEL_DIST - d) / REPEL_DIST * 0.25;
-            n.vx += (dx/d)*f; n.vy += (dy/d)*f;
-            const spd = Math.sqrt(n.vx*n.vx + n.vy*n.vy);
-            if (spd > 2.2) { n.vx = n.vx/spd*2.2; n.vy = n.vy/spd*2.2; }
-          }
-          if (now > n.dieAt) n.alpha = Math.max(0, n.alpha - 0.025);
-        }
-        nodes = nodes.filter(n => n.alpha > 0);
-      }
-
-      // Spatial grid connections (skip during fly-in)
-      if (state !== 'fly') {
-        const cs    = linkDist;
-        const gcols = Math.ceil(W / cs) + 1;
-        const grows = Math.ceil(H / cs) + 1;
-        const cells = Array.from({ length: gcols * grows }, () => []);
-        for (const n of nodes) {
-          const cx = Math.min((n.x / cs) | 0, gcols - 1);
-          const cy = Math.min((n.y / cs) | 0, grows - 1);
-          cells[cy * gcols + cx].push(n);
-        }
-        const ld2 = cs * cs;
-        const lw  = isDrift ? 0.7 : 1.1;
-        const ba  = isDrift ? 0.22 : 0.62;
-        const fwd = [[1,0],[-1,1],[0,1],[1,1]];
-        for (let cy = 0; cy < grows; cy++) {
-          for (let cx = 0; cx < gcols; cx++) {
-            const cell = cells[cy * gcols + cx];
-            if (!cell.length) continue;
-            for (let a = 0; a < cell.length; a++) {
-              for (let b = a + 1; b < cell.length; b++) {
-                const dx = cell[a].x - cell[b].x, dy = cell[a].y - cell[b].y;
-                const d2 = dx*dx + dy*dy;
-                if (d2 < ld2) {
-                  const d = Math.sqrt(d2);
-                  ctx.strokeStyle = `rgba(245,242,237,${(1-d/cs)*ba*cell[a].alpha*cell[b].alpha})`;
-                  ctx.lineWidth = lw;
-                  ctx.beginPath(); ctx.moveTo(cell[a].x, cell[a].y); ctx.lineTo(cell[b].x, cell[b].y); ctx.stroke();
-                }
-              }
-            }
-            for (const [dcx, dcy] of fwd) {
-              const nx = cx + dcx, ny = cy + dcy;
-              if (nx < 0 || nx >= gcols || ny >= grows) continue;
-              const nb = cells[ny * gcols + nx];
-              for (const na of cell) {
-                for (const mb of nb) {
-                  const dx = na.x - mb.x, dy = na.y - mb.y;
-                  const d2 = dx*dx + dy*dy;
-                  if (d2 < ld2) {
-                    const d = Math.sqrt(d2);
-                    ctx.strokeStyle = `rgba(245,242,237,${(1-d/cs)*ba*na.alpha*mb.alpha})`;
-                    ctx.lineWidth = lw;
-                    ctx.beginPath(); ctx.moveTo(na.x, na.y); ctx.lineTo(mb.x, mb.y); ctx.stroke();
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-
-      // Mouse connections (drift only)
-      if (isDrift && mouse.x > -100) {
-        const md2 = MOUSE_DIST * MOUSE_DIST;
-        for (const n of nodes) {
-          const dx = n.x - mouse.x, dy = n.y - mouse.y;
-          const d2 = dx*dx + dy*dy;
-          if (d2 < md2) {
-            const d = Math.sqrt(d2);
-            ctx.strokeStyle = `rgba(245,242,237,${(1 - d/MOUSE_DIST) * 0.65})`;
-            ctx.lineWidth = 1;
-            ctx.beginPath(); ctx.moveTo(mouse.x, mouse.y); ctx.lineTo(n.x, n.y); ctx.stroke();
-          }
-        }
-        ctx.beginPath(); ctx.arc(mouse.x, mouse.y, 3.5, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(245,242,237,0.9)'; ctx.fill();
-      }
-
-      // Node dots
-      const nodeA = isDrift ? 0.45 : 0.9;
-      const rMul  = isDrift ? 1 : 1.5;
-      for (const n of nodes) {
-        ctx.beginPath();
-        ctx.arc(n.x, n.y, n.r * rMul, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(245,242,237,${nodeA * n.alpha})`;
-        ctx.fill();
-      }
-
-      requestAnimationFrame(tick);
-    }
-
-    const coverPage = canvas.closest('.cover-page');
-    coverPage.addEventListener('mousemove', e => {
-      const rect = canvas.getBoundingClientRect();
-      mouse.x = e.clientX - rect.left;
-      mouse.y = e.clientY - rect.top;
+    nodes.forEach((n, i) => {
+      if (i < pts.length) { n.tx = pts[i][0]; n.ty = pts[i][1]; }
+      else { n.tx = Math.random() * W; n.ty = Math.random() * H; }
     });
-    coverPage.addEventListener('mouseleave', () => { mouse.x = -9999; mouse.y = -9999; });
-    window.addEventListener('resize', init);
+  }
 
-    document.fonts.ready.then(() => { init(); tick(); });
+  function init() {
+    resize();
+    nodes = Array.from({ length: NODE_COUNT }, () => ({
+      sx: Math.random() * W * 1.8 - W * 0.4,
+      sy: Math.random() * H * 1.8 - H * 0.4,
+      tx: 0, ty: 0,
+      x: 0, y: 0,
+      vx: (Math.random() - 0.5) * BASE_SPEED,
+      vy: (Math.random() - 0.5) * BASE_SPEED,
+      r: 1.8 + Math.random() * 1.5,
+      alpha: 1,
+      dieAt: Infinity
+    }));
+    nodes.forEach(n => { n.x = n.sx; n.y = n.sy; });
+    sampleTargets();
+    phase = 'fly'; phaseStart = performance.now(); linkDist = LINK_FORM;
+  }
+
+  function buildGrid(active) {
+    const cs    = linkDist;
+    const gcols = Math.ceil(W / cs) + 1;
+    const grows = Math.ceil(H / cs) + 1;
+    const cells = Array.from({ length: gcols * grows }, () => []);
+    active.forEach(n => {
+      const ci = (n.x / cs | 0), ri = (n.y / cs | 0);
+      const idx = ri * gcols + ci;
+      if (idx >= 0 && idx < cells.length) cells[idx].push(n);
+    });
+    return { cells, gcols, grows, cs };
+  }
+
+  function drawConnections(active) {
+    const { cells, gcols, grows, cs } = buildGrid(active);
+    const fwd = [[1,0],[-1,1],[0,1],[1,1]];
+    const ld2 = linkDist * linkDist;
+    ctx.lineWidth = (phase === 'hold') ? 1.1 : 0.7;
+    for (let ri = 0; ri < grows; ri++) {
+      for (let ci = 0; ci < gcols; ci++) {
+        const cell = cells[ri * gcols + ci];
+        // same-cell pairs
+        for (let a = 0; a < cell.length; a++) {
+          for (let b = a + 1; b < cell.length; b++) {
+            const dx = cell[a].x - cell[b].x, dy = cell[a].y - cell[b].y;
+            if (dx*dx + dy*dy > ld2) continue;
+            const al = Math.min(cell[a].alpha, cell[b].alpha);
+            const base = (phase === 'hold') ? 0.62 : 0.22;
+            ctx.strokeStyle = `rgba(245,242,237,${base * al})`;
+            ctx.beginPath(); ctx.moveTo(cell[a].x, cell[a].y); ctx.lineTo(cell[b].x, cell[b].y); ctx.stroke();
+          }
+        }
+        // forward neighbours
+        fwd.forEach(([dc, dr]) => {
+          const nc = ci + dc, nr = ri + dr;
+          if (nc < 0 || nc >= gcols || nr < 0 || nr >= grows) return;
+          const ncell = cells[nr * gcols + nc];
+          cell.forEach(a => {
+            ncell.forEach(b => {
+              const dx = a.x - b.x, dy = a.y - b.y;
+              if (dx*dx + dy*dy > ld2) return;
+              const al = Math.min(a.alpha, b.alpha);
+              const base = (phase === 'hold') ? 0.62 : 0.22;
+              ctx.strokeStyle = `rgba(245,242,237,${base * al})`;
+              ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+            });
+          });
+        });
+      }
+    }
+  }
+
+  function tick(now) {
+    requestAnimationFrame(tick);
+    if (!onCover) { ctx.clearRect(0, 0, W, H); return; }
+    ctx.clearRect(0, 0, W, H);
+    if (!nodes.length) return;
+
+    const elapsed = now - phaseStart;
+
+    if (phase === 'fly') {
+      const t = Math.min(elapsed / T_FLY, 1);
+      const e = 1 - Math.pow(1 - t, 3);
+      nodes.forEach(n => {
+        n.x = n.sx + (n.tx - n.sx) * e;
+        n.y = n.sy + (n.ty - n.sy) * e;
+      });
+      if (t >= 1) { phase = 'hold'; phaseStart = now; }
+    } else if (phase === 'hold') {
+      nodes.forEach(n => {
+        n.x = n.tx + (Math.random() - 0.5) * 1.2;
+        n.y = n.ty + (Math.random() - 0.5) * 1.2;
+      });
+      if (elapsed >= T_HOLD) {
+        phase = 'drift'; phaseStart = now;
+        nodes.forEach((n, i) => {
+          if (i >= KEEP) n.dieAt = now + Math.random() * 700;
+        });
+      }
+    } else {
+      // drift
+      const driftElapsed = now - phaseStart;
+      const lerpT = Math.min(driftElapsed / 1800, 1);
+      linkDist = LINK_FORM + (LINK_DRIFT - LINK_FORM) * lerpT;
+
+      const dead = [];
+      nodes.forEach(n => {
+        if (now >= n.dieAt) { n.alpha -= 0.025; }
+        if (n.alpha <= 0) { dead.push(n); return; }
+        // repel from mouse
+        const dx = n.x - mouseX, dy = n.y - mouseY;
+        const d2 = dx*dx + dy*dy;
+        if (d2 < REPEL_DIST * REPEL_DIST && d2 > 0) {
+          const d = Math.sqrt(d2);
+          const f = (REPEL_DIST - d) / REPEL_DIST * 2;
+          n.vx += (dx / d) * f; n.vy += (dy / d) * f;
+        }
+        n.x += n.vx; n.y += n.vy;
+        if (n.x < 0 || n.x > W) n.vx *= -1;
+        if (n.y < 0 || n.y > H) n.vy *= -1;
+        n.x = Math.max(0, Math.min(W, n.x));
+        n.y = Math.max(0, Math.min(H, n.y));
+        // speed clamp
+        const sp = Math.sqrt(n.vx*n.vx + n.vy*n.vy);
+        if (sp > BASE_SPEED * 3) { n.vx *= BASE_SPEED * 3 / sp; n.vy *= BASE_SPEED * 3 / sp; }
+      });
+      dead.forEach(n => { const i = nodes.indexOf(n); if (i > -1) nodes.splice(i, 1); });
+
+      // mouse connections
+      if (mouseX > -9999) {
+        const md2 = MOUSE_DIST * MOUSE_DIST;
+        nodes.forEach(n => {
+          const dx = n.x - mouseX, dy = n.y - mouseY;
+          if (dx*dx + dy*dy < md2) {
+            ctx.strokeStyle = `rgba(245,242,237,${0.5 * n.alpha})`;
+            ctx.lineWidth = 0.8;
+            ctx.beginPath(); ctx.moveTo(mouseX, mouseY); ctx.lineTo(n.x, n.y); ctx.stroke();
+          }
+        });
+      }
+    }
+
+    // draw connections (skip during fly-in)
+    if (phase !== 'fly') drawConnections(nodes);
+
+    // draw nodes
+    nodes.forEach(n => {
+      const r = (phase === 'fly' || phase === 'hold') ? n.r * 1.5 : n.r;
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(245,242,237,${n.alpha})`;
+      ctx.fill();
+    });
+  }
+
+  // Track mouse / page
+  const coverPage = document.querySelector('.cover-page');
+  document.addEventListener('mousemove', e => {
+    if (!onCover) return;
+    const rect = canvas.getBoundingClientRect();
+    mouseX = e.clientX - rect.left;
+    mouseY = e.clientY - rect.top;
+  });
+  coverPage.addEventListener('mouseleave', () => { mouseX = -9999; mouseY = -9999; });
+
+  // Listen to page changes
+  document.getElementById('track').addEventListener('transitionend', () => {});
+  const origGo = window._go;
+  // Patch: detect current page via transform
+  const observer = new MutationObserver(() => {
+    const t = document.getElementById('track').style.transform;
+    const m = t.match(/translateX\(calc\(-100vw \* (\d+)\)\)/);
+    onCover = !m || m[1] === '0';
+    if (onCover && nodes.length === 0) {
+      document.fonts.ready.then(() => { init(); tick(performance.now()); });
+    }
+  });
+  observer.observe(document.getElementById('track'), { attributes: true, attributeFilter: ['style'] });
+
+  document.fonts.ready.then(() => { init(); tick(performance.now()); });
+})();
+</script>
+
+<script>
+  // Auto-linkify PR references: "PR #16754" and standalone "#16754"
+  (function() {
+    const BASE = 'https://github.com/DynamoDS/Dynamo/pull/';
+    const SCOPES = '.callout-body, .page-summary, .bullet-list, .pr-caption, .verdict-body';
+    const RE = /\b(PR\s+)?(#(\d{5,}))\b/g;
+
+    function linkify(node) {
+      if (node.nodeType === 3) {
+        if (!RE.test(node.textContent)) return;
+        RE.lastIndex = 0;
+        const frag = document.createDocumentFragment();
+        let last = 0, m;
+        while ((m = RE.exec(node.textContent)) !== null) {
+          if (m.index > last) frag.appendChild(document.createTextNode(node.textContent.slice(last, m.index)));
+          const a = document.createElement('a');
+          a.href = BASE + m[3];
+          a.target = '_blank';
+          a.rel = 'noopener';
+          a.className = 'pr-link';
+          a.textContent = m[0];
+          frag.appendChild(a);
+          last = m.index + m[0].length;
+        }
+        if (last < node.textContent.length) frag.appendChild(document.createTextNode(node.textContent.slice(last)));
+        node.parentNode.replaceChild(frag, node);
+      } else if (node.nodeType === 1 && !['SCRIPT','STYLE','A'].includes(node.tagName)) {
+        Array.from(node.childNodes).forEach(linkify);
+      }
+    }
+
+    document.querySelectorAll(SCOPES).forEach(linkify);
   })();
 </script>
 </body>
