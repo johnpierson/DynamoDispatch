@@ -6,7 +6,7 @@
   <title>Dynamo Dispatch — Release 4.1.0</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,700;0,900;1,400;1,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=Open+Sans:wght@400&family=Playfair+Display:ital,wght@0,700;0,900;1,400;1,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&display=swap" rel="stylesheet">
   <style>
     :root {
       --ink:   #0a0a0a;
@@ -823,77 +823,212 @@
   // ── NODE NETWORK CANVAS (cover page) ──
   (function () {
     const canvas = document.getElementById('cover-canvas');
-    const ctx = canvas.getContext('2d');
-    const NODE_COUNT = 60;
-    const LINK_DIST    = 170;
-    const MOUSE_DIST   = 220;
-    const REPEL_DIST   = 90;
-    const BASE_SPEED   = 0.45;
+    const ctx    = canvas.getContext('2d');
 
-    let W, H;
+    const NODE_COUNT  = 1000;
+    const LINK_FORM   = 55;    // tight during text — traces letter strokes
+    const LINK_DRIFT  = 170;   // wide during ambient network
+    const MOUSE_DIST  = 220;
+    const REPEL_DIST  = 90;
+    const BASE_SPEED  = 0.42;
+    const T_FLY       = 1500;  // ms to fly into text
+    const T_HOLD      = 2400;  // ms to hold text formation
+
+    let W, H, nodes = [];
     let mouse = { x: -9999, y: -9999 };
-    let nodes = [];
+    let state = 'fly';          // 'fly' | 'hold' | 'drift'
+    let stateStart = 0;
+
+    function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
 
     function resize() {
       W = canvas.width  = canvas.offsetWidth;
       H = canvas.height = canvas.offsetHeight;
     }
 
-    function makeNode() {
-      const a = Math.random() * Math.PI * 2;
-      const s = BASE_SPEED * (0.5 + Math.random());
-      return { x: Math.random() * W, y: Math.random() * H,
-               vx: Math.cos(a) * s, vy: Math.sin(a) * s,
-               r: 1.8 + Math.random() * 1.4 };
+    // Render text to offscreen canvas and sample filled pixel positions
+    function sampleText() {
+      const off = document.createElement('canvas');
+      off.width = W; off.height = H;
+      const oc = off.getContext('2d');
+      oc.fillStyle = '#fff';
+
+      const sz1 = Math.floor(H * 0.30);
+      const sz2 = Math.floor(H * 0.20);
+      const gap  = H * 0.03;
+      const totalH = sz1 + gap + sz2;
+
+      oc.font = `400 ${sz1}px 'Open Sans', sans-serif`;
+      oc.textAlign = 'center';
+      oc.textBaseline = 'top';
+      oc.fillText('DYNAMO', W / 2, H / 2 - totalH / 2);
+
+      oc.font = `400 ${sz2}px 'Open Sans', sans-serif`;
+      oc.fillText('DISPATCH', W / 2, H / 2 - totalH / 2 + sz1 + gap);
+
+      const px = oc.getImageData(0, 0, W, H).data;
+      const pts = [];
+      const step = 4;
+      for (let y = step; y < H - step; y += step)
+        for (let x = step; x < W - step; x += step)
+          if (px[(y * W + x) * 4 + 3] > 120) pts.push([x, y]);
+      return pts;
     }
 
-    function init() { resize(); nodes = Array.from({ length: NODE_COUNT }, makeNode); }
+    function init() {
+      resize();
+      const pts = sampleText();
 
-    function tick() {
-      // Pause rendering when not on cover — saves CPU
-      if (current !== 0) { requestAnimationFrame(tick); return; }
-
-      ctx.clearRect(0, 0, W, H);
-
-      // Update positions + mouse repulsion
-      for (const n of nodes) {
-        n.x += n.vx;  n.y += n.vy;
-        if (n.x < 0 || n.x > W) n.vx *= -1;
-        if (n.y < 0 || n.y > H) n.vy *= -1;
-
-        const dx = n.x - mouse.x, dy = n.y - mouse.y;
-        const d  = Math.sqrt(dx * dx + dy * dy);
-        if (d < REPEL_DIST && d > 0.5) {
-          const f  = (REPEL_DIST - d) / REPEL_DIST * 0.25;
-          n.vx += (dx / d) * f;  n.vy += (dy / d) * f;
-          const spd = Math.sqrt(n.vx * n.vx + n.vy * n.vy);
-          if (spd > 2.2) { n.vx = n.vx / spd * 2.2; n.vy = n.vy / spd * 2.2; }
-        }
+      // Fisher-Yates shuffle
+      for (let i = pts.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [pts[i], pts[j]] = [pts[j], pts[i]];
       }
 
-      // Node–node connections
-      for (let i = 0; i < nodes.length; i++) {
-        for (let j = i + 1; j < nodes.length; j++) {
-          const dx = nodes[i].x - nodes[j].x, dy = nodes[i].y - nodes[j].y;
-          const d  = Math.sqrt(dx * dx + dy * dy);
-          if (d < LINK_DIST) {
-            ctx.strokeStyle = `rgba(245,242,237,${(1 - d / LINK_DIST) * 0.22})`;
-            ctx.lineWidth = 0.7;
-            ctx.beginPath();
-            ctx.moveTo(nodes[i].x, nodes[i].y);
-            ctx.lineTo(nodes[j].x, nodes[j].y);
-            ctx.stroke();
+      nodes = [];
+      for (let i = 0; i < NODE_COUNT; i++) {
+        const [tx, ty] = pts[i % pts.length];
+        const a = Math.random() * Math.PI * 2;
+        const s = BASE_SPEED * (0.6 + Math.random() * 0.8);
+        nodes.push({
+          sx: Math.random() * W,  // random start position
+          sy: Math.random() * H,
+          tx, ty,                  // text target
+          x: 0, y: 0,
+          vx: Math.cos(a) * s,
+          vy: Math.sin(a) * s,
+          r: 1.8 + Math.random() * 1.5,
+          alpha: 1, dieAt: Infinity
+        });
+      }
+      state = 'fly';
+      stateStart = Date.now();
+    }
+
+    function tick() {
+      if (current !== 0) { requestAnimationFrame(tick); return; }
+      ctx.clearRect(0, 0, W, H);
+
+      const elapsed  = Date.now() - stateStart;
+      const isDrift  = state === 'drift';
+
+      let   linkDist = isDrift
+        ? LINK_FORM + (LINK_DRIFT - LINK_FORM) * Math.min(elapsed / 1800, 1)
+        : LINK_FORM;
+
+      // ── Update node positions ──
+      if (state === 'fly') {
+        const t = easeOut(Math.min(elapsed / T_FLY, 1));
+        for (const n of nodes) {
+          n.x = n.sx + (n.tx - n.sx) * t;
+          n.y = n.sy + (n.ty - n.sy) * t;
+        }
+        if (elapsed >= T_FLY) { state = 'hold'; stateStart = Date.now(); }
+
+      } else if (state === 'hold') {
+        for (const n of nodes) {
+          n.x = n.tx + (Math.random() - 0.5) * 1.2;
+          n.y = n.ty + (Math.random() - 0.5) * 1.2;
+        }
+        if (elapsed >= T_HOLD) {
+          for (const n of nodes) { n.x = n.tx; n.y = n.ty; }
+          // Stagger fade-out of excess nodes over 700ms instead of hard-cutting
+          const now = Date.now();
+          nodes.forEach((n, i) => {
+            if (i >= 250) n.dieAt = now + Math.random() * 700;
+          });
+          state = 'drift'; stateStart = Date.now();
+        }
+
+      } else { // drift
+        const now = Date.now();
+        for (const n of nodes) {
+          n.x += n.vx; n.y += n.vy;
+          if (n.x < 0 || n.x > W) n.vx *= -1;
+          if (n.y < 0 || n.y > H) n.vy *= -1;
+          const dx = n.x - mouse.x, dy = n.y - mouse.y;
+          const d2 = dx*dx + dy*dy;
+          if (d2 < REPEL_DIST * REPEL_DIST && d2 > 0.25) {
+            const d = Math.sqrt(d2);
+            const f = (REPEL_DIST - d) / REPEL_DIST * 0.25;
+            n.vx += (dx/d)*f; n.vy += (dy/d)*f;
+            const spd = Math.sqrt(n.vx*n.vx + n.vy*n.vy);
+            if (spd > 2.2) { n.vx = n.vx/spd*2.2; n.vy = n.vy/spd*2.2; }
+          }
+          // Fade out dying nodes
+          if (now > n.dieAt) n.alpha = Math.max(0, n.alpha - 0.025);
+        }
+        // Prune fully faded nodes
+        nodes = nodes.filter(n => n.alpha > 0);
+      }
+
+      // ── Node–node connections (spatial grid — O(n) instead of O(n²)) ──
+      // Skip during fly-in: nodes are scattered so few lines fire anyway
+      if (state !== 'fly') {
+        const cs    = linkDist;                          // cell size = link distance
+        const gcols = Math.ceil(W / cs) + 1;
+        const grows = Math.ceil(H / cs) + 1;
+        const cells = Array.from({ length: gcols * grows }, () => []);
+        for (const n of nodes) {
+          const cx = Math.min((n.x / cs) | 0, gcols - 1);
+          const cy = Math.min((n.y / cs) | 0, grows - 1);
+          cells[cy * gcols + cx].push(n);
+        }
+        const ld2 = cs * cs;
+        const lw  = isDrift ? 0.7 : 1.1;
+        const ba  = isDrift ? 0.22 : 0.62;
+        // Only check forward neighbours — covers all unique pairs without duplicates
+        const fwd = [[1,0],[-1,1],[0,1],[1,1]];
+        for (let cy = 0; cy < grows; cy++) {
+          for (let cx = 0; cx < gcols; cx++) {
+            const cell = cells[cy * gcols + cx];
+            if (!cell.length) continue;
+            // Same-cell pairs
+            for (let a = 0; a < cell.length; a++) {
+              for (let b = a + 1; b < cell.length; b++) {
+                const dx = cell[a].x - cell[b].x, dy = cell[a].y - cell[b].y;
+                const d2 = dx*dx + dy*dy;
+                if (d2 < ld2) {
+                  const d = Math.sqrt(d2);
+                  ctx.strokeStyle = `rgba(245,242,237,${(1-d/cs)*ba*cell[a].alpha*cell[b].alpha})`;
+                  ctx.lineWidth = lw;
+                  ctx.beginPath(); ctx.moveTo(cell[a].x, cell[a].y);
+                  ctx.lineTo(cell[b].x, cell[b].y); ctx.stroke();
+                }
+              }
+            }
+            // Cross-cell pairs
+            for (const [dcx, dcy] of fwd) {
+              const nx = cx + dcx, ny = cy + dcy;
+              if (nx < 0 || nx >= gcols || ny >= grows) continue;
+              const nb = cells[ny * gcols + nx];
+              for (const na of cell) {
+                for (const mb of nb) {
+                  const dx = na.x - mb.x, dy = na.y - mb.y;
+                  const d2 = dx*dx + dy*dy;
+                  if (d2 < ld2) {
+                    const d = Math.sqrt(d2);
+                    ctx.strokeStyle = `rgba(245,242,237,${(1-d/cs)*ba*na.alpha*mb.alpha})`;
+                    ctx.lineWidth = lw;
+                    ctx.beginPath(); ctx.moveTo(na.x, na.y);
+                    ctx.lineTo(mb.x, mb.y); ctx.stroke();
+                  }
+                }
+              }
+            }
           }
         }
       }
 
-      // Mouse–node connections
-      if (mouse.x > -100) {
+      // ── Mouse connections (drift only) ──
+      if (isDrift && mouse.x > -100) {
+        const md2 = MOUSE_DIST * MOUSE_DIST;
         for (const n of nodes) {
           const dx = n.x - mouse.x, dy = n.y - mouse.y;
-          const d  = Math.sqrt(dx * dx + dy * dy);
-          if (d < MOUSE_DIST) {
-            ctx.strokeStyle = `rgba(245,242,237,${(1 - d / MOUSE_DIST) * 0.65})`;
+          const d2 = dx*dx + dy*dy;
+          if (d2 < md2) {
+            const d = Math.sqrt(d2);
+            ctx.strokeStyle = `rgba(245,242,237,${(1 - d/MOUSE_DIST) * 0.65})`;
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(mouse.x, mouse.y);
@@ -901,25 +1036,26 @@
             ctx.stroke();
           }
         }
-        // Mouse node dot
         ctx.beginPath();
         ctx.arc(mouse.x, mouse.y, 3.5, 0, Math.PI * 2);
         ctx.fillStyle = 'rgba(245,242,237,0.9)';
         ctx.fill();
       }
 
-      // Regular node dots
+      // ── Node dots ──
+      const nodeA = isDrift ? 0.45 : 0.9;
+      const rMul  = isDrift ? 1 : 1.5;
       for (const n of nodes) {
         ctx.beginPath();
-        ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(245,242,237,0.45)';
+        ctx.arc(n.x, n.y, n.r * rMul, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(245,242,237,${nodeA * n.alpha})`;
         ctx.fill();
       }
 
       requestAnimationFrame(tick);
     }
 
-    // Track mouse only when hovering the cover page
+    // Mouse tracking
     const coverPage = canvas.closest('.cover-page');
     coverPage.addEventListener('mousemove', e => {
       const rect = canvas.getBoundingClientRect();
@@ -927,10 +1063,10 @@
       mouse.y = e.clientY - rect.top;
     });
     coverPage.addEventListener('mouseleave', () => { mouse.x = -9999; mouse.y = -9999; });
-
     window.addEventListener('resize', init);
-    init();
-    tick();
+
+    // Wait for fonts before sampling text pixels
+    document.fonts.ready.then(() => { init(); tick(); });
   })();
 </script>
 </body>

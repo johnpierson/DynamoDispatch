@@ -250,6 +250,26 @@ Generate a single self-contained HTML file as a **14-page horizontal-swipe edito
 - Version number in IBM Plex Mono, 4vw
 - Tagline (release headline) in Source Serif italic, 2vw
 - Date + issue metadata in IBM Plex Mono, bottom-left, small
+- **Full-bleed interactive canvas behind all content** (`position: absolute; inset: 0; pointer-events: none`). Add `position: relative` to the cover page div; wrap all cover text content in a `<div style="position:relative;z-index:1;">`.
+
+**Cover canvas animation — "DYNAMO DISPATCH" particle formation:**
+
+Include `family=Open+Sans:wght@400` in the Google Fonts link.
+
+The canvas animates through three phases:
+1. **Fly-in (1.5s):** 1000 nodes scatter in from random positions and ease into pixel positions sampled from "DYNAMO DISPATCH" rendered in Open Sans 400 on an offscreen canvas. Font sizes: `H * 0.30` for "DYNAMO", `H * 0.20` for "DISPATCH", gap `H * 0.03`. Sample step: 4px, alpha threshold: 120. Connection distance during formation: 55px. Node radius × 1.5 during formation.
+2. **Hold (2.4s):** nodes hold their letter positions with 1.2px jitter. Connections bright (alpha 0.62, lineWidth 1.1).
+3. **Scatter → drift:** nodes beyond index 250 get staggered `dieAt` timestamps (random within 700ms) and fade out via `n.alpha -= 0.025` per frame until pruned. Remaining 250 nodes drift freely, bouncing off walls. Mouse on cover page repels nearby nodes (90px radius) and draws bright connection lines to nodes within 220px. Drift connections: 170px distance, alpha 0.22, lineWidth 0.7. Connection distance expands from 55 → 170px over 1800ms.
+
+**Use a spatial grid for connection drawing** (cell size = linkDist) — only check same-cell and 4 forward-neighbour cells `[1,0],[-1,1],[0,1],[1,1]`. Skip connection drawing entirely during fly-in. This keeps the loop O(n) instead of O(n²).
+
+Each node shape: `{ sx, sy, tx, ty, x, y, vx, vy, r: 1.8–3.3, alpha: 1, dieAt: Infinity }`.
+
+Use `document.fonts.ready.then(() => { init(); tick(); })` to ensure Open Sans is loaded before sampling text pixels.
+
+Pause rendering (`requestAnimationFrame` still fires but clears and returns) when not on page 0.
+
+Node colour throughout: `rgba(245,242,237, …)` (matches `--paper`).
 
 **Pages 2–13 — Content pages (one per release section):**
 Map each section of the release notes to one page. If the release has fewer than 12 sections, add a Verdict page and pad with a merged "Under the Hood" summary page if needed. Do not add a Watch-Outs page. If more than 12 sections, group minor ones together.
