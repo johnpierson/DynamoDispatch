@@ -118,7 +118,7 @@ Each content page uses a **55/45 split layout** (flex row, full bleed):
 *Right column (45%):* `height: 100vh; max-height: 100vh; min-height: 0; overflow: hidden;` padding `4vw 6vw 5vh 4vw`. Same `min-height: 0` rule applies.
 - Key stat — Playfair Display, **6.5vw minimum**. Prefer outcome-based stats over raw counts. Stat label: IBM Plex Mono, 12px, caps.
 - Tech/stack tag — IBM Plex Mono pill (border, no fill). Show where the work happened (e.g. `CLR · Dispatcher · LibG`).
-- PR image (if available, filtered grayscale, no border-radius, no shadow, `width: 100%`, `max-height: 28vh`, `object-fit: cover`)
+- PR image (if available, no filter, no border-radius, no shadow, `width: 100%`, `max-height: 28vh`, `object-fit: cover`)
 - `<figcaption>` in IBM Plex Mono 11px below image
 - **Callout box** — background: 5% tint of text color; 4px solid left border (full text color); padding 20px 24px; `margin-top: auto`:
   - Label: `IBM Plex Mono 11px caps` — "WHAT THIS MEANS FOR YOU"
@@ -146,7 +146,7 @@ Each content page uses a **55/45 split layout** (flex row, full bleed):
 - High contrast on dark pages. Body text opacity 0.85 minimum. Callout body 0.8 minimum.
 - Nothing overlapping. `margin-bottom` between every element. `padding-bottom: 5vh` on content columns.
 - Full-bleed edge-to-edge. No floating cards. No padding boxes around content areas.
-- All PR images: `filter: grayscale(100%) contrast(1.1)` to match e-ink aesthetic.
+- All PR images: no filter — display in full color.
 - **PR references are always clickable links.** Do not manually wrap them in the HTML — instead include the auto-linkifier script below just before `</body>`. It finds every `PR #NNNNN` and `#NNNNN` pattern in `.callout-body`, `.page-summary`, `.bullet-list`, `.pr-caption`, and `.verdict-body` and wraps them in `<a class="pr-link">` tags pointing to `https://github.com/DynamoDS/Dynamo/pull/NNNNN`.
 
 ```css
