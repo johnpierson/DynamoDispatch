@@ -44,18 +44,19 @@
     .cover-meta { font-family: 'IBM Plex Mono', monospace; font-size: clamp(10px, 0.85vw, 13px); letter-spacing: 0.12em; opacity: 0.35; }
 
     /* ── CONTENT PAGES ── */
-    .content-page { flex-direction: row; }
+    .content-page { flex-direction: row; overflow: hidden; }
     .col-left {
-      width: 55%; height: 100%;
+      width: 55%; height: 100vh; max-height: 100vh; min-height: 0;
       padding: 4vw 3vw 5vh 6vw;
-      display: flex; flex-direction: column;
+      display: flex; flex-direction: column; justify-content: center;
       position: relative; overflow: hidden;
     }
     .col-right {
-      width: 45%; height: 100%;
+      width: 45%; height: 100vh; max-height: 100vh; min-height: 0;
       padding: 4vw 6vw 5vh 4vw;
       display: flex; flex-direction: column;
       border-left: 1px solid currentColor;
+      overflow: hidden;
     }
     .dark  .col-right { border-left-color: rgba(245,242,237,0.12); }
     .light .col-right { border-left-color: rgba(10,10,10,0.12); }
@@ -86,17 +87,10 @@
     }
     .page-summary {
       font-family: 'Source Serif 4', serif; font-size: max(15px, 1.3vw);
-      line-height: 1.55; opacity: 0.85; margin-bottom: 1.5vh;
+      line-height: 1.6; opacity: 0.85;
       position: relative; z-index: 1;
-      flex-shrink: 0;
+      overflow: hidden;
     }
-    .bullet-list {
-      font-family: 'Source Serif 4', serif; font-size: max(14px, 1.1vw);
-      line-height: 1.65; opacity: 0.85; padding-left: 1.2em;
-      position: relative; z-index: 1;
-      flex: 1; min-height: 0; overflow: hidden;
-    }
-    .bullet-list li { margin-bottom: 0.25em; }
 
     /* Right column elements */
     .big-stat {
@@ -120,7 +114,7 @@
     }
     .pr-image {
       width: 100%; max-height: 28vh; object-fit: cover;
-      filter: grayscale(100%) contrast(1.1); margin-bottom: 1vh;
+      margin-bottom: 1vh;
       flex-shrink: 0;
     }
     .pr-caption {
@@ -225,18 +219,6 @@
       <h2 class="page-headline">The Controls Are Finally Where You Left Them</h2>
       <div class="section-path">Features</div>
       <p class="page-summary">Dynamo's workspace and sidebar have historically been places where menus and panels appeared when called and disappeared when dismissed, with no memory of where you were. This release wires up the Extensions panel to remember its minimized state, promotes the Extensions menu to sit alongside every other top menu, and adds two keyboard shortcuts that jump straight to the canvas edges. Small changes to familiar controls, each closing a gap users had been routing around.</p>
-      <ul class="bullet-list">
-        <li>Extensions panel didn't auto-open when activating a minimized extension — now auto-expands</li>
-        <li>Home/End keys had no function on the canvas — now jump to canvas extremes</li>
-        <li>Extensions menu lived in a submenu, separated from Help — now promoted to top menu bar</li>
-        <li>Deleting inline Watch nodes left dangling ports — upstream and downstream connections now preserved</li>
-        <li>Documentation Browser tracked nodes manually — new AutoSync setting follows selection automatically</li>
-        <li>Online status indicator now visible in the bottom status bar</li>
-        <li>Autodesk badge marks DynamoTeam-maintained packages in search results</li>
-        <li>Notification flag for unsafe path prompts is now configurable</li>
-        <li>Sidebar button auto-expansion wired up</li>
-        <li>All view extensions now close when the Interactive Tour starts</li>
-      </ul>
     </div>
     <div class="col-right">
       <div class="big-stat">21</div>
@@ -259,16 +241,6 @@
       <h2 class="page-headline">The API Catches Up to How Libraries Actually Work</h2>
       <div class="section-path">Features</div>
       <p class="page-summary">When third-party developers publish Dynamo nodes, they often need to declare what category their nodes belong to. But the attribute controlling this — NodeCategoryAttribute — lived in DynamoCore, forcing an unnecessary tight dependency on a heavy package. This release type-forwards it to DynamoServices. ActionGroupDisposable is also now nestable, so complex multi-step operations can compose their undo groups without conflicts. And the DYN file format gets its first machine-readable specification.</p>
-      <ul class="bullet-list">
-        <li>NodeCategoryAttribute lived in DynamoCore → type-forwarded to DynamoServices, dropping a hard dependency for external node packages</li>
-        <li>ActionGroupDisposable wasn't nestable → now composable, enabling grouped undo-redo across complex operations</li>
-        <li>No machine-readable DYN file spec → Dynamo graph file specification published as JSON Schema + Markdown</li>
-        <li>WebView2 security settings varied per instance → now standardized across all WebView2 uses</li>
-        <li>ASM (ShapeManager) version detection and logging added for diagnostics</li>
-        <li>Icons added for NurbsCurve nodes; documentation and UI assets added for Geometry.ProjectMany</li>
-        <li>PNG icons embedded into Units, Symbols, Quantity, and Utilities assemblies</li>
-        <li>Splash screen now prompts restart after importing settings</li>
-      </ul>
     </div>
     <div class="col-right">
       <div class="big-stat">11</div>
@@ -291,13 +263,6 @@
       <h2 class="page-headline">The Start Page Finally Shows Its Work</h2>
       <div class="section-path">Templates</div>
       <p class="page-summary">Template cards in the start page previously showed just a name — no visual hint of what the template does. From 4.1.0, each card shows a thumbnail. The File → Open → Template dialog has also been tightened: it no longer accepts DYF (custom node) files, which could be opened through it accidentally. Placeholder icons cover items that don't have custom thumbnails yet, so the grid never appears broken.</p>
-      <ul class="bullet-list">
-        <li>No thumbnail on start page cards → now displays preview images (DynamoHome v1.0.27)</li>
-        <li>Internal file names were showing as template titles → replaced with human-readable display names</li>
-        <li>Open Template dialog accepted any file type → now restricted to template files (DYF excluded)</li>
-        <li>Items without custom thumbnails showed empty space → placeholder icons fill the grid</li>
-        <li>Localization rules updated to cover new template display names</li>
-      </ul>
     </div>
     <div class="col-right">
       <div class="big-stat">5</div>
@@ -320,18 +285,6 @@
       <h2 class="page-headline">Six Pin Bugs Walk Into a Release. None Walk Out.</h2>
       <div class="section-path">Bug Fixes</div>
       <p class="page-summary">Connector pins are the anchors you attach to wires to lock them in place. They're stored alongside the graph. Six separate ways this could go wrong were fixed in one release: position drift on reload, disappearing on Save As, missing from clipboard, undo not working, notes losing their pin, and a new transient-pin reconnection path that makes the whole system more robust under rapid edits.</p>
-      <ul class="bullet-list">
-        <li>Pin positions drifted after save/reload → fixed, positions now persist correctly</li>
-        <li>Pins lost on Save As → new file now preserves full pin state</li>
-        <li>Copy/paste didn't include connector pins → clipboard operations are now pin-aware</li>
-        <li>Pinned notes became orphans when their node was deleted → note ownership tracked through deletion</li>
-        <li>Pin/unpin undo was inconsistent across scenarios → unified into a single reliable path</li>
-        <li>Connector reconnection improved with transient pins and safety hardening</li>
-        <li>Alt+F4 while autocomplete was open crashed the node window → closed</li>
-        <li>Moving and deleting nodes simultaneously caused a race condition crash → fixed</li>
-        <li>Selection state and note restoration fixed across several edge cases</li>
-        <li>Info + Warning bubbles now coexist on non-chart nodes without overlap</li>
-      </ul>
     </div>
     <div class="col-right">
       <div class="big-stat">13</div>
@@ -352,18 +305,6 @@
       <h2 class="page-headline">The Camera Drifts. The Gizmo Fails. Both Fixed.</h2>
       <div class="section-path">Bug Fixes</div>
       <p class="page-summary">Two related rendering failures: the viewport camera slowly drifted when the user was zoomed in far, and the transform gizmo stopped redrawing correctly. Both traced to a shared WPF BitmapCache being reused across threads — a subtle race that corrupted the render state. Pan/zoom crashes on large graphs came from the same root. This second batch also closes geometry GC issues where CLR containers holding geometry pointers could be freed before consumers finished with them.</p>
-      <ul class="bullet-list">
-        <li>Camera drift when zoomed in → shared BitmapCache race condition fixed</li>
-        <li>Gizmo redraw failures → same root cause, fixed in the same pass</li>
-        <li>Two separate pan/zoom crash paths on large graphs → both closed</li>
-        <li>CLR containers freed geometry pointers before consumers were done → GC protection added (PR #16821)</li>
-        <li>Info bubbles rendered behind nodes and notes → now render above correctly</li>
-        <li>Port context menus stayed open when window lost focus → now close on blur</li>
-        <li>AppData wrote to version 10.0 folder instead of 4.1 → fixed, C3D AppData validation added</li>
-        <li>Group styles lookup used First() — could throw on empty → changed to FirstOrDefault</li>
-        <li>Invalid input values from the AI Assistant now handled gracefully</li>
-        <li>Node info messages now show/hide based on graph creation version</li>
-      </ul>
     </div>
     <div class="col-right">
       <div class="big-stat">13</div>
@@ -384,15 +325,6 @@
       <h2 class="page-headline">Curves That Finally Do What They Promise</h2>
       <div class="section-path">Geometry &amp; LibG Updates</div>
       <p class="page-summary">Voronoi diagrams partition space by "which seed point is closest?" — Dynamo's implementation was failing on inputs where edge lengths varied widely. A relative edge-length filter now handles those cases. PolyCurve.ByPoints had undefined behavior at edge cases where it would return different types in different scenarios; the behavior is now unified and predictable. Periodic NURBS curves — closed smooth curves like circles — get new API exposure for their knot and control point topology.</p>
-      <ul class="bullet-list">
-        <li>Voronoi/Delaunay failed on large edge-length variation → relative filtering with MIConvexHull fix resolves it</li>
-        <li>PolyCurve.ByPoints and Polygon.ByPoints returned inconsistent types across inputs → unified</li>
-        <li>Periodic NURBS APIs exposed: PeriodicKnots and PeriodicControlPoints now accessible from nodes</li>
-        <li>Scale-adaptive tolerance added for surface stitching — works correctly at small and large scales</li>
-        <li>LibG geometry transform bug fixed — PR #17019 alone is a reason to upgrade</li>
-        <li>PolyCurve.ByGroupedCurves and Arc.ByStartEndAndTangencies grouped under creation nodes</li>
-        <li>LibG NuGet updated to 4.0.0.4313 / 4.0.0.3915</li>
-      </ul>
     </div>
     <div class="col-right">
       <div class="big-stat">4</div>
@@ -415,11 +347,6 @@
       <h2 class="page-headline">One Low-Level Fix. Massive Speed Recovery.</h2>
       <div class="section-path">Performance Improvements</div>
       <p class="page-summary">Dynamo keeps a lookup table to find geometry objects fast. Every object needs a unique ID so the table knows which is which. The old method borrowed IDs from .NET's default system — which can hand the same ID to two different objects. When that happens in a large table, every lookup turns into a slow search instead of an instant jump. The fix is one line: use memory addresses as IDs instead. They're guaranteed unique. The second fix stops expensive UI calculations from blocking the drawing thread.</p>
-      <ul class="bullet-list">
-        <li>Two geometry objects could receive the same ID → lookup degrades to linear search → graph slows. Fixed: memory addresses used as IDs (PR #16754) — always unique by definition</li>
-        <li>Expensive UI calculations ran on the WPF drawing thread → canvas froze during data updates. Fixed: operations deferred to the Dispatcher queue</li>
-        <li>View models recalculated on every event even when inputs hadn't changed → null-safety checks and caching stop redundant work</li>
-      </ul>
     </div>
     <div class="col-right">
       <div class="big-stat">0</div>
@@ -442,11 +369,6 @@
       <h2 class="page-headline">Packages Now Tell You What's Installed</h2>
       <div class="section-path">Package Manager</div>
       <p class="page-summary">The Search tab in Dynamo's Package Manager previously showed what was available — but not what version you already had installed. To check that, you had to switch to the Installed tab and cross-reference manually. 4.1.0 puts the installed version inline in Search. Publishers also get a one-click button to copy version compatibility data forward from a previous release, saving the most tedious step of the publish workflow.</p>
-      <ul class="bullet-list">
-        <li>Installed version wasn't visible in the Search tab → now displayed inline alongside search results</li>
-        <li>Compatibility info had to be re-entered for each new version → copy-from-previous button added</li>
-        <li>Home/End key navigation didn't work in the publish wizard form → now functional</li>
-      </ul>
     </div>
     <div class="col-right">
       <div class="big-stat">3</div>
@@ -469,10 +391,6 @@
       <h2 class="page-headline">Purple Is Gone. PythonNet3 Is the Baseline.</h2>
       <div class="section-path">PythonNet3</div>
       <p class="page-summary">When Dynamo migrated its Python nodes to PythonNet3, the team added a distinctive purple syntax highlight as a visual signal: "this is the new runtime." That marker has served its purpose. 4.1.0 removes the purple highlighting — Python is now PythonNet3 by assumption, not by flag. The sample scripts bundled with Dynamo have been updated to match, replacing PythonNet2-style imports throughout.</p>
-      <ul class="bullet-list">
-        <li>Sample scripts were still using PythonNet2-style imports → updated to PythonNet3 API (PR #16600)</li>
-        <li>Purple syntax highlighting was a migration signal, not a design choice → removed now that PythonNet3 is default (PR #16615)</li>
-      </ul>
     </div>
     <div class="col-right">
       <div class="big-stat">2</div>
@@ -495,14 +413,6 @@
       <h2 class="page-headline">The Pipeline Catches Up to .NET 10</h2>
       <div class="section-path">Build &amp; Infrastructure</div>
       <p class="page-summary">Post-RC, master was bumped to 4.2.0 and the performance test suite was upgraded to .NET 10. A patch to global.json changes the SDK roll-forward policy: instead of requiring an exact SDK version match, builds now accept any newer patch. This means .NET publishes a patch update without breaking local builds or CI. The npm registry reachability check was rewritten to use a reliable WebClient call after the previous Invoke-WebRequest approach proved flaky in CI environments.</p>
-      <ul class="bullet-list">
-        <li>Master version bumped to 4.2.0 post-RC</li>
-        <li>Performance tests upgraded to .NET 10</li>
-        <li>global.json rollForward: "patch" changed to allow newer patch SDK versions — no more manual SDK pin on every .NET patch release (PR #16815)</li>
-        <li>npm registry check rewrote from Invoke-WebRequest to WebClient — more reliable in constrained CI environments (PR #16834)</li>
-        <li>Stale submenu state in customization tests fixed</li>
-        <li>setnpmreg script and .NET SDK version updated</li>
-      </ul>
     </div>
     <div class="col-right">
       <div class="big-stat">8</div>
@@ -523,16 +433,6 @@
       <h2 class="page-headline">Skills Get a Canonical Home and a Validation Gate</h2>
       <div class="section-path">AI Agent Skills &amp; Tooling</div>
       <p class="page-summary">Agent skills in the repository were scattered across tool-specific directories depending on which IDE or AI assistant had added them. This release canonicalizes everything under .agents/skills and adds a validate-skills CI check that fails the build if any tool's directory diverges from that path. New skills added: dynamo-unit-testing for structured C# test generation, a C# Janitor for automated code health checks, UX Designer, and Content Designer — alongside three experimental architecture agents.</p>
-      <ul class="bullet-list">
-        <li>Skills scattered across tool-specific paths → all canonicalized under .agents/skills</li>
-        <li>No enforcement of consistency → validate-skills CI check blocks divergence (PR #16961)</li>
-        <li>dynamo-unit-testing skill added — structured test generation for Dynamo's C# test suite</li>
-        <li>C# Janitor agent added — automated code health checks for C# files</li>
-        <li>UX Designer and Content Designer skills added (Content Designer improved with guardrails)</li>
-        <li>Three experimental architecture agents added</li>
-        <li>.github/copilot-instructions.md expanded with project context</li>
-        <li>dynamo-dotnet-expert skill refactored</li>
-      </ul>
     </div>
     <div class="col-right">
       <div class="big-stat">7</div>
@@ -553,10 +453,6 @@
       <h2 class="page-headline">Small Bumps, Platform Readiness</h2>
       <div class="section-path">QoL &amp; Dependency Updates</div>
       <p class="page-summary">Two dependency updates close out the release. The dynamo-home npm package moves to 1.0.28, collecting the start-page thumbnail and placeholder icon work shipped earlier in this release. DynamoVisualProgramming.Analytics is updated for .NET 10 compatibility, completing the platform chain. Neither changes Dynamo's surface behavior — both ensure the pieces that downstream tools depend on are current.</p>
-      <ul class="bullet-list">
-        <li>@dynamods/dynamo-home bumped to 1.0.28 — captures the template thumbnail and placeholder icon work</li>
-        <li>DynamoVisualProgramming.Analytics updated for .NET 10 compatibility (PR #16940)</li>
-      </ul>
     </div>
     <div class="col-right">
       <div class="big-stat">2</div>
@@ -574,7 +470,7 @@
     <div class="verdict-kicker">Editorial Verdict · Dynamo 4.1.0</div>
     <div class="verdict-headline">The Release That Fixed What You Stopped Noticing</div>
     <div class="verdict-body">
-      Dynamo 4.1.0 is a release for the long-term user. The features aren't dramatic — they're completions of things that were almost right but not quite: the Extensions menu in the correct place, Home/End keys on the canvas, Watch node connections that survive deletion, template cards that show what's inside them. Twenty-six bugs were fixed, more than half touching the connector pin system that has been a persistent friction point for years. The geometry performance fix is the standout surprise: a single hash function change eliminates severe slowdowns on geometry-heavy graphs, with zero collisions after the fix. PythonNet3 is quietly declared the baseline. The AI tooling section is unusual for a release notes page — it signals that the Dynamo team is building with AI-native workflows in mind, not just shipping features to end users.
+      A quiet release that clears accumulated debt: 26 bugs closed (half of them pins), a geometry hash fix that eliminates a class of slowdowns, and PythonNet3 finally declared the baseline. Most impactful for teams running geometry-heavy graphs or maintaining custom node packages.
     </div>
     <div class="verdict-stamp">Upgrade — Stability and Performance Gains Justify It</div>
   </div>
@@ -653,7 +549,8 @@
 </script>
 
 <script>
-// ── COVER CANVAS — DYNAMO DISPATCH particle formation ──
+// ── COVER CANVAS — "DYNAMO DISPATCH" particle formation ──
+// Sequence: dots fly in to form text → connections bloom on 250 survivors → scatter + drift
 (function(){
   const canvas = document.getElementById('cover-canvas');
   const ctx    = canvas.getContext('2d');
@@ -665,10 +562,12 @@
   const MOUSE_DIST = 220;
   const REPEL_DIST = 90;
   const BASE_SPEED = 0.42;
-  const T_FLY      = 1500;
-  const T_HOLD     = 2400;
+  const T_FLY      = 1500;   // dots fly into text positions — no connections
+  const T_CONNECT  = 1000;   // connections fade in on KEEP nodes
+  const T_HOLD     = 1200;   // hold with connections before scatter
 
-  let W, H, nodes = [], phase = 'fly', phaseStart = 0, linkDist = LINK_FORM;
+  let W, H, nodes = [], phase = 'fly', phaseStart = 0;
+  let linkDist = LINK_FORM, connAlpha = 0;
   let mouseX = -9999, mouseY = -9999, onCover = true;
 
   function resize() {
@@ -702,7 +601,6 @@
       for (let x = 0; x < W; x += step)
         if (px[(y * W + x) * 4] > 120) pts.push([x, y]);
 
-    // shuffle
     for (let i = pts.length - 1; i > 0; i--) {
       const j = Math.random() * (i + 1) | 0;
       [pts[i], pts[j]] = [pts[j], pts[i]];
@@ -724,11 +622,13 @@
       vy: (Math.random() - 0.5) * BASE_SPEED,
       r: 1.8 + Math.random() * 1.5,
       alpha: 1,
-      dieAt: Infinity
+      dieAt: Infinity,
+      keep: false
     }));
-    nodes.forEach(n => { n.x = n.sx; n.y = n.sy; });
+    nodes.forEach((n, i) => { n.x = n.sx; n.y = n.sy; n.keep = i < KEEP; });
     sampleTargets();
-    phase = 'fly'; phaseStart = performance.now(); linkDist = LINK_FORM;
+    phase = 'fly'; phaseStart = performance.now();
+    linkDist = LINK_FORM; connAlpha = 0;
   }
 
   function buildGrid(active) {
@@ -741,29 +641,28 @@
       const idx = ri * gcols + ci;
       if (idx >= 0 && idx < cells.length) cells[idx].push(n);
     });
-    return { cells, gcols, grows, cs };
+    return { cells, gcols, grows };
   }
 
   function drawConnections(active) {
-    const { cells, gcols, grows, cs } = buildGrid(active);
+    if (connAlpha <= 0) return;
+    const { cells, gcols, grows } = buildGrid(active);
     const fwd = [[1,0],[-1,1],[0,1],[1,1]];
     const ld2 = linkDist * linkDist;
-    ctx.lineWidth = (phase === 'hold') ? 1.1 : 0.7;
+    const lw  = (phase === 'hold') ? 1.1 : 0.7;
+    ctx.lineWidth = lw;
     for (let ri = 0; ri < grows; ri++) {
       for (let ci = 0; ci < gcols; ci++) {
         const cell = cells[ri * gcols + ci];
-        // same-cell pairs
         for (let a = 0; a < cell.length; a++) {
           for (let b = a + 1; b < cell.length; b++) {
             const dx = cell[a].x - cell[b].x, dy = cell[a].y - cell[b].y;
             if (dx*dx + dy*dy > ld2) continue;
             const al = Math.min(cell[a].alpha, cell[b].alpha);
-            const base = (phase === 'hold') ? 0.62 : 0.22;
-            ctx.strokeStyle = `rgba(245,242,237,${base * al})`;
+            ctx.strokeStyle = `rgba(245,242,237,${connAlpha * al})`;
             ctx.beginPath(); ctx.moveTo(cell[a].x, cell[a].y); ctx.lineTo(cell[b].x, cell[b].y); ctx.stroke();
           }
         }
-        // forward neighbours
         fwd.forEach(([dc, dr]) => {
           const nc = ci + dc, nr = ri + dr;
           if (nc < 0 || nc >= gcols || nr < 0 || nr >= grows) return;
@@ -773,8 +672,7 @@
               const dx = a.x - b.x, dy = a.y - b.y;
               if (dx*dx + dy*dy > ld2) return;
               const al = Math.min(a.alpha, b.alpha);
-              const base = (phase === 'hold') ? 0.62 : 0.22;
-              ctx.strokeStyle = `rgba(245,242,237,${base * al})`;
+              ctx.strokeStyle = `rgba(245,242,237,${connAlpha * al})`;
               ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
             });
           });
@@ -792,13 +690,25 @@
     const elapsed = now - phaseStart;
 
     if (phase === 'fly') {
+      // dots only — no connections
       const t = Math.min(elapsed / T_FLY, 1);
       const e = 1 - Math.pow(1 - t, 3);
       nodes.forEach(n => {
         n.x = n.sx + (n.tx - n.sx) * e;
         n.y = n.sy + (n.ty - n.sy) * e;
       });
-      if (t >= 1) { phase = 'hold'; phaseStart = now; }
+      if (t >= 1) { phase = 'connect'; phaseStart = now; }
+
+    } else if (phase === 'connect') {
+      // connections fade in — only between KEEP nodes
+      const t = Math.min(elapsed / T_CONNECT, 1);
+      connAlpha = t * 0.62;
+      nodes.forEach(n => {
+        n.x = n.tx + (Math.random() - 0.5) * 1.2;
+        n.y = n.ty + (Math.random() - 0.5) * 1.2;
+      });
+      if (t >= 1) { connAlpha = 0.62; phase = 'hold'; phaseStart = now; }
+
     } else if (phase === 'hold') {
       nodes.forEach(n => {
         n.x = n.tx + (Math.random() - 0.5) * 1.2;
@@ -806,21 +716,22 @@
       });
       if (elapsed >= T_HOLD) {
         phase = 'drift'; phaseStart = now;
-        nodes.forEach((n, i) => {
-          if (i >= KEEP) n.dieAt = now + Math.random() * 700;
+        nodes.forEach(n => {
+          if (!n.keep) n.dieAt = now + Math.random() * 700;
         });
       }
+
     } else {
       // drift
       const driftElapsed = now - phaseStart;
       const lerpT = Math.min(driftElapsed / 1800, 1);
       linkDist = LINK_FORM + (LINK_DRIFT - LINK_FORM) * lerpT;
+      connAlpha = 0.62 - lerpT * (0.62 - 0.22);
 
       const dead = [];
       nodes.forEach(n => {
         if (now >= n.dieAt) { n.alpha -= 0.025; }
         if (n.alpha <= 0) { dead.push(n); return; }
-        // repel from mouse
         const dx = n.x - mouseX, dy = n.y - mouseY;
         const d2 = dx*dx + dy*dy;
         if (d2 < REPEL_DIST * REPEL_DIST && d2 > 0) {
@@ -833,13 +744,11 @@
         if (n.y < 0 || n.y > H) n.vy *= -1;
         n.x = Math.max(0, Math.min(W, n.x));
         n.y = Math.max(0, Math.min(H, n.y));
-        // speed clamp
         const sp = Math.sqrt(n.vx*n.vx + n.vy*n.vy);
         if (sp > BASE_SPEED * 3) { n.vx *= BASE_SPEED * 3 / sp; n.vy *= BASE_SPEED * 3 / sp; }
       });
       dead.forEach(n => { const i = nodes.indexOf(n); if (i > -1) nodes.splice(i, 1); });
 
-      // mouse connections
       if (mouseX > -9999) {
         const md2 = MOUSE_DIST * MOUSE_DIST;
         nodes.forEach(n => {
@@ -853,12 +762,17 @@
       }
     }
 
-    // draw connections (skip during fly-in)
-    if (phase !== 'fly') drawConnections(nodes);
+    // connections on keep-nodes only (skip during fly)
+    if (phase !== 'fly') {
+      const connNodes = (phase === 'connect' || phase === 'hold')
+        ? nodes.filter(n => n.keep)
+        : nodes;
+      drawConnections(connNodes);
+    }
 
-    // draw nodes
+    // draw all nodes
     nodes.forEach(n => {
-      const r = (phase === 'fly' || phase === 'hold') ? n.r * 1.5 : n.r;
+      const r = (phase === 'fly' || phase === 'connect' || phase === 'hold') ? n.r * 1.5 : n.r;
       ctx.beginPath();
       ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
       ctx.fillStyle = `rgba(245,242,237,${n.alpha})`;
@@ -866,7 +780,6 @@
     });
   }
 
-  // Track mouse / page
   const coverPage = document.querySelector('.cover-page');
   document.addEventListener('mousemove', e => {
     if (!onCover) return;
@@ -876,10 +789,6 @@
   });
   coverPage.addEventListener('mouseleave', () => { mouseX = -9999; mouseY = -9999; });
 
-  // Listen to page changes
-  document.getElementById('track').addEventListener('transitionend', () => {});
-  const origGo = window._go;
-  // Patch: detect current page via transform
   const observer = new MutationObserver(() => {
     const t = document.getElementById('track').style.transform;
     const m = t.match(/translateX\(calc\(-100vw \* (\d+)\)\)/);

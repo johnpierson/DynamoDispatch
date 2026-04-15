@@ -74,14 +74,15 @@ Set `const TOTAL = <actual page count>` in the JS. Build `LIGHT_PAGES` as a `Set
 
 Include `family=Open+Sans:wght@400` in the Google Fonts link.
 
-The canvas animates through three phases:
-1. **Fly-in (1.5s):** 1000 nodes scatter in from random positions and ease into pixel positions sampled from "DYNAMO DISPATCH" rendered in Open Sans 400 on an offscreen canvas. Font sizes: `H * 0.30` for "DYNAMO", `H * 0.20` for "DISPATCH", gap `H * 0.03`. Sample step: 4px, alpha threshold: 120. Connection distance during formation: 55px. Node radius × 1.5 during formation.
-2. **Hold (2.4s):** nodes hold their letter positions with 1.2px jitter. Connections bright (alpha 0.62, lineWidth 1.1).
-3. **Scatter → drift:** nodes beyond index 250 get staggered `dieAt` timestamps (random within 700ms) and fade out via `n.alpha -= 0.025` per frame until pruned. Remaining 250 nodes drift freely, bouncing off walls. Mouse on cover page repels nearby nodes (90px radius) and draws bright connection lines to nodes within 220px. Drift connections: 170px distance, alpha 0.22, lineWidth 0.7. Connection distance expands from 55 → 170px over 1800ms.
+1000 nodes animate through four phases:
+1. **Fly-in (1.5s):** 1000 nodes scatter in from random offscreen positions and ease into pixel positions sampled from "DYNAMO DISPATCH" rendered in Open Sans 400 on an offscreen canvas. Font sizes: `H * 0.30` for "DYNAMO", `H * 0.20` for "DISPATCH", gap `H * 0.03`. Sample step: 4px, alpha threshold: 120. **No connections during fly-in — dots only.**
+2. **Connect (1.0s):** connections fade in (alpha 0 → 0.62) between only the first KEEP=250 nodes (the "survivors"). Non-survivors are visible but unconnected. Nodes hold text positions with 1.2px jitter.
+3. **Hold (1.2s):** all nodes jitter at text positions. Connections bright (0.62) on the 250.
+4. **Scatter → drift:** non-keep nodes get staggered `dieAt` and fade out. Surviving 250 drift freely, bouncing off walls. Mouse repels nearby nodes (90px radius) and draws bright connection lines to nodes within 220px. `linkDist` expands from 55 → 170px over 1800ms; `connAlpha` falls from 0.62 → 0.22.
 
-**Use a spatial grid for connection drawing** (cell size = linkDist) — only check same-cell and 4 forward-neighbour cells `[1,0],[-1,1],[0,1],[1,1]`. Skip connection drawing entirely during fly-in. This keeps the loop O(n) instead of O(n²).
+**Use a spatial grid for connection drawing** (cell size = linkDist) — only check same-cell and 4 forward-neighbour cells `[1,0],[-1,1],[0,1],[1,1]`. This keeps the loop O(n) instead of O(n²).
 
-Each node shape: `{ sx, sy, tx, ty, x, y, vx, vy, r: 1.8–3.3, alpha: 1, dieAt: Infinity }`.
+Each node shape: `{ sx, sy, tx, ty, x, y, vx, vy, r: 1.8–3.3, alpha: 1, dieAt: Infinity, keep: bool }`.
 
 Use `document.fonts.ready.then(() => { init(); tick(); })` to ensure Open Sans is loaded before sampling text pixels.
 
@@ -107,17 +108,16 @@ Alternate light/dark: page 2 = light, page 3 = dark, page 4 = light, etc. — co
 
 Each content page uses a **55/45 split layout** (flex row, full bleed):
 
-*Left column (55%):* padding `4vw 3vw 5vh 6vw`. All flex children use `flex-shrink: 0` except the bullet list.
+*Left column (55%):* `height: 100vh; max-height: 100vh; min-height: 0; overflow: hidden;` padding `4vw 3vw 5vh 6vw`. Use `justify-content: center` to vertically center the content group. **Critical:** use `min-height: 0` — without it, the column as a flex item ignores `height: 100vh` and grows to content size, making `overflow: hidden` useless. All flex children use `flex-shrink: 0`.
 - Giant ghosted section rank number — Playfair Display, ~30vw, opacity 0.06, positioned absolute behind content
-- Category tag — IBM Plex Mono, 11px, caps, letter-spacing 0.2em; `margin-bottom: 1.2vh`
-- Editorial headline — Playfair Display, `clamp(24px, 4.5vw, 72px)`, line-height 1.05; `margin-bottom: 1.5vh`
-- Section path — IBM Plex Mono, 13px, e.g. `Features` (section name only — no repo prefix like "DynamoDS/Dynamo →"); `margin-bottom: 1.5vh`
-- Summary — Source Serif, `max(15px, 1.3vw)`, line-height 1.55, opacity 0.85; `margin-bottom: 1.5vh`. **Write using the Feynman technique**: explain *why* the problem existed and what the fix actually does, in plain terms. No jargon without an explanation. Imagine a smart reader who doesn't know this codebase — make the mechanism click.
-- Bullet list of key items — Source Serif, `max(14px, 1.1vw)`, line-height 1.65, opacity 0.85; **`flex: 1; min-height: 0; overflow: hidden`** — clip element that prevents overflow. Bullets also use Feynman framing: state the cause → effect → fix, not just the fix.
+- Category tag — IBM Plex Mono, 11px, caps, letter-spacing 0.2em; `margin-bottom: 1.2vh`; `flex-shrink: 0`
+- Editorial headline — Playfair Display, `clamp(24px, 4.5vw, 72px)`, line-height 1.05; `margin-bottom: 1.5vh`; `flex-shrink: 0`
+- Section path — IBM Plex Mono, 13px, e.g. `Features` (section name only); `margin-bottom: 1.5vh`; `flex-shrink: 0`
+- Summary — Source Serif, `max(15px, 1.3vw)`, line-height 1.6, opacity 0.85; `overflow: hidden` — the summary IS the content. Write using the Feynman technique: explain *why* the problem existed and what the fix does, in plain terms. No bullet list follows — the summary must stand alone. Do not add a numbered or bulleted list to content pages.
 
-*Right column (45%):*
-- Key stat — Playfair Display, **6.5vw minimum**. Prefer **outcome-based stats** over raw counts: "0 hash collisions after fix", "26 bugs closed", "5x faster startup". If a good outcome number exists, use it over a PR count. Stat label: IBM Plex Mono, 12px, caps — describes what the number measures.
-- Tech/stack tag — IBM Plex Mono pill (border, no fill). Show where the work happened (e.g. `CLR · Dispatcher · LibG`) — useful signal for technically savvy readers.
+*Right column (45%):* `height: 100vh; max-height: 100vh; min-height: 0; overflow: hidden;` padding `4vw 6vw 5vh 4vw`. Same `min-height: 0` rule applies.
+- Key stat — Playfair Display, **6.5vw minimum**. Prefer outcome-based stats over raw counts. Stat label: IBM Plex Mono, 12px, caps.
+- Tech/stack tag — IBM Plex Mono pill (border, no fill). Show where the work happened (e.g. `CLR · Dispatcher · LibG`).
 - PR image (if available, filtered grayscale, no border-radius, no shadow, `width: 100%`, `max-height: 28vh`, `object-fit: cover`)
 - `<figcaption>` in IBM Plex Mono 11px below image
 - **Callout box** — background: 5% tint of text color; 4px solid left border (full text color); padding 20px 24px; `margin-top: auto`:
@@ -126,9 +126,9 @@ Each content page uses a **55/45 split layout** (flex row, full bleed):
 
 **Page N+1 — Verdict (dark):**
 - No split layout. Full-width centered editorial verdict.
-- Playfair Display italic headline, 5vw
-- Source Serif body, max(17px, 1.5vw), opacity 0.85, max-width 720px centered
-- Upgrade recommendation in IBM Plex Mono, large
+- Playfair Display italic headline, 5vw — one punchy sentence, not a summary
+- Source Serif body, max(17px, 1.5vw), opacity 0.85, max-width 680px centered — **2–4 sentences maximum**. One sentence on what changed, one on who benefits most, one on whether to upgrade. No recap of individual features — the content pages covered those. Be direct.
+- Upgrade recommendation in IBM Plex Mono, large — a single terse verdict line, e.g. `UPGRADE — STABILITY FIXES JUSTIFY IT` or `HOLD — BREAKING CHANGES, REVIEW FIRST`
 
 **Page N+2 — Dark back cover (always last):**
 - Centered: "DYNAMO DISPATCH" in IBM Plex Mono caps, large
