@@ -225,22 +225,88 @@ For each major theme or feature:
 ## under the hood
 Notable technical/platform/developer-experience improvements.
 
-## watch-outs
-Breaking changes, migration notes, known issues, caveats.
-
 ## bottom line
 Short editorial verdict.
 ```
 
 ### If asked for HTML
 
-Generate a single self-contained HTML file with:
-- Large, readable typography (Fraunces + Inter via Google Fonts)
-- Generous spacing
-- Clear editorial hierarchy
-- 10-spread layout system (same spread styles as Morning Edition, mapped to release sections)
-- No tiny text or dashboard UI
-- The Dynamo logo (`../assets/dynamo-logo.png`, relative to the output file) must appear at the top of the masthead, above the title. Size it tastefully — no taller than 48px. Do not stretch or distort it.
+Generate a single self-contained HTML file as a **14-page horizontal-swipe editorial magazine**.
+
+**Fonts** (Google Fonts via `<link>`):
+- `Playfair Display` — headlines
+- `Source Serif 4` — body text
+- `IBM Plex Mono` — metadata, tags, stats labels
+
+**Aesthetic:** E-ink monochrome only. No color — only black (`#0a0a0a`), white (`#f5f2ed`), and grays. No box shadows. Crisp borders. Think Monocle magazine.
+
+---
+
+#### Page Structure (14 pages total)
+
+**Page 1 — Dark cover:**
+- `../assets/dynamo-logo.png` top-left, `width: clamp(160px, 22vw, 360px)`, **no CSS filter** (the logo is multicolored — display its natural colors)
+- Product name in Playfair Display, huge (10vw+)
+- Version number in IBM Plex Mono, 4vw
+- Tagline (release headline) in Source Serif italic, 2vw
+- Date + issue metadata in IBM Plex Mono, bottom-left, small
+
+**Pages 2–13 — Content pages (one per release section):**
+Map each section of the release notes to one page. If the release has fewer than 12 sections, add a Verdict page and pad with a merged "Under the Hood" summary page if needed. Do not add a Watch-Outs page. If more than 12 sections, group minor ones together.
+
+Alternate light/dark: page 2 = light, page 3 = dark, page 4 = light, etc.
+
+- **Light page:** background `#f5f2ed`, text `#0a0a0a`
+- **Dark page:** background `#0a0a0a`, text `#f5f2ed`
+
+Each content page uses a **55/45 split layout** (flex row, full bleed):
+
+*Left column (55%):*
+- Giant ghosted section rank number — Playfair Display, ~30vw, opacity 0.06, positioned absolute behind content
+- Category tag — IBM Plex Mono, 11px, caps, letter-spacing 0.2em
+- Editorial headline — Playfair Display, **5vw minimum**, line-height 1.05
+- Section path — IBM Plex Mono, 13px, e.g. `DynamoDS/Dynamo → Features`
+- Summary — Source Serif, `max(17px, 1.5vw)`, opacity 0.85, 2–3 sentences
+- Bullet list of key items — Source Serif, same size, opacity 0.85
+
+*Right column (45%):*
+- Key stat (PR count, fix count, or a notable number) — Playfair Display, **6.5vw minimum**
+- Stat label — IBM Plex Mono, 12px, caps
+- Tech/stack tag — IBM Plex Mono pill (border, no fill)
+- PR image (if available, filtered grayscale, no border-radius, no shadow, `width: 100%`, `max-height: 28vh`, `object-fit: cover`)
+- `<figcaption>` in IBM Plex Mono 11px below image
+- **Callout box** — background: 5% tint of text color; 4px solid left border (full text color); padding 20px 24px; `margin-top: auto`:
+  - Label: `IBM Plex Mono 11px caps` — "WHAT THIS MEANS FOR YOU"
+  - Body: Source Serif `max(15px, 1.3vw)`, opacity 0.8 — a personalized note for a senior Dynamo developer at Autodesk (C#/.NET, WPF, open-source AEC platform). Be specific: name the feature/fix and explain the concrete workflow or codebase implication.
+
+**Page 13 — Verdict (dark):**
+- No split layout. Full-width centered editorial verdict.
+- Playfair Display italic headline, 5vw
+- Source Serif body, max(17px, 1.5vw), opacity 0.85, max-width 720px centered
+- Upgrade recommendation in IBM Plex Mono, large
+
+**Page 14 — Dark back cover:**
+- Centered: "DYNAMO DISPATCH" in IBM Plex Mono caps, large
+- Issue number + date below in Source Serif italic
+- `../assets/dynamo-logo.png` centered, height 48px, `filter: brightness(0) invert(1)`, `opacity: 0.5` (white silhouette on dark)
+
+---
+
+#### Rules
+- 100vw × 100vh pages. `overflow: hidden` on body. No scrollbars.
+- CSS transform-based pagination: `translateX(-100vw * currentPage)` on a flex track.
+- **Navigation:** arrow keys (←→), mouse wheel (any delta → page), touch swipe (>50px threshold), dot nav fixed at bottom center.
+- Dots: small circles, filled = current page, outline = others. Adapt color to current page background.
+- Huge fonts everywhere. Nothing below 15px. No small text.
+- High contrast on dark pages. Body text opacity 0.85 minimum. Callout body 0.8 minimum.
+- Nothing overlapping. `margin-bottom` between every element. `padding-bottom: 10vh` on all pages.
+- Full-bleed edge-to-edge. No floating cards. No padding boxes around content areas.
+- All PR images: `filter: grayscale(100%) contrast(1.1)` to match e-ink aesthetic.
+
+---
+
+#### Image placement
+Place PR images in the right column of the relevant content page, between the stat and the callout box. One image per page maximum. Apply grayscale filter. If no image available, omit gracefully — the callout box fills the space with `margin-top: auto`.
 
 Save to `C:\Users\piersoj\Repos\Dynamo-Digest\issues\YYYY-MM-DD-brief-title.html`.
 Where `brief-title` is a 2–4 word kebab-case summary (e.g. `node-graph-performance`).
