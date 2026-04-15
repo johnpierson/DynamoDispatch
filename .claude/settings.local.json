@@ -4,7 +4,8 @@
       "WebFetch(domain:github.com)",
       "Bash(gh api *)",
       "Bash(cmd *)",
-      "Bash(powershell *)"
+      "Bash(powershell *)",
+      "Bash(gh pr *)"
     ]
   }
 }
