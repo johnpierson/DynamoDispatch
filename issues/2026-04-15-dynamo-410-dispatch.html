@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamo Dispatch — Release 4.1.0</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,300;1,9..144,400;1,9..144,700;1,9..144,900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #f0ede8;
+      font-family: 'Inter', sans-serif;
+      font-size: 18px;
+      color: #1a1a1a;
+    }
+
+    /* ── MASTHEAD ── */
+    .masthead {
+      background: #fff;
+      padding: 36px 64px 28px;
+      border-bottom: 4px solid #1a1a1a;
+    }
+    .masthead-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 10px;
+    }
+    .masthead-brand {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: #1a1a1a;
+    }
+    .masthead-meta {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      color: #888;
+    }
+    .masthead-title {
+      font-family: 'Fraunces', serif;
+      font-size: 88px;
+      font-weight: 900;
+      font-optical-sizing: auto;
+      line-height: 0.9;
+      letter-spacing: -0.03em;
+      color: #1a1a1a;
+      margin-bottom: 16px;
+    }
+    .masthead-title span {
+      font-style: italic;
+      font-weight: 300;
+      color: #888;
+    }
+    .masthead-sub {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 14px;
+      border-top: 1px solid #e0e0e0;
+    }
+    .masthead-kicker {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #555;
+    }
+    .masthead-verdict {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-size: 15px;
+      color: #888;
+    }
+
+    /* ── SHARED SPREAD STRUCTURE ── */
+    .spread {
+      padding: 72px 64px;
+      position: relative;
+      overflow: hidden;
+    }
+    .spread-numeral {
+      font-family: 'Fraunces', serif;
+      font-weight: 900;
+      font-optical-sizing: auto;
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+    }
+    .section-tag {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      display: block;
+    }
+    .spread-headline {
+      font-family: 'Fraunces', serif;
+      font-optical-sizing: auto;
+      line-height: 1.05;
+      letter-spacing: -0.025em;
+    }
+    .spread-body {
+      font-family: 'Inter', sans-serif;
+      font-size: 18px;
+      line-height: 1.75;
+    }
+    .spread-body p + p { margin-top: 1em; }
+
+    .item-list {
+      list-style: none;
+      padding: 0;
+      margin-top: 28px;
+    }
+    .item-list li {
+      font-size: 16px;
+      line-height: 1.6;
+      padding: 10px 0 10px 20px;
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+      position: relative;
+    }
+    .item-list li::before {
+      content: '—';
+      position: absolute;
+      left: 0;
+      opacity: 0.4;
+    }
+    .item-list li:last-child { border-bottom: none; }
+
+    /* ── FIGURES ── */
+    .figures {
+      margin-top: 40px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .figures.single figure { flex: 1 1 100%; }
+    .figures.duo figure    { flex: 1 1 calc(50% - 10px); min-width: 260px; }
+    .figures.trio figure   { flex: 1 1 calc(33% - 14px); min-width: 220px; }
+
+    figure { margin: 0; }
+    figure img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 6px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+    }
+    figcaption {
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      margin-top: 8px;
+      opacity: 0.5;
+    }
+    .dark-fig figure img  { box-shadow: 0 2px 16px rgba(0,0,0,0.5); }
+    .dark-fig figcaption  { color: #fff; }
+
+    /* ── SPREAD 1: HERO ── */
+    .spread-hero {
+      background: #ffffff;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 48px;
+      min-height: 560px;
+      align-items: start;
+    }
+    .spread-hero .hero-numeral-col {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+    }
+    .spread-hero .spread-numeral { font-size: 240px; color: #f0f0f0; line-height: 1; margin-top: -16px; }
+    .spread-hero .spread-headline { font-size: 64px; font-weight: 900; color: #1a1a1a; margin-bottom: 28px; }
+    .spread-hero .section-tag { color: #888; }
+    .spread-hero .spread-body { color: #444; max-width: 620px; }
+    .spread-hero .hero-source {
+      font-size: 12px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase;
+      color: #bbb; writing-mode: vertical-lr; text-orientation: mixed;
+      transform: rotate(180deg); align-self: flex-end;
+    }
+
+    /* ── SPREAD 2: MIDNIGHT ── */
+    .spread-midnight { background: #0d1117; color: #e6edf3; }
+    .spread-midnight .section-tag { color: #58a6ff; }
+    .spread-midnight .spread-headline {
+      font-size: 64px; font-weight: 700; color: #ffffff; margin-bottom: 28px;
+      padding-top: 20px; border-top: 2px solid #58a6ff; max-width: 680px;
+    }
+    .spread-midnight .spread-numeral { font-size: 200px; color: #161b22; position: absolute; top: 32px; right: 48px; line-height: 1; }
+    .spread-midnight .spread-body { color: #8b949e; max-width: 680px; }
+    .spread-midnight .item-list li { color: #c9d1d9; border-bottom-color: rgba(255,255,255,0.06); }
+    .spread-midnight .item-list li::before { color: #58a6ff; opacity: 1; }
+
+    /* ── SPREAD 3: TERMINAL ── */
+    .spread-terminal { background: #0a0a0a; color: #00ff41; }
+    .spread-terminal .section-tag { color: #00cc33; font-family: 'Courier New', monospace; font-size: 12px; }
+    .spread-terminal .spread-numeral { font-family: 'Fraunces', serif; font-size: 180px; color: #002200; position: absolute; top: 40px; right: 48px; line-height: 1; }
+    .spread-terminal .spread-headline {
+      font-family: 'Courier New', Consolas, monospace; font-size: 42px; font-weight: bold;
+      color: #00ff41; letter-spacing: 0.04em; margin-bottom: 28px; line-height: 1.2; max-width: 700px;
+    }
+    .spread-terminal .cursor {
+      display: inline-block; width: 3px; height: 1em; background: #00ff41;
+      vertical-align: middle; margin-left: 4px; animation: blink 1.1s step-end infinite;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+    .spread-terminal .spread-body { font-family: 'Courier New', monospace; font-size: 16px; color: #00cc33; max-width: 680px; }
+    .spread-terminal .prompt::before { content: '> '; color: #005500; }
+    .spread-terminal .item-list li { font-family: 'Courier New', monospace; font-size: 14px; color: #009922; border-bottom-color: rgba(0,255,65,0.08); }
+    .spread-terminal .item-list li::before { content: '$'; color: #005500; opacity: 1; }
+
+    /* ── SPREAD 4: ROSE ALERT ── */
+    .spread-rose { background: #fff0f2; position: relative; }
+    .spread-rose .spread-numeral { font-size: 240px; color: #ffd6de; position: absolute; bottom: -20px; left: 40px; line-height: 1; }
+    .spread-rose .alert-stamp {
+      position: absolute; top: 56px; right: 64px; width: 120px; height: 120px;
+      background: #e5194b; border-radius: 50%; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; transform: rotate(12deg);
+    }
+    .spread-rose .alert-stamp-icon { font-size: 28px; color: white; line-height: 1; }
+    .spread-rose .alert-stamp-text { font-family: 'Inter', sans-serif; font-size: 9px; font-weight: 900; letter-spacing: 0.2em; text-transform: uppercase; color: white; margin-top: 4px; }
+    .spread-rose .section-tag { color: #e5194b; }
+    .spread-rose .spread-headline { font-size: 68px; font-weight: 900; color: #1a1a1a; margin-bottom: 28px; max-width: 680px; position: relative; z-index: 1; }
+    .spread-rose .spread-body  { color: #555; max-width: 640px; position: relative; z-index: 1; }
+    .spread-rose .item-list    { position: relative; z-index: 1; }
+    .spread-rose .item-list li { color: #333; border-bottom-color: rgba(229,25,75,0.1); }
+    .spread-rose .item-list li::before { color: #e5194b; opacity: 1; }
+
+    /* ── SPREAD 5: ACADEMIC DROP-CAP ── */
+    .spread-academic { background: #faf7f0; border-top: 1px dashed #c8b89a; border-bottom: 1px dashed #c8b89a; }
+    .spread-academic .section-tag { color: #a08060; }
+    .spread-academic .chapter-mark { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: #c8b89a; margin-bottom: 8px; }
+    .spread-academic .spread-headline { font-size: 56px; font-weight: 700; font-style: italic; color: #2c2c2c; margin-bottom: 32px; max-width: 720px; }
+    .spread-academic .drop-cap-body { font-size: 18px; line-height: 1.8; color: #444; max-width: 720px; }
+    .spread-academic .drop-cap-body::first-letter { font-family: 'Fraunces', serif; font-size: 5.5em; font-weight: 900; float: left; line-height: 0.75; padding-right: 12px; padding-top: 8px; color: #2c2c2c; }
+    .spread-academic .item-list { max-width: 720px; }
+    .spread-academic .item-list li { color: #444; border-bottom-color: #e8dcc8; }
+    .spread-academic .item-list li::before { color: #a08060; opacity: 1; }
+
+    /* ── SPREAD 6: BIG STAT ── */
+    .spread-stat { background: #f5f5f5; position: relative; overflow: hidden; }
+    .spread-stat .stat-watermark { font-family: 'Fraunces', serif; font-size: 360px; font-weight: 900; color: #ececec; position: absolute; bottom: -60px; right: -20px; line-height: 1; pointer-events: none; }
+    .spread-stat .section-tag { color: #888; }
+    .spread-stat .spread-headline { font-size: 60px; font-weight: 900; color: #1a1a1a; margin-bottom: 28px; max-width: 640px; position: relative; z-index: 1; }
+    .spread-stat .big-number { font-family: 'Fraunces', serif; font-size: 140px; font-weight: 900; color: #1a1a1a; line-height: 1; margin-bottom: 4px; }
+    .spread-stat .big-number-label { font-size: 14px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #888; margin-bottom: 36px; }
+    .spread-stat .spread-body { color: #555; max-width: 620px; position: relative; z-index: 1; }
+
+    /* ── SPREAD 7: BLUEPRINT ── */
+    .spread-blueprint {
+      background: #0a1628;
+      background-image:
+        repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(79,195,247,0.05) 39px, rgba(79,195,247,0.05) 40px),
+        repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(79,195,247,0.05) 39px, rgba(79,195,247,0.05) 40px);
+      color: #a8d4f5;
+    }
+    .spread-blueprint .spread-numeral { font-size: 200px; color: #0d2040; position: absolute; top: 32px; right: 48px; line-height: 1; }
+    .spread-blueprint .section-tag { color: #4fc3f7; }
+    .spread-blueprint .spread-headline { font-size: 58px; font-weight: 700; font-style: italic; color: #4fc3f7; margin-bottom: 28px; max-width: 660px; }
+    .spread-blueprint .spread-body { color: #7ab8e8; max-width: 660px; }
+    .spread-blueprint .item-list li { color: #a8d4f5; border-bottom-color: rgba(79,195,247,0.12); }
+    .spread-blueprint .item-list li::before { color: #4fc3f7; opacity: 1; }
+
+    /* ── SPREAD 8: BROADSHEET ── */
+    .spread-broadsheet { background: #f5f0e8; border-top: 4px solid #1a1a1a; border-bottom: 1px solid #1a1a1a; }
+    .spread-broadsheet .section-tag { color: #888; }
+    .spread-broadsheet .chapter-no { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700; color: #bbb; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 16px; }
+    .spread-broadsheet .spread-headline { font-size: 56px; font-weight: 900; color: #1a1a1a; margin-bottom: 36px; max-width: 100%; }
+    .spread-broadsheet .columns { column-count: 2; column-gap: 48px; font-size: 17px; line-height: 1.75; color: #333; }
+    .spread-broadsheet .columns p + p { margin-top: 1em; }
+    .spread-broadsheet .item-list { column-count: 2; column-gap: 48px; }
+    .spread-broadsheet .item-list li { font-size: 15px; color: #444; border-bottom-color: #ddd0bc; break-inside: avoid; }
+
+    /* ── SPREAD 9: SLAB ── */
+    .spread-slab { background: #f5a623; position: relative; overflow: hidden; }
+    .spread-slab .spread-numeral { font-family: 'Inter', sans-serif; font-weight: 900; font-size: 320px; color: rgba(0,0,0,0.08); position: absolute; top: -40px; right: -20px; line-height: 1; }
+    .spread-slab .section-tag { color: rgba(0,0,0,0.5); }
+    .spread-slab .spread-headline { font-family: 'Inter', sans-serif; font-size: 62px; font-weight: 900; color: #1a1a1a; letter-spacing: -0.03em; text-transform: uppercase; margin-bottom: 28px; max-width: 680px; position: relative; z-index: 1; }
+    .spread-slab .spread-body { color: #3a2800; max-width: 640px; position: relative; z-index: 1; }
+    .spread-slab .item-list li { color: #3a2800; border-bottom-color: rgba(0,0,0,0.12); }
+    .spread-slab .item-list li::before { color: rgba(0,0,0,0.3); opacity: 1; }
+
+    /* ── SPREAD 10: FINALE ── */
+    .spread-finale { background: #1a1a1a; color: #fff; position: relative; overflow: hidden; min-height: 520px; }
+    .spread-finale .finale-numeral { font-family: 'Fraunces', serif; font-weight: 900; font-size: 400px; color: #252525; position: absolute; bottom: -80px; right: -30px; line-height: 1; pointer-events: none; }
+    .spread-finale .section-tag { color: #666; }
+    .spread-finale .spread-headline { font-size: 64px; font-weight: 900; font-style: italic; color: #f5c842; margin-bottom: 28px; max-width: 620px; position: relative; z-index: 1; }
+    .spread-finale .spread-body { color: #aaa; max-width: 620px; position: relative; z-index: 1; }
+    .spread-finale .sign-off { font-family: 'Fraunces', serif; font-style: italic; font-size: 22px; font-weight: 300; color: #555; margin-top: 48px; position: relative; z-index: 1; }
+    .spread-finale .item-list li { color: #888; border-bottom-color: rgba(255,255,255,0.06); }
+    .spread-finale .item-list li::before { color: #f5c842; opacity: 1; }
+
+    /* ── FOOTER ── */
+    .footer { background: #fff; border-top: 4px solid #1a1a1a; padding: 24px 64px; display: flex; justify-content: space-between; align-items: center; }
+    .footer-left { font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: #1a1a1a; }
+    .footer-right { font-size: 12px; color: #aaa; font-style: italic; font-family: 'Fraunces', serif; }
+
+    @media (max-width: 800px) {
+      .spread { padding: 48px 28px; }
+      .masthead { padding: 28px 28px 20px; }
+      .masthead-title { font-size: 52px; }
+      .spread-hero { grid-template-columns: 1fr; }
+      .spread-hero .hero-numeral-col { display: none; }
+      .spread-hero .spread-headline,
+      .spread-midnight .spread-headline,
+      .spread-rose .spread-headline { font-size: 42px; }
+      .spread-broadsheet .columns,
+      .spread-broadsheet .item-list { column-count: 1; }
+      .spread-finale .finale-numeral { font-size: 200px; }
+      .footer { flex-direction: column; gap: 8px; text-align: center; padding: 20px 28px; }
+      .figures.duo figure, .figures.trio figure { flex: 1 1 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ MASTHEAD ══ -->
+<header class="masthead">
+  <div class="masthead-logo">
+    <img src="../assets/dynamo-logo.png" alt="Dynamo" style="height:40px;width:auto;display:block;margin-bottom:20px;">
+  </div>
+  <div class="masthead-top">
+    <span class="masthead-brand">Dynamo Dispatch</span>
+    <span class="masthead-meta">Release Review · April 2026 · github.com/DynamoDS/Dynamo</span>
+  </div>
+  <div class="masthead-title">Release <span>4.1.0</span></div>
+  <div class="masthead-sub">
+    <span class="masthead-kicker">10 sections · 90+ pull requests · Worth every PR</span>
+    <span class="masthead-verdict">Templates Finally Arrive, and the Pin Bugs Are Gone</span>
+  </div>
+</header>
+
+
+<!-- ══ SPREAD 1: HERO — FEATURES ══ -->
+<section class="spread spread-hero">
+  <div class="hero-numeral-col">
+    <div class="spread-numeral">01</div>
+    <div class="hero-source">Features</div>
+  </div>
+  <div>
+    <span class="section-tag">01 — Features</span>
+    <h2 class="spread-headline">Twenty-Two Features<br>That Quietly Improve<br>Everything</h2>
+    <div class="spread-body">
+      <p>The headline feature count belies the cumulative impact. Node group styles are now customizable from Preferences — edit, remove, or reset them. Home and End keys navigate to the leftmost and rightmost nodes on the canvas. A new online status indicator (globe icon with LED) appears in the status bar. And the Documentation Browser gains an AutoSync mode that follows your selected node as you work.</p>
+      <p>Deleting an inline Watch node now rewires connectors rather than orphaning them — a fix so obvious in retrospect it's hard to believe it waited this long. The Extensions panel auto-expands when you activate it while minimized. And the Extensions menu finally appears alongside the other top-level menus where it always belonged.</p>
+    </div>
+    <ul class="item-list">
+      <li>Node group styles: edit, remove, reset from Preferences</li>
+      <li>Home / End canvas navigation shortcuts</li>
+      <li>Documentation Browser AutoSync setting</li>
+      <li>Online status indicator in the status bar</li>
+      <li>Watch node deletion rewires connectors</li>
+      <li>Dynamo graph file spec published as JSON Schema + Markdown</li>
+      <li><code>NodeCategoryAttribute</code> type-forwarded to DynamoServices</li>
+      <li><code>ActionGroupDisposable</code> made nestable for composable undo/redo</li>
+    </ul>
+    <div class="figures trio">
+      <figure>
+        <img src="https://github.com/user-attachments/assets/8d8b448a-2a33-419e-9298-d8388d03ebda" alt="Watch node deletion auto-rewires connectors">
+        <figcaption>PR #16884 — Watch node deletion now rewires upstream/downstream connectors automatically</figcaption>
+      </figure>
+      <figure>
+        <img src="https://github.com/user-attachments/assets/26dca8c3-d1aa-4229-84fe-4ffac6e35287" alt="Extensions menu alongside other menus">
+        <figcaption>PR #16771 — Extensions menu now appears alongside other top-level menus</figcaption>
+      </figure>
+      <figure>
+        <img src="https://github.com/user-attachments/assets/75d361ed-795a-490f-9cc9-0778dd2110d8" alt="AutoSync preference in Documentation Browser">
+        <figcaption>PR #16887 — New AutoSync setting in Preferences → Features → Documentation Browser</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ SPREAD 2: MIDNIGHT — TEMPLATES ══ -->
+<section class="spread spread-midnight">
+  <div class="spread-numeral">02</div>
+  <span class="section-tag">02 — Templates</span>
+  <h2 class="spread-headline">The Start Page<br>Earns Its Keep</h2>
+  <div class="spread-body">
+    <p>Template files are now a first-class feature on the Dynamo home screen. Thumbnail previews, placeholder icons for graphs without custom images, human-readable display names replacing internal identifiers — and a File → Open → Template dialog that restricts to template files and excludes DYF files. DynamoHome updated to v1.0.27 with the new placeholder icon system.</p>
+    <p>The backend wiring enables templates to open into a new editable workspace. Users can land on a starting point without navigating the filesystem, and teams can standardize on starter graphs without ceremony.</p>
+  </div>
+  <ul class="item-list">
+    <li>Thumbnail previews on the start page</li>
+    <li>Human-readable display names (replaces internal IDs)</li>
+    <li>File → Open → Template restricts to template files only</li>
+    <li>Templates open into a new editable workspace</li>
+    <li>DynamoHome v1.0.27 with placeholder icon system</li>
+  </ul>
+  <div class="figures duo dark-fig">
+    <figure>
+      <img src="https://github.com/user-attachments/assets/010eec73-0009-4b05-9661-63c2219d274e" alt="Template thumbnails on start page">
+      <figcaption>PR #16981 — Base64-encoded thumbnails now appear on the Dynamo start page</figcaption>
+    </figure>
+    <figure>
+      <img src="https://github.com/user-attachments/assets/9d3d5e98-aef6-4623-913c-51a45462d2b7" alt="Placeholder thumbnails replacing hard-to-read ones">
+      <figcaption>PR #16935 — Placeholder images replace the previous hard-to-read thumbnails</figcaption>
+    </figure>
+  </div>
+</section>
+
+
+<!-- ══ SPREAD 3: TERMINAL — BUILD & INFRASTRUCTURE ══ -->
+<section class="spread spread-terminal">
+  <div class="spread-numeral">03</div>
+  <span class="section-tag prompt">Build &amp; Infrastructure</span>
+  <h2 class="spread-headline">.NET 10. Roll Forward. CI Unblocked.<span class="cursor"></span></h2>
+  <div class="spread-body">
+    <p class="prompt">The march toward .NET 10 continues. Performance tests upgraded. SDK roll-forward policy loosened from <code>disable</code> to <code>patch</code> in global.json, allowing patch-version updates without manual intervention.</p>
+    <p class="prompt">The npm registry reachability check was rewritten from <code>Invoke-WebRequest</code> to a <code>WebClient</code>-based function — more reliable in CI environments. Two tests excluded from CI to unblock builds while root causes are investigated.</p>
+  </div>
+  <ul class="item-list">
+    <li>Performance tests upgraded to .NET 10</li>
+    <li>SDK roll-forward: disable → patch</li>
+    <li>npm registry check rewritten (WebClient-based)</li>
+    <li>Master bumped to 4.2.0 after RC4.1.0 branch</li>
+    <li>ResetCypythonLogsToConsoleAfterRun marked as known failure</li>
+  </ul>
+</section>
+
+
+<!-- ══ SPREAD 4: ROSE ALERT — BUG FIXES ══ -->
+<section class="spread spread-rose">
+  <div class="spread-numeral">04</div>
+  <div class="alert-stamp">
+    <div class="alert-stamp-icon">★</div>
+    <div class="alert-stamp-text">27 Fixes</div>
+  </div>
+  <span class="section-tag">04 — Bug Fixes</span>
+  <h2 class="spread-headline">The Pin Bugs<br>Are Finally,<br>Completely Gone</h2>
+  <div class="spread-body">
+    <p>Six connector-pin bugs in one release. Notes orphaned when their parent node was deleted. Pins shifting upward after save/reload. Connector pins lost on Save As. Pins dropped during copy-paste. Pin-unpin undo broken with unpredictable behavior on repeat. Selection state not clearing after unpin. All fixed. Drag operations now use transient pins to preserve connectivity throughout.</p>
+    <p>Beyond pins: the AppData versioning bug that wrote to a <code>10.0</code> directory instead of <code>4.1</code> is patched. Two node autocomplete crashes fixed. Info and Warning bubbles can now coexist on non-chart nodes. Pan/zoom crashes on the WPF rendering thread resolved.</p>
+  </div>
+  <ul class="item-list">
+    <li>AppData version directory: <code>10.0</code> → <code>4.1</code> (Sandbox + C3D hosts)</li>
+    <li>Node autocomplete crash on Alt+F4</li>
+    <li>Node autocomplete crash: simultaneous move + delete</li>
+    <li>Pinned note orphaned on node delete</li>
+    <li>Pins shift upward after save/reload</li>
+    <li>Connector pins lost on Save As</li>
+    <li>Pins omitted from copy-paste</li>
+    <li>Pin/unpin undo broken (Ctrl+Z)</li>
+    <li>Pan/zoom: WPF rendering thread BitmapCache crash</li>
+    <li>Gizmo redraw failure + camera drift when zoomed</li>
+    <li>Geometry objects prematurely GC'd in CLR containers</li>
+    <li>AI Assistant invalid input values (Revit categories) handled</li>
+  </ul>
+</section>
+
+
+<!-- ══ SPREAD 5: ACADEMIC — GEOMETRY & LIBG ══ -->
+<section class="spread spread-academic">
+  <div class="chapter-mark">§ V — Geometry &amp; LibG</div>
+  <h2 class="spread-headline">Periodic NURBS Arrive.<br>Tessellation Improves.<br>Curves Unify.</h2>
+  <div class="drop-cap-body">
+    LibG gains two new first-class APIs: <em>NurbsCurve.PeriodicControlPoints</em> and <em>NurbsCurve.PeriodicKnots</em>, with icons and documentation. Periodic NURBS curves are essential for closed, smooth surface modeling — having them as nodes removes a class of workarounds that computational designers have been patching around for years.
+  </div>
+  <div class="figures single">
+    <figure>
+      <img src="https://github.com/user-attachments/assets/281c9891-c181-4f81-b29f-a38c0943b4f6" alt="NurbsCurve.PeriodicKnots and PeriodicControlPoints node icons">
+      <figcaption>PR #16931 — New icons for NurbsCurve.PeriodicKnots and NurbsCurve.PeriodicControlPoints</figcaption>
+    </figure>
+  </div>
+  <ul class="item-list">
+    <li>Periodic NURBS: <code>PeriodicControlPoints</code> and <code>PeriodicKnots</code> nodes, with icons + docs</li>
+    <li>Voronoi and Delaunay tessellation: relative edge-length filter + UV clamping for out-of-range input</li>
+    <li><code>PolyCurve.ByPoints</code> and <code>Polygon.ByPoints</code> behavior unified</li>
+    <li><code>Curve.PullOntoPlane</code> / <code>PullOntoSurface</code> now return concrete curve types (⚠ potential graph impact)</li>
+    <li>Scale-adaptive tolerance for surface stitching</li>
+    <li>LibG NuGet updated to 4.0.0.4313</li>
+  </ul>
+</section>
+
+
+<!-- ══ SPREAD 6: BIG STAT — PERFORMANCE ══ -->
+<section class="spread spread-stat">
+  <div class="stat-watermark">2</div>
+  <span class="section-tag">06 — Performance</span>
+  <div class="big-number">0</div>
+  <div class="big-number-label">Hash collisions after the fix</div>
+  <h2 class="spread-headline">One Low-Level Fix.<br>Massive Speed Recovery.</h2>
+  <div class="spread-body">
+    <p>The geometry marshaling layer was using default CLR object hash codes, causing hash collisions when large numbers of geometry objects were tracked simultaneously. The result: severe, non-obvious performance degradation on high-node-count graphs — not a crash, just a graph that silently gets slower as it grows. The fix switches to identity-based hash codes and eliminates the collision entirely.</p>
+    <p>The second fix defers expensive view model operations to the Dispatcher with null-safety and caching, improving general UI responsiveness — particularly noticeable on large, complex workspaces.</p>
+  </div>
+</section>
+
+
+<!-- ══ SPREAD 7: BLUEPRINT — PACKAGE MANAGER ══ -->
+<section class="spread spread-blueprint">
+  <div class="spread-numeral">07</div>
+  <span class="section-tag">07 — Package Manager</span>
+  <h2 class="spread-headline">Know What's Installed.<br>Copy What Works.</h2>
+  <div class="spread-body">
+    <p>The Package Manager search tab now displays which version of a package is currently installed — the dropdown defaults to the installed version, labels it "(installed)", and flags when a newer version is available. The Install button dynamically becomes "Update" or "Uninstall" depending on state.</p>
+    <p>A new button lets you copy compatibility info from a previous package version. Autodesk-maintained packages are now marked with an Autodesk badge in search results.</p>
+  </div>
+  <ul class="item-list">
+    <li>Installed version visible and labelled in search results</li>
+    <li>Install button becomes Update or Uninstall based on state</li>
+    <li>Copy compatibility info from previous package version</li>
+    <li>Autodesk badge on DynamoTeam-maintained packages</li>
+    <li>Home / End keys fixed in publish form</li>
+  </ul>
+  <div class="figures duo dark-fig">
+    <figure>
+      <img src="https://github.com/user-attachments/assets/b49df223-c085-4f09-9f3a-b71287f90998" alt="Package Manager showing installed version">
+      <figcaption>PR #16853 — Installed version now shown and labelled in the Search tab</figcaption>
+    </figure>
+    <figure>
+      <img src="https://github.com/user-attachments/assets/cfbf00f5-f834-4f63-88d8-a5146303e632" alt="Autodesk badge on DynamoTeam packages">
+      <figcaption>PR #16830 — Autodesk badge marks DynamoTeam-maintained packages</figcaption>
+    </figure>
+  </div>
+</section>
+
+
+<!-- ══ SPREAD 8: BROADSHEET — AI AGENT SKILLS ══ -->
+<section class="spread spread-broadsheet">
+  <div class="chapter-no">Section 08</div>
+  <span class="section-tag">AI Agent Skills &amp; Tooling</span>
+  <h2 class="spread-headline">The Repo Now Ships Its Own AI Workforce</h2>
+  <div class="columns">
+    <p>Dynamo 4.1.0 includes a canonical <code>.agents/skills</code> directory with agent skills for unit testing, UX design (aligned to Autodesk's Weave Design System), content design (with hallucination guardrails and PR-based node descriptions), and C# code cleanup. A CI workflow — <code>validate-skills</code> — checks for drift between the canonical skills and IDE-specific wrappers. Wrappers sync to VSCode, Cursor, and Claude Code.</p>
+    <p>Three experimental architecture agents were also added: Codebase Patterns, Ecosystem Reviewer, and a modular skill writer. <code>.github/copilot-instructions.md</code> was expanded with comprehensive repository context and build commands.</p>
+    <p>It's not a user-facing feature, but it signals a significant shift in how the team expects contributors to work with the codebase. The infrastructure is versioned and shipped — not a side experiment.</p>
+  </div>
+  <ul class="item-list">
+    <li>Canonical <code>.agents/skills</code> directory with cross-IDE sync</li>
+    <li><code>dynamo-unit-testing</code> agent skill added</li>
+    <li>UX Designer agent (Weave Design System aligned)</li>
+    <li>Content Designer agent (hallucination guardrails)</li>
+    <li>C# Janitor agent for automated code cleanup</li>
+    <li><code>validate-skills</code> CI workflow — prevents drift</li>
+    <li>Three experimental architecture agents</li>
+    <li>Copilot instructions expanded with full repo context</li>
+  </ul>
+</section>
+
+
+<!-- ══ SPREAD 9: SLAB — PYTHONNET3 ══ -->
+<section class="spread spread-slab">
+  <div class="spread-numeral">09</div>
+  <span class="section-tag">09 — PythonNet3</span>
+  <h2 class="spread-headline">Purple Is Out.<br>PythonNet3 Is In.</h2>
+  <div class="spread-body">
+    <p>Python samples have been updated to use PythonNet3 APIs. Existing scripts using older PythonNet patterns may need review — check your custom Python nodes if you rely on PythonNet-specific interop patterns.</p>
+    <p>The purple syntax highlighting that appeared on Python nodes has been removed. A small change, but one that eliminates a persistent visual inconsistency that made Python nodes stand out from the rest of the canvas for the wrong reasons.</p>
+  </div>
+  <ul class="item-list">
+    <li>Python samples updated to PythonNet3</li>
+    <li>Purple syntax highlighting removed from Python nodes</li>
+  </ul>
+</section>
+
+
+<!-- ══ SPREAD 10: FINALE — QOL & DEPENDENCIES ══ -->
+<section class="spread spread-finale">
+  <div class="finale-numeral">10</div>
+  <span class="section-tag">10 — QoL &amp; Dependencies</span>
+  <h2 class="spread-headline">And Everything Else<br>That Keeps the<br>Wheels Turning</h2>
+  <div class="spread-body">
+    <p>The quiet changes. DynamoHome bumped to v1.0.28. The Analytics package updated to 4.2.4.11548 for .NET 10 compatibility. WebView2 security settings standardized and browser accelerator keys disabled across all instances. ASM version logging added — Dynamo now detects and logs the loaded ShapeManager version and path to the console.</p>
+    <p>The splash screen restart message after settings import was updated to reflect the actual required workflow. The open-containing-folder action on sample files was fixed to respect the user's locale instead of always opening the <code>en-US</code> directory.</p>
+  </div>
+  <ul class="item-list">
+    <li>DynamoHome → v1.0.28</li>
+    <li>Analytics → 4.2.4.11548 (.NET 10 compat)</li>
+    <li>WebView2 security hardened across all instances</li>
+    <li>ASM/ShapeManager version logged to console on load</li>
+    <li>Sample files open-in-folder respects user locale</li>
+    <li><code>PhoneticRun</code> elements no longer appear in OpenXMLImportExcel</li>
+  </ul>
+  <div class="sign-off">That's 4.1.0. Worth every PR.</div>
+</section>
+
+
+<!-- ══ FOOTER ══ -->
+<footer class="footer">
+  <span class="footer-left">Dynamo Dispatch · Release 4.1.0</span>
+  <span class="footer-right">dynamo.autodesk.com · Generated April 15, 2026</span>
+</footer>
+
+</body>
+</html>
