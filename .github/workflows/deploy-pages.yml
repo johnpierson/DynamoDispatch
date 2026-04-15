@@ -1,0 +1,226 @@
+name: Deploy Dynamo Dispatch
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "issues/**"
+      - "assets/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build site
+        run: |
+          mkdir -p _site/issues _site/assets
+
+          # Copy public assets
+          cp -r assets/. _site/assets/ 2>/dev/null || true
+          cp -r issues/. _site/issues/ 2>/dev/null || true
+
+          # Generate index.html from issues/*.html files
+          # Sort newest-first by filename (YYYY-MM-DD prefix)
+          ISSUE_ROWS=""
+          for f in $(ls _site/issues/*.html 2>/dev/null | sort -r); do
+            BASENAME=$(basename "$f" .html)
+            DATE=$(echo "$BASENAME" | grep -oP '^\d{4}-\d{2}-\d{2}' || echo "")
+            TITLE=$(grep -oP '(?<=<title>)[^<]+' "$f" | head -1 || echo "$BASENAME")
+            FORMATTED_DATE=$(date -d "$DATE" "+%B %-d, %Y" 2>/dev/null || echo "$DATE")
+            ISSUE_ROWS="${ISSUE_ROWS}
+            <li>
+              <a href=\"issues/${BASENAME}.html\">
+                <span class=\"issue-date\">${FORMATTED_DATE}</span>
+                <span class=\"issue-title\">${TITLE}</span>
+                <span class=\"issue-arrow\">→</span>
+              </a>
+            </li>"
+          done
+
+          cat > _site/index.html << HTMLEOF
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Dynamo Dispatch</title>
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+            <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,900;1,9..144,300;1,9..144,900&family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+            <style>
+              *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+              body {
+                background: #f0ede8;
+                font-family: 'Inter', sans-serif;
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+              }
+              header {
+                background: #fff;
+                border-bottom: 4px solid #1a1a1a;
+                padding: 40px 64px 32px;
+              }
+              .logo {
+                height: 36px;
+                width: auto;
+                display: block;
+                margin-bottom: 24px;
+              }
+              .header-label {
+                font-size: 11px;
+                font-weight: 700;
+                letter-spacing: 0.25em;
+                text-transform: uppercase;
+                color: #888;
+                margin-bottom: 8px;
+              }
+              h1 {
+                font-family: 'Fraunces', serif;
+                font-size: 72px;
+                font-weight: 900;
+                line-height: 0.95;
+                letter-spacing: -0.03em;
+                color: #1a1a1a;
+              }
+              h1 span { font-style: italic; font-weight: 300; color: #aaa; }
+              .header-sub {
+                margin-top: 16px;
+                padding-top: 14px;
+                border-top: 1px solid #e0e0e0;
+                font-size: 13px;
+                color: #888;
+                letter-spacing: 0.05em;
+              }
+              main {
+                flex: 1;
+                max-width: 860px;
+                width: 100%;
+                margin: 0 auto;
+                padding: 64px 64px 0;
+              }
+              .section-label {
+                font-size: 11px;
+                font-weight: 700;
+                letter-spacing: 0.2em;
+                text-transform: uppercase;
+                color: #aaa;
+                margin-bottom: 24px;
+                display: block;
+              }
+              ul.issue-list {
+                list-style: none;
+                padding: 0;
+                border-top: 2px solid #1a1a1a;
+              }
+              ul.issue-list li a {
+                display: flex;
+                align-items: baseline;
+                gap: 20px;
+                padding: 22px 0;
+                border-bottom: 1px solid #ddd8d0;
+                text-decoration: none;
+                color: inherit;
+                transition: background 0.1s;
+              }
+              ul.issue-list li a:hover { background: #eae7e2; margin: 0 -16px; padding-left: 16px; padding-right: 16px; }
+              .issue-date {
+                font-family: 'Inter', sans-serif;
+                font-size: 12px;
+                font-weight: 600;
+                letter-spacing: 0.08em;
+                color: #aaa;
+                white-space: nowrap;
+                min-width: 140px;
+              }
+              .issue-title {
+                font-family: 'Fraunces', serif;
+                font-size: 22px;
+                font-weight: 700;
+                color: #1a1a1a;
+                flex: 1;
+                line-height: 1.2;
+              }
+              .issue-arrow {
+                font-size: 18px;
+                color: #bbb;
+                align-self: center;
+              }
+              .empty {
+                padding: 48px 0;
+                font-family: 'Fraunces', serif;
+                font-style: italic;
+                font-size: 20px;
+                color: #aaa;
+                border-top: 2px solid #1a1a1a;
+              }
+              footer {
+                margin-top: 64px;
+                background: #fff;
+                border-top: 4px solid #1a1a1a;
+                padding: 20px 64px;
+                font-size: 11px;
+                font-weight: 700;
+                letter-spacing: 0.2em;
+                text-transform: uppercase;
+                color: #1a1a1a;
+                display: flex;
+                justify-content: space-between;
+              }
+              footer span:last-child { font-weight: 400; color: #aaa; letter-spacing: 0; text-transform: none; font-family: 'Fraunces', serif; font-style: italic; }
+              @media (max-width: 700px) {
+                header, main, footer { padding-left: 24px; padding-right: 24px; }
+                h1 { font-size: 48px; }
+                .issue-date { min-width: 0; display: none; }
+              }
+            </style>
+          </head>
+          <body>
+            <header>
+              <img src="assets/dynamo-logo.png" alt="Dynamo" class="logo">
+              <div class="header-label">The Archive</div>
+              <h1>Dynamo <span>Dispatch</span></h1>
+              <div class="header-sub">Release reviews &amp; editorial summaries · github.com/DynamoDS/Dynamo</div>
+            </header>
+            <main>
+              <span class="section-label">All Issues</span>
+              $(if [ -z "$ISSUE_ROWS" ]; then echo '<p class="empty">No issues yet.</p>'; else echo "<ul class=\"issue-list\">${ISSUE_ROWS}</ul>"; fi)
+            </main>
+            <footer>
+              <span>Dynamo Dispatch</span>
+              <span>dynamo.autodesk.com</span>
+            </footer>
+          </body>
+          </html>
+          HTMLEOF
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
