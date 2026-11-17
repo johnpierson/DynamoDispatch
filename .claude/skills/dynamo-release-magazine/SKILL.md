@@ -1,5 +1,5 @@
 ---
-name: dynamo-dispatch
+name: dynamo-release-magazine
 description: Turn Dynamo GitHub release notes into a polished magazine-style editorial HTML magazine saved to issues/. Input: a GitHub URL, pasted release notes, or a changelog.
 ---
 
@@ -46,10 +46,11 @@ Short editorial verdict.
 
 Generate a single self-contained HTML file as a **horizontal-swipe editorial magazine**. The page count is dynamic — one content page per release section, plus a fixed cover, verdict, and back cover.
 
-**Fonts** (Google Fonts via `<link>`):
-- `Playfair Display` — headlines
-- `Source Serif 4` — body text
-- `IBM Plex Mono` — metadata, tags, stats labels
+**Fonts** (Autodesk Artifakt, loaded with `@font-face { src: local(...) }` per weight — copy the `@font-face` block from the latest file in `issues/`; always end font stacks with `sans-serif` so machines without Artifakt degrade cleanly):
+- `Artifakt Legend` — headlines, stats, cover title
+- `Artifakt Element` — body text, metadata, tags, stat labels
+
+**The latest file in `issues/` is the reference implementation** — start from its CSS and JS (navigation, cover canvas, linkifier, narrow-screen layout) rather than rewriting them.
 
 **Aesthetic:** E-ink monochrome only. No color — only black (`#0a0a0a`), white (`#f5f2ed`), and grays. No box shadows. Crisp borders. Think Monocle magazine.
 
@@ -64,18 +65,16 @@ Set `const TOTAL = <actual page count>` in the JS. Build `LIGHT_PAGES` as a `Set
 
 **Page 1 — Dark cover:**
 - `../assets/dynamo-logo.png` top-left, `width: clamp(160px, 22vw, 360px)`, **no CSS filter** (the logo is multicolored — display its natural colors)
-- Product name in Playfair Display, huge (10vw+)
-- Version number in IBM Plex Mono, 4vw
-- Tagline (release headline) in Source Serif italic, 2vw
-- Date + issue metadata in IBM Plex Mono, bottom-left, small
+- Product name in Artifakt Legend, huge (10vw+)
+- Version number in Artifakt Element, 4vw
+- Tagline (release headline) in Artifakt Element italic, 2vw
+- Date + issue metadata in Artifakt Element, bottom-left, small
 - **Full-bleed interactive canvas behind all content** (`position: absolute; inset: 0; pointer-events: none`). Add `position: relative` to the cover page div; wrap all cover text content in a `<div style="position:relative;z-index:1;">`.
 
 **Cover canvas animation — "DYNAMO DISPATCH" particle formation:**
 
-Include `family=Open+Sans:wght@400` in the Google Fonts link.
-
 1000 nodes animate through four phases:
-1. **Fly-in (1.5s):** 1000 nodes scatter in from random offscreen positions and ease into pixel positions sampled from "DYNAMO DISPATCH" rendered in Open Sans 400 on an offscreen canvas. Font sizes: `H * 0.30` for "DYNAMO", `H * 0.20` for "DISPATCH", gap `H * 0.03`. Sample step: 4px, alpha threshold: 120. **No connections during fly-in — dots only.**
+1. **Fly-in (1.5s):** 1000 nodes scatter in from random offscreen positions and ease into pixel positions sampled from "DYNAMO DISPATCH" rendered in `400 Npx "Artifakt Legend", sans-serif` on an offscreen canvas. Font sizes: `H * 0.30` for "DYNAMO", `H * 0.20` for "DISPATCH", gap `H * 0.03`. Sample step: 4px, alpha threshold: 120. **No connections during fly-in — dots only.**
 2. **Connect (1.0s):** connections fade in (alpha 0 → 0.62) between only the first KEEP=250 nodes (the "survivors"). Non-survivors are visible but unconnected. Nodes hold text positions with 1.2px jitter.
 3. **Hold (1.2s):** all nodes jitter at text positions. Connections bright (0.62) on the 250.
 4. **Scatter → drift:** non-keep nodes get staggered `dieAt` and fade out. Surviving 250 drift freely, bouncing off walls. Mouse repels nearby nodes (90px radius) and draws bright connection lines to nodes within 220px. `linkDist` expands from 55 → 170px over 1800ms; `connAlpha` falls from 0.62 → 0.22.
@@ -84,9 +83,9 @@ Include `family=Open+Sans:wght@400` in the Google Fonts link.
 
 Each node shape: `{ sx, sy, tx, ty, x, y, vx, vy, r: 1.8–3.3, alpha: 1, dieAt: Infinity, keep: bool }`.
 
-Use `document.fonts.ready.then(() => { init(); tick(); })` to ensure Open Sans is loaded before sampling text pixels.
+Use `document.fonts.ready.then(...)` to ensure the font is loaded before sampling text pixels.
 
-Pause rendering (`requestAnimationFrame` still fires but clears and returns) when not on page 0.
+Stop the `requestAnimationFrame` loop when not on page 0 and restart it on return (the nav script fires a `dispatch:page` event). Size the canvas backing store by `devicePixelRatio`. Under `prefers-reduced-motion: reduce`, draw the formed wordmark once with no animation.
 
 Node colour throughout: `rgba(245,242,237, …)` (matches `--paper`).
 
@@ -109,30 +108,30 @@ Alternate light/dark: page 2 = light, page 3 = dark, page 4 = light, etc. — co
 Each content page uses a **55/45 split layout** (flex row, full bleed):
 
 *Left column (55%):* `height: 100vh; max-height: 100vh; min-height: 0; overflow: hidden;` padding `4vw 3vw 5vh 6vw`. Use `justify-content: center` to vertically center the content group. **Critical:** use `min-height: 0` — without it, the column as a flex item ignores `height: 100vh` and grows to content size, making `overflow: hidden` useless. All flex children use `flex-shrink: 0`.
-- Giant ghosted section rank number — Playfair Display, ~30vw, opacity 0.06, positioned absolute behind content
-- Category tag — IBM Plex Mono, 11px, caps, letter-spacing 0.2em; `margin-bottom: 1.2vh`; `flex-shrink: 0`
-- Editorial headline — Playfair Display, `clamp(24px, 4.5vw, 72px)`, line-height 1.05; `margin-bottom: 1.5vh`; `flex-shrink: 0`
-- Section path — IBM Plex Mono, 13px, e.g. `Features` (section name only); `margin-bottom: 1.5vh`; `flex-shrink: 0`
-- Summary — Source Serif, `max(15px, 1.3vw)`, line-height 1.6, opacity 0.85; `overflow: hidden` — the summary IS the content. Write using the Feynman technique: explain *why* the problem existed and what the fix does, in plain terms. No bullet list follows — the summary must stand alone. Do not add a numbered or bulleted list to content pages.
+- Giant ghosted section rank number — Artifakt Legend, ~30vw, opacity 0.06, positioned absolute behind content
+- Category tag — Artifakt Element, 11px, caps, letter-spacing 0.2em; `margin-bottom: 1.2vh`; `flex-shrink: 0`
+- Editorial headline — Artifakt Legend, `clamp(24px, 4.5vw, 72px)`, line-height 1.05; `margin-bottom: 1.5vh`; `flex-shrink: 0`
+- Section path — Artifakt Element, 13px, e.g. `Features` (section name only); `margin-bottom: 1.5vh`; `flex-shrink: 0`
+- Summary — Artifakt Element, `max(15px, 1.3vw)`, line-height 1.6, opacity 0.85; `overflow: hidden` — the summary IS the content. Write using the Feynman technique: explain *why* the problem existed and what the fix does, in plain terms. No bullet list follows — the summary must stand alone. Do not add a numbered or bulleted list to content pages.
 
 *Right column (45%):* `height: 100vh; max-height: 100vh; min-height: 0; overflow: hidden;` padding `4vw 6vw 5vh 4vw`. Same `min-height: 0` rule applies.
-- Key stat — Playfair Display, **6.5vw minimum**. Stat label: IBM Plex Mono, 12px, caps. **Always frame as a user-facing outcome, not a raw count.** The number describes what the user now experiences — prefer `0` stats ("0 panels that forget your preferences", "0 tab switches to check installed version") or specific outcome counts ("6 connector pin bugs fixed", "Every template has a visual preview"). The number itself can be a word (e.g. `Every`). Avoid labels like "N Feature Additions" or "N Pipeline Updates" — describe the result, not the work.
-- Tech/stack tag — IBM Plex Mono pill (border, no fill). Show where the work happened (e.g. `CLR · Dispatcher · LibG`).
+- Key stat — Artifakt Legend, **6.5vw minimum**. Stat label: Artifakt Element, 12px, caps. **Always frame as a user-facing outcome, not a raw count.** The number describes what the user now experiences — prefer `0` stats ("0 panels that forget your preferences", "0 tab switches to check installed version") or specific outcome counts ("6 connector pin bugs fixed", "Every template has a visual preview"). The number itself can be a word (e.g. `Every`). Avoid labels like "N Feature Additions" or "N Pipeline Updates" — describe the result, not the work.
+- Tech/stack tag — Artifakt Element pill (border, no fill). Show where the work happened (e.g. `CLR · Dispatcher · LibG`).
 - PR image (if available, no filter, no border-radius, no shadow, `width: 100%`, `max-height: 28vh`, `object-fit: cover`)
-- `<figcaption>` in IBM Plex Mono 11px below image
+- `<figcaption>` in Artifakt Element 11px below image
 - **Callout box** — background: 5% tint of text color; 4px solid left border (full text color); padding 20px 24px; `margin-top: auto`:
-  - Label: `IBM Plex Mono 11px caps` — "WHAT THIS MEANS FOR YOU"
-  - Body: Source Serif `max(15px, 1.3vw)`, opacity 0.8 — a personalized note for a senior Dynamo developer at Autodesk (C#/.NET, WPF, open-source AEC platform). Be specific: name the feature/fix and explain the concrete workflow or codebase implication.
+  - Label: `Artifakt Element 11px caps` — "WHAT THIS MEANS FOR YOU"
+  - Body: Artifakt Element `max(15px, 1.3vw)`, opacity 0.8 — a personalized note for a senior Dynamo developer at Autodesk (C#/.NET, WPF, open-source AEC platform). Be specific: name the feature/fix and explain the concrete workflow or codebase implication.
 
 **Page N+1 — Verdict (dark):**
 - No split layout. Full-width centered editorial verdict.
-- Playfair Display italic headline, 5vw — one punchy sentence, not a summary. **Always frame positively** — what the user gains, not what was broken. "The Release That Gives You Your Speed Back" not "The Release That Fixed What You Stopped Noticing."
-- Source Serif body, max(17px, 1.5vw), opacity 0.85, max-width 680px centered — **2–4 sentences maximum**. One sentence on what changed, one on who benefits most, one on whether to upgrade. No recap of individual features — the content pages covered those. Be direct.
-- Upgrade recommendation in IBM Plex Mono, large — a single terse verdict line, e.g. `UPGRADE — STABILITY FIXES JUSTIFY IT` or `HOLD — BREAKING CHANGES, REVIEW FIRST`
+- Artifakt Legend italic headline, 5vw — one punchy sentence, not a summary. **Always frame positively** — what the user gains, not what was broken. "The Release That Gives You Your Speed Back" not "The Release That Fixed What You Stopped Noticing."
+- Artifakt Element body, max(17px, 1.5vw), opacity 0.85, max-width 680px centered — **2–4 sentences maximum**. One sentence on what changed, one on who benefits most, one on whether to upgrade. No recap of individual features — the content pages covered those. Be direct.
+- Upgrade recommendation in Artifakt Element, large — a single terse verdict line, e.g. `UPGRADE — STABILITY FIXES JUSTIFY IT` or `HOLD — BREAKING CHANGES, REVIEW FIRST`
 
 **Page N+2 — Dark back cover (always last):**
-- Centered: "DYNAMO DISPATCH" in IBM Plex Mono caps, large
-- Issue number + date below in Source Serif italic
+- Centered: "DYNAMO DISPATCH" in Artifakt Element caps, large
+- Issue number + date below in Artifakt Element italic
 - `../assets/dynamo-logo.png` centered, height 48px, `filter: brightness(0) invert(1)`, `opacity: 0.5` (white silhouette on dark)
 
 ---
@@ -140,18 +139,19 @@ Each content page uses a **55/45 split layout** (flex row, full bleed):
 #### Rules
 - 100vw × 100vh pages. `overflow: hidden` on body. No scrollbars.
 - CSS transform-based pagination: `translateX(-100vw * currentPage)` on a flex track.
-- **Navigation:** arrow keys (←→), mouse wheel (any delta → page), touch swipe (>50px threshold), dot nav fixed at bottom center.
-- Dots: small circles, filled = current page, outline = others. Adapt color to current page background.
-- Huge fonts everywhere. Nothing below 15px. No small text.
+- **Navigation:** arrow keys (←→), PageUp/PageDown, Home/End, Space, mouse wheel (one page per gesture), touch swipe (>50px, mostly horizontal), clickable side arrows, dot nav fixed at bottom center.
+- Dots: small circles, filled = current page, outline = others. Adapt color to current page background. Dots and arrows are `<button>` elements with `aria-label`s.
+- **Narrow / portrait screens** (`max-width: 820px` or portrait): stack the two columns and let the page scroll vertically instead of clipping.
+- Huge fonts everywhere. Reading text (summary, callout, verdict) never below 15px. Only the caps metadata labels specified above (tags, captions, stat labels) may be 11–13px.
 - High contrast on dark pages. Body text opacity 0.85 minimum. Callout body 0.8 minimum.
 - Nothing overlapping. `margin-bottom` between every element. `padding-bottom: 5vh` on content columns.
 - Full-bleed edge-to-edge. No floating cards. No padding boxes around content areas.
 - All PR images: no filter — display in full color.
-- **PR references are always clickable links.** Do not manually wrap them in the HTML — instead include the auto-linkifier script below just before `</body>`. It finds every `PR #NNNNN` and `#NNNNN` pattern in `.callout-body`, `.page-summary`, `.bullet-list`, `.pr-caption`, and `.verdict-body` and wraps them in `<a class="pr-link">` tags pointing to `https://github.com/DynamoDS/Dynamo/pull/NNNNN`.
+- **PR references are always clickable links.** Do not manually wrap them in the HTML — instead include the auto-linkifier script below just before `</body>`. It finds every `PR #NNNNN` and `#NNNNN` pattern in `.callout-body`, `.page-summary`, `.pr-caption`, and `.verdict-body` and wraps them in `<a class="pr-link">` tags pointing to `https://github.com/DynamoDS/Dynamo/pull/NNNNN`.
 
 ```css
 a.pr-link {
-  font-family: 'IBM Plex Mono', monospace; font-size: 0.88em;
+  font-family: 'Artifakt Element', sans-serif; font-size: 0.88em;
   color: inherit; text-decoration: underline;
   text-decoration-style: dotted; text-underline-offset: 3px;
   opacity: 0.85; transition: opacity 0.15s;
@@ -163,8 +163,8 @@ a.pr-link:hover { opacity: 1; text-decoration-style: solid; }
 <script>
   (function() {
     const BASE = 'https://github.com/DynamoDS/Dynamo/pull/';
-    const SCOPES = '.callout-body, .page-summary, .bullet-list, .pr-caption, .verdict-body';
-    const RE = /\b(PR\s+)?(#(\d{5,}))\b/g;
+    const SCOPES = '.callout-body, .page-summary, .pr-caption, .verdict-body';
+    const RE = /(?:\bPR\s+)?(?<![\w&#])#(\d{4,})\b/g;
     function linkify(node) {
       if (node.nodeType === 3) {
         if (!RE.test(node.textContent)) return;
@@ -174,7 +174,7 @@ a.pr-link:hover { opacity: 1; text-decoration-style: solid; }
         while ((m = RE.exec(node.textContent)) !== null) {
           if (m.index > last) frag.appendChild(document.createTextNode(node.textContent.slice(last, m.index)));
           const a = document.createElement('a');
-          a.href = BASE + m[3]; a.target = '_blank'; a.rel = 'noopener'; a.className = 'pr-link';
+          a.href = BASE + m[1]; a.target = '_blank'; a.rel = 'noopener'; a.className = 'pr-link';
           a.textContent = m[0]; frag.appendChild(a);
           last = m.index + m[0].length;
         }
@@ -192,10 +192,12 @@ a.pr-link:hover { opacity: 1; text-decoration-style: solid; }
 ---
 
 #### Image placement
-Place PR images in the right column of the relevant content page, between the stat and the callout box. One image per page maximum. Apply grayscale filter. If no image available, omit gracefully — the callout box fills the space with `margin-top: auto`.
+Place PR images in the right column of the relevant content page, between the stat and the callout box. One image per page maximum. No filter — full color. If no image available, omit gracefully — the callout box fills the space with `margin-top: auto`. Add an `error` listener that hides any `img.pr-image` that fails to load.
 
-Save to `C:\Users\piersoj\Repos\Dynamo-Digest\issues\YYYY-MM-DD-brief-title.html`.
-Where `brief-title` is a 2–4 word kebab-case summary (e.g. `node-graph-performance`).
+Save to `issues/YYYY-MM-DD-brief-title.html` (relative to the repo root).
+Where `YYYY-MM-DD` is today's date and `brief-title` is a 2–4 word kebab-case summary (e.g. `node-graph-performance`).
+
+After saving, add a row for the new issue to the table in `README.md`.
 
 ### PR Image Fetching
 
@@ -233,15 +235,13 @@ Parse the PR body for:
 Include: `.png`, `.jpg`, `.jpeg`, `.gif`, `.webp`
 Skip: `.mp4`, `.mov` (video files won't render in HTML img tags)
 
-If a PR body contains multiple images, use the first 1–2 only.
+**Never use `https://private-user-images.githubusercontent.com/...?jwt=...` URLs.** Those are signed links from the rendered PR page and expire in about five minutes, leaving a broken image. Use the durable `https://github.com/user-attachments/assets/<uuid>` form from the raw PR body (the `<uuid>` is the trailing GUID in the signed URL's filename).
+
+If a PR body contains multiple images, pick the single best one.
 
 **Step 4 — Place images in the HTML.**
 
-- Place images inside the spread for their section, below the headline and summary.
-- Style as a `<figure>` with `max-width: 100%`, `border-radius: 6px`, subtle box-shadow.
-- `<figcaption>` shows: PR number + a short description of what the image shows.
-- If multiple PRs in a section have images, use a simple 2-column flex grid for the figures.
-- Never stretch images. Use `object-fit: contain` or natural sizing.
+Follow "Image placement" above: right column, between the stat and the callout, one image per page, with a caption showing the PR number plus a short description of what the image shows.
 
 **Graceful degradation:** If a PR has no images, or fetching fails, skip it silently. Do not block HTML generation waiting for images.
 

@@ -6,6 +6,7 @@ on:
     paths:
       - "issues/**"
       - "assets/**"
+      - ".github/workflows/deploy-pages.yml"
   workflow_dispatch:
 
 permissions:
@@ -37,7 +38,8 @@ jobs:
           for f in $(ls _site/issues/*.html 2>/dev/null | sort -r); do
             BASENAME=$(basename "$f" .html)
             DATE=$(echo "$BASENAME" | grep -oP '^\d{4}-\d{2}-\d{2}' || echo "")
-            TITLE=$(grep -oP '(?<=<title>)[^<]+' "$f" | head -1 || echo "$BASENAME")
+            TITLE=$(grep -oP '(?<=<title>)[^<]+' "$f" | head -1 || true)
+            TITLE=${TITLE:-$BASENAME}
             FORMATTED_DATE=$(date -d "$DATE" "+%B %-d, %Y" 2>/dev/null || echo "$DATE")
             ISSUE_ROWS="${ISSUE_ROWS}
             <li>
@@ -58,7 +60,7 @@ jobs:
             <title>Dynamo Dispatch</title>
             <link rel="preconnect" href="https://fonts.googleapis.com">
             <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-            <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,900;1,9..144,300;1,9..144,900&family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+            <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,300;1,9..144,900&family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
             <style>
               *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
               body {

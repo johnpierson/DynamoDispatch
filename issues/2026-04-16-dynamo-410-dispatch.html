@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dynamo Dispatch — 4.1.0</title>
+  <meta name="description" content="Dynamo Dispatch, Issue 01: an editorial review of the Dynamo 4.1.0 release.">
   <style>
     /* Artifakt Legend — display/headline */
     @font-face { font-family: 'Artifakt Legend'; src: local('Artifakt Legend Thin');       font-weight: 100; font-style: normal; }
@@ -228,10 +229,13 @@
       display: flex; gap: 8px; z-index: 100;
     }
     .dot {
-      width: 7px; height: 7px; border-radius: 50%;
+      width: 7px; height: 7px; border-radius: 50%; padding: 0;
+      background: transparent; position: relative;
       border: 1.5px solid rgba(245,242,237,0.6);
       cursor: pointer; transition: background 0.2s, border-color 0.2s;
     }
+    .dot::after { content: ''; position: absolute; inset: -8px -4px; } /* larger hit area */
+    .dot:focus-visible, .arrow-hint:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
     .dot.active { background: rgba(245,242,237,0.9); border-color: rgba(245,242,237,0.9); }
     .dot.dark-dot { border-color: rgba(10,10,10,0.5); }
     .dot.dark-dot.active { background: rgba(10,10,10,0.8); border-color: rgba(10,10,10,0.8); }
@@ -239,10 +243,12 @@
     .arrow-hint {
       position: fixed; top: 50%; transform: translateY(-50%);
       font-size: 20px; opacity: 0.25; z-index: 100;
-      pointer-events: none; transition: color 0.3s;
+      background: none; border: 0; padding: 12px 8px; cursor: pointer;
+      color: var(--paper); transition: color 0.3s, opacity 0.2s;
     }
-    #arrow-left  { left: 18px; }
-    #arrow-right { right: 18px; }
+    .arrow-hint:hover, .arrow-hint:focus-visible { opacity: 0.8; }
+    #arrow-left  { left: 10px; }
+    #arrow-right { right: 10px; }
 
     /* ── PR links ── */
     a.pr-link {
@@ -252,6 +258,25 @@
       opacity: 0.85; transition: opacity 0.15s;
     }
     a.pr-link:hover { opacity: 1; text-decoration-style: solid; }
+
+    /* ── Narrow / portrait screens: stack the columns, let the page scroll ── */
+    @media (max-width: 820px), (orientation: portrait) {
+      .content-page { flex-direction: column; overflow-y: auto; }
+      .col-left, .col-right {
+        width: 100%; height: auto; max-height: none; flex: 0 0 auto;
+        overflow: visible; padding: 8vh 7vw 3vh;
+      }
+      .col-right { border-left: 0; padding-top: 2vh; padding-bottom: 72px; }
+      .callout { margin-top: 2vh; }
+      .ghost-rank { font-size: 50vw; }
+      .cover-tagline { max-width: none; }
+      .verdict-page { overflow-y: auto; padding: 10vh 7vw 72px; justify-content: flex-start; }
+      .arrow-hint { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #track { transition: none; }
+    }
   </style>
 </head>
 <body>
@@ -262,7 +287,7 @@
     <canvas id="cover-canvas"></canvas>
     <div style="position:relative;z-index:1;">
       <img src="../assets/dynamo-logo.png" alt="Dynamo" class="cover-logo">
-      <div class="cover-title">Dynamo</div>
+      <h1 class="cover-title">Dynamo</h1>
       <div class="cover-version">4.1.0</div>
       <div class="cover-tagline">Speed recovered. Pins fixed. Python normalized. The foundational release you didn't know you were waiting for.</div>
     </div>
@@ -413,7 +438,7 @@
       <div class="big-stat">0</div>
       <div class="stat-label">Geometry Hash Collisions After Fix</div>
       <div class="stack-tag">CLR · Dispatcher · LibG</div>
-      <img src="https://private-user-images.githubusercontent.com/5086849/519675509-cda4ed68-9f7f-48d2-b60a-5876b556ee7c.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NzYyODYzNTMsIm5iZiI6MTc3NjI4NjA1MywicGF0aCI6Ii81MDg2ODQ5LzUxOTY3NTUwOS1jZGE0ZWQ2OC05ZjdmLTQ4ZDItYjYwYS01ODc2YjU1NmVlN2MucG5nP1gtQW16LUFsZ29yaXRobT1BV1M0LUhNQUMtU0hBMjU2JlgtQW16LUNyZWRlbnRpYWw9QUtJQVZDT0RZTFNBNTNQUUs0WkElMkYyMDI2MDQxNSUyRnVzLWVhc3QtMSUyRnMzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyNjA0MTVUMjA0NzMzWiZYLUFtei1FeHBpcmVzPTMwMCZYLUFtei1TaWduYXR1cmU9NDBiZjE0NWE3ZjFmMjVhN2RhYjg0NDVhY2Y4NDJlYzQ1ODIxNDAzOTAyZDI0MzZhNGY0ODgxMWQ5N2M4NmI4MiZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QmcmVzcG9uc2UtY29udGVudC10eXBlPWltYWdlJTJGcG5nIn0.mbaIXQSi1uDHOKc9fYjkBNaFdbSO7Ws2HyoTzibEsJ0" alt="Geometry performance fix illustration" class="pr-image">
+      <img src="https://github.com/user-attachments/assets/cda4ed68-9f7f-48d2-b60a-5876b556ee7c" alt="Geometry performance fix illustration" class="pr-image">
       <div class="pr-caption">#16754 — Identity hash codes eliminate the geometry marshaling collision cascade</div>
       <div class="callout">
         <div class="callout-label">What This Means for You</div>
@@ -547,9 +572,9 @@
 </div><!-- /track -->
 
 <!-- Dot nav -->
-<div id="dots"></div>
-<div class="arrow-hint" id="arrow-left">←</div>
-<div class="arrow-hint" id="arrow-right">→</div>
+<nav id="dots" aria-label="Pages"></nav>
+<button type="button" class="arrow-hint" id="arrow-left" aria-label="Previous page">←</button>
+<button type="button" class="arrow-hint" id="arrow-right" aria-label="Next page">→</button>
 
 <script>
 (function(){
@@ -562,43 +587,81 @@
   const arrowL = document.getElementById('arrow-left');
   const arrowR = document.getElementById('arrow-right');
 
+  const pages = Array.from(track.children);
+  const dots = [];
   for (let i = 0; i < TOTAL; i++) {
-    const d = document.createElement('div');
+    const d = document.createElement('button');
+    d.type = 'button';
     d.className = 'dot';
+    d.setAttribute('aria-label', `Page ${i + 1} of ${TOTAL}`);
     d.addEventListener('click', () => go(i));
     dotsEl.appendChild(d);
+    dots.push(d);
   }
+  arrowL.addEventListener('click', () => go(cur - 1));
+  arrowR.addEventListener('click', () => go(cur + 1));
 
   function go(n) {
     cur = Math.max(0, Math.min(TOTAL - 1, n));
     track.style.transform = `translateX(calc(-100vw * ${cur}))`;
     const isLight = LIGHT_PAGES.has(cur);
-    document.querySelectorAll('.dot').forEach((d, i) => {
+    dots.forEach((d, i) => {
       d.className = 'dot' + (isLight ? ' dark-dot' : '') + (i === cur ? ' active' : '');
+      if (i === cur) d.setAttribute('aria-current', 'page'); else d.removeAttribute('aria-current');
     });
     arrowL.style.color = isLight ? 'var(--ink)' : 'var(--paper)';
     arrowR.style.color = isLight ? 'var(--ink)' : 'var(--paper)';
-    arrowL.style.display = cur === 0 ? 'none' : '';
-    arrowR.style.display = cur === TOTAL - 1 ? 'none' : '';
+    arrowL.style.visibility = cur === 0 ? 'hidden' : '';
+    arrowR.style.visibility = cur === TOTAL - 1 ? 'hidden' : '';
+    document.dispatchEvent(new CustomEvent('dispatch:page', { detail: cur }));
   }
 
   document.addEventListener('keydown', e => {
-    if (e.key === 'ArrowRight') go(cur + 1);
-    if (e.key === 'ArrowLeft')  go(cur - 1);
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    const onButton = e.target instanceof HTMLButtonElement;
+    switch (e.key) {
+      case 'ArrowRight': case 'PageDown': go(cur + 1); break;
+      case 'ArrowLeft':  case 'PageUp':   go(cur - 1); break;
+      case ' ': if (onButton) return; go(cur + (e.shiftKey ? -1 : 1)); break;
+      case 'Home': go(0); break;
+      case 'End':  go(TOTAL - 1); break;
+      default: return;
+    }
+    e.preventDefault();
   });
-  let wheelLock = false;
+
+  // Wheel: one page per gesture. The lock holds until the wheel has been quiet
+  // for a moment, so trackpad inertia doesn't skip several pages.
+  let wheelLock = false, wheelTimer = 0;
   document.addEventListener('wheel', e => {
-    if (wheelLock) return;
+    if (e.ctrlKey) return;                       // pinch-zoom
+    const page = pages[cur];
+    const horizontal = Math.abs(e.deltaX) > Math.abs(e.deltaY);
+    // Stacked (narrow) layout: vertical wheel scrolls the page itself.
+    if (!horizontal && page.scrollHeight > page.clientHeight + 1) return;
+    const delta = horizontal ? e.deltaX : e.deltaY;
+    if (wheelLock) {
+      clearTimeout(wheelTimer);
+      wheelTimer = setTimeout(() => wheelLock = false, 250);
+      return;
+    }
+    if (Math.abs(delta) < 4) return;
     wheelLock = true;
-    setTimeout(() => wheelLock = false, 600);
-    if (e.deltaY > 0 || e.deltaX > 0) go(cur + 1);
-    else go(cur - 1);
+    wheelTimer = setTimeout(() => wheelLock = false, 600);
+    go(cur + (delta > 0 ? 1 : -1));
   }, { passive: true });
-  let tx = 0;
-  document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
+
+  let tx = 0, ty = 0;
+  document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; ty = e.touches[0].clientY; }, { passive: true });
   document.addEventListener('touchend', e => {
     const dx = e.changedTouches[0].clientX - tx;
-    if (Math.abs(dx) > 50) go(dx < 0 ? cur + 1 : cur - 1);
+    const dy = e.changedTouches[0].clientY - ty;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) go(dx < 0 ? cur + 1 : cur - 1);
+  }, { passive: true });
+
+  // A PR image that fails to load is dropped; its caption (with the PR link) stays.
+  document.querySelectorAll('img.pr-image').forEach(img => {
+    img.addEventListener('error', () => { img.style.display = 'none'; });
   });
 
   go(0);
@@ -627,13 +690,26 @@
   let linkDist = LINK_FORM, connAlpha = 0;
   let mouseX = -9999, mouseY = -9999, onCover = true;
 
+  const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let running = false;
+
   function resize() {
-    W = canvas.width  = canvas.offsetWidth;
-    H = canvas.height = canvas.offsetHeight;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = canvas.offsetWidth;
+    H = canvas.offsetHeight;
+    canvas.width  = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
-  window.addEventListener('resize', () => { resize(); if (nodes.length) sampleTargets(); });
+  window.addEventListener('resize', () => {
+    resize();
+    // Targets only matter while the text is forming; drifting nodes just re-clamp.
+    if (nodes.length && phase !== 'drift') sampleTargets();
+    if (REDUCED) drawStatic();
+  });
 
   function sampleTargets() {
+    if (W < 1 || H < 1) return;
     const off = document.createElement('canvas');
     off.width = W; off.height = H;
     const c = off.getContext('2d');
@@ -644,10 +720,10 @@
     c.fillStyle = '#fff';
     c.textAlign  = 'center';
     c.textBaseline = 'alphabetic';
-    c.font = `400 ${sz1}px "Artifakt Legend"`;
+    c.font = `400 ${sz1}px "Artifakt Legend", sans-serif`;
     const y1 = H * 0.5 - gap / 2;
     c.fillText('DYNAMO', W / 2, y1);
-    c.font = `400 ${sz2}px "Artifakt Legend"`;
+    c.font = `400 ${sz2}px "Artifakt Legend", sans-serif`;
     const y2 = y1 + gap + sz2 * 0.8;
     c.fillText('DISPATCH', W / 2, y2);
 
@@ -738,9 +814,26 @@
     }
   }
 
-  function tick(now) {
+  function drawStatic() {
+    // Reduced motion: show the formed wordmark, no animation.
+    ctx.clearRect(0, 0, W, H);
+    nodes.forEach(n => {
+      ctx.beginPath();
+      ctx.arc(n.tx, n.ty, n.r * 1.5, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(245,242,237,1)';
+      ctx.fill();
+    });
+  }
+
+  function start() {
+    if (running || REDUCED) return;
+    running = true;
     requestAnimationFrame(tick);
-    if (!onCover) { ctx.clearRect(0, 0, W, H); return; }
+  }
+
+  function tick(now) {
+    if (!onCover) { running = false; ctx.clearRect(0, 0, W, H); return; }
+    requestAnimationFrame(tick);
     ctx.clearRect(0, 0, W, H);
     if (!nodes.length) return;
 
@@ -785,10 +878,9 @@
       linkDist = LINK_FORM + (LINK_DRIFT - LINK_FORM) * lerpT;
       connAlpha = 0.62 - lerpT * (0.62 - 0.22);
 
-      const dead = [];
       nodes.forEach(n => {
         if (now >= n.dieAt) { n.alpha -= 0.025; }
-        if (n.alpha <= 0) { dead.push(n); return; }
+        if (n.alpha <= 0) return;
         const dx = n.x - mouseX, dy = n.y - mouseY;
         const d2 = dx*dx + dy*dy;
         if (d2 < REPEL_DIST * REPEL_DIST && d2 > 0) {
@@ -804,7 +896,7 @@
         const sp = Math.sqrt(n.vx*n.vx + n.vy*n.vy);
         if (sp > BASE_SPEED * 3) { n.vx *= BASE_SPEED * 3 / sp; n.vy *= BASE_SPEED * 3 / sp; }
       });
-      dead.forEach(n => { const i = nodes.indexOf(n); if (i > -1) nodes.splice(i, 1); });
+      nodes = nodes.filter(n => n.alpha > 0);
 
       if (mouseX > -9999) {
         const md2 = MOUSE_DIST * MOUSE_DIST;
@@ -846,17 +938,24 @@
   });
   coverPage.addEventListener('mouseleave', () => { mouseX = -9999; mouseY = -9999; });
 
-  const observer = new MutationObserver(() => {
-    const t = document.getElementById('track').style.transform;
-    const m = t.match(/translateX\(calc\(-100vw \* (\d+)\)\)/);
-    onCover = !m || m[1] === '0';
-    if (onCover && nodes.length === 0) {
-      document.fonts.ready.then(() => { init(); tick(performance.now()); });
+  // Pause the loop off the cover; resume (and shift phase timing) on return.
+  let leftAt = 0;
+  document.addEventListener('dispatch:page', e => {
+    const was = onCover;
+    onCover = e.detail === 0;
+    if (was && !onCover) { leftAt = performance.now(); mouseX = -9999; mouseY = -9999; }
+    if (!was && onCover && nodes.length) {
+      const away = performance.now() - leftAt;
+      phaseStart += away;
+      nodes.forEach(n => { if (n.dieAt !== Infinity) n.dieAt += away; });
+      start();
     }
   });
-  observer.observe(document.getElementById('track'), { attributes: true, attributeFilter: ['style'] });
 
-  document.fonts.ready.then(() => { init(); tick(performance.now()); });
+  document.fonts.ready.then(() => {
+    init();
+    if (REDUCED) drawStatic(); else if (onCover) start();
+  });
 })();
 </script>
 
@@ -865,7 +964,7 @@
   (function() {
     const BASE = 'https://github.com/DynamoDS/Dynamo/pull/';
     const SCOPES = '.callout-body, .page-summary, .bullet-list, .pr-caption, .verdict-body';
-    const RE = /\b(PR\s+)?(#(\d{5,}))\b/g;
+    const RE = /(?:\bPR\s+)?(?<![\w&#])#(\d{4,})\b/g;
     function linkify(node) {
       if (node.nodeType === 3) {
         if (!RE.test(node.textContent)) return;
@@ -875,7 +974,7 @@
         while ((m = RE.exec(node.textContent)) !== null) {
           if (m.index > last) frag.appendChild(document.createTextNode(node.textContent.slice(last, m.index)));
           const a = document.createElement('a');
-          a.href = BASE + m[3]; a.target = '_blank'; a.rel = 'noopener'; a.className = 'pr-link';
+          a.href = BASE + m[1]; a.target = '_blank'; a.rel = 'noopener'; a.className = 'pr-link';
           a.textContent = m[0]; frag.appendChild(a);
           last = m.index + m[0].length;
         }

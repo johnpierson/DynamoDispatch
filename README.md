@@ -1,4 +1,4 @@
-# Dynamo Digest
+# Dynamo Dispatch
 
 A magazine-style release summary for the [Dynamo](https://github.com/DynamoDS/Dynamo) visual programming platform. Each issue is a self-contained HTML slideshow covering features, bug fixes, performance improvements, and ecosystem changes from a Dynamo release.
 
@@ -19,5 +19,9 @@ issues/          One HTML file per issue
 
 Open any file in `issues/` directly in a browser. No build step required.
 
-- Arrow keys or scroll to navigate slides
-- Click the dot indicators to jump to a slide
+- Arrow keys, Page Up/Down, Space, scroll, or swipe to navigate slides; Home/End jump to the first and last
+- Click the side arrows or the dot indicators to move between slides
+
+Headlines and body text use Autodesk's Artifakt fonts when installed locally and fall back to the system sans-serif otherwise.
+
+Pushing to `main` publishes the issues to GitHub Pages with a generated index (`.github/workflows/deploy-pages.yml`).
