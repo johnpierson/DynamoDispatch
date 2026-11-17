@@ -14,6 +14,33 @@ description: Turn Dynamo GitHub release notes into a polished magazine-style edi
 5. Highlight anything especially actionable for users, developers, or teams adopting the release.
 6. If the notes are thin, say what is missing instead of guessing.
 
+### What earns a page
+
+Every content page highlights **one customer win and leads with a great image of it.** This rule decides the page list; the release notes' section headings do not.
+
+- **Customer win:** something a Dynamo user can see or do differently. Build changes, dependency bumps, test fixes, and repo tooling are not customer wins and never get their own page.
+- **Great image:** a screenshot or GIF from the PR that shows the change clearly at page size. A tight crop of the menu, node, dialog, or wire qualifies. A full-window capture where the change is too small to read does not, and neither does a test runner, a console, or a blank first frame of a GIF.
+- **Find the images first.** Fetch the body of *every* PR in the release section (see PR Image Fetching), then look at each image before you plan pages. Do not pick pages and hunt for images afterwards.
+- **No image, no page.** If a change has no image, or only a weak one, reconsider it: it does not get a highlight page. Mention it in the closing roundup instead, and tell the user which changes were held back for lack of an image so they can supply a screenshot.
+- **Closing roundup.** One final content page, "Also in [version]", with no image. It summarizes the important changes that did not earn a page (security fixes, performance, features without screenshots) in two short paragraphs.
+
+A release with few good images makes a short issue. That is correct. Do not pad it.
+
+### Writing standards
+
+All copy follows the `dynamo-content-designer` skill (Dynamo repo, `.claude/skills/dynamo-content-designer`). Load it before writing if it is available. The rules that matter most here:
+
+- **Source only.** Every claim, number, and stat must trace to a line item in the anchored release notes section, or to the body of a PR linked from it. Do not infer history ("before this release…"), root causes, breaking changes, or scope ("the only supported…") that the source does not state. If the notes are thin, write less and say so.
+- **Why before how.** Open each page with what the reader can now do or what stopped going wrong, then the detail.
+- **Plain words, short sentences.** Write for a smart reader who may not be a native English speaker. No idioms, no jokes that need cultural context.
+- **Define terms on first use**, in a short clause: "A connector pin is a point you add to a wire to control its route." This includes acronyms and internal names (LibG, DYF, marshaling, rollForward).
+- **One idea per paragraph.** Summaries are two short paragraphs (about 40–60 words each), never one block.
+- **One word per thing.** Do not vary terms for style (wire/connector, panel/sidebar). Pick one and keep it.
+- **No marketing tone.** Avoid "finally", "sleeper hit", "game-changer", "you didn't know you needed", and formula headlines repeated across pages. A headline states the change in plain words: "See Your Installed Version While You Search".
+- **Recommend, do not list options.** The callout gives one or two concrete actions with their PR numbers.
+
+Before saving, check each page against the source once more and count anything you quote as a number (fixes, entries, new nodes).
+
 ### Default output (markdown)
 
 ```
@@ -44,7 +71,7 @@ Short editorial verdict.
 
 ### If asked for HTML
 
-Generate a single self-contained HTML file as a **horizontal-swipe editorial magazine**. The page count is dynamic — one content page per release section, plus a fixed cover, verdict, and back cover.
+Generate a single self-contained HTML file as a **horizontal-swipe editorial magazine**. The page count is dynamic — one content page per illustrated customer win (see "What earns a page"), one closing roundup, plus a fixed cover, verdict, and back cover.
 
 **Fonts** (Autodesk Artifakt, loaded with `@font-face { src: local(...) }` per weight — copy the `@font-face` block from the latest file in `issues/`; always end font stacks with `sans-serif` so machines without Artifakt degrade cleanly):
 - `Artifakt Legend` — headlines, stats, cover title
@@ -59,7 +86,7 @@ Generate a single self-contained HTML file as a **horizontal-swipe editorial mag
 #### Page Structure (dynamic total)
 
 **Total pages = 1 cover + N content pages + 1 verdict + 1 back cover.**
-N = total content pages across all sections. Sections with many items may span multiple pages — count each page individually. If a release has 10 sections but 2 sections each need a continuation page, N = 12 and the magazine has 15 pages total.
+N = highlight pages plus the closing roundup. If a release has 9 illustrated customer wins, N = 10 and the magazine has 13 pages total.
 
 Set `const TOTAL = <actual page count>` in the JS. Build `LIGHT_PAGES` as a `Set` of 0-indexed page numbers: page 0 = dark (cover), content pages alternate starting light at index 1, verdict = dark, back cover = dark.
 
@@ -89,16 +116,8 @@ Stop the `requestAnimationFrame` loop when not on page 0 and restart it on retur
 
 Node colour throughout: `rgba(245,242,237, …)` (matches `--paper`).
 
-**Pages 2–N — Content pages (one or more per release section):**
-Every distinct section gets at least one page. **If a section has more items than fit comfortably on one page, split it across multiple pages.** A section like "Bug Fixes" with 26 items should become two pages (e.g. "Bug Fixes — Part I" and "Bug Fixes — Part II"), each with its own headline, summary, and bullet subset. Do not cram — if the bullet list clips significantly, add a continuation page. Do not merge sections to save space, and do not invent pages to pad. Do not add a Watch-Outs page.
-
-Continuation pages for the same section:
-- Ghost rank number stays the same (e.g. both parts show `03`)
-- Cat tag stays the same
-- Headline adds "— Part II" (or "— Continued")
-- Section path stays the same
-- Summary briefly re-anchors ("The second half of bug fixes covers…") rather than repeating the opener
-- Stat on continuation page can show the subset count (e.g. "13 of 26")
+**Pages 2–N — Content pages (one per customer win, then the roundup):**
+Each page covers one customer win with its image. Order them by how much users will notice them. Do not invent pages to pad, and do not add a Watch-Outs page. The ghost rank number is the running page number (`01`, `02`, …), the category tag is the topic (e.g. `Package Manager`), and the section path is the release notes section the change came from (e.g. `Bug Fixes`).
 
 Alternate light/dark: page 2 = light, page 3 = dark, page 4 = light, etc. — continuation pages follow the same alternating sequence as any other page.
 
@@ -112,20 +131,20 @@ Each content page uses a **55/45 split layout** (flex row, full bleed):
 - Category tag — Artifakt Element, 11px, caps, letter-spacing 0.2em; `margin-bottom: 1.2vh`; `flex-shrink: 0`
 - Editorial headline — Artifakt Legend, `clamp(24px, 4.5vw, 72px)`, line-height 1.05; `margin-bottom: 1.5vh`; `flex-shrink: 0`
 - Section path — Artifakt Element, 13px, e.g. `Features` (section name only); `margin-bottom: 1.5vh`; `flex-shrink: 0`
-- Summary — Artifakt Element, `max(15px, 1.3vw)`, line-height 1.6, opacity 0.85; `overflow: hidden` — the summary IS the content. Write using the Feynman technique: explain *why* the problem existed and what the fix does, in plain terms. No bullet list follows — the summary must stand alone. Do not add a numbered or bulleted list to content pages.
+- Summary — Artifakt Element, `max(15px, 1.3vw)`, line-height 1.6, opacity 0.85; `overflow: hidden` — the summary IS the content. Write it as two `<p class="page-summary">` paragraphs (see Writing standards): first what changed for the reader and any term that needs defining, then the supporting changes. Explain a cause only when the source states it. No bullet list follows — the summary must stand alone. Do not add a numbered or bulleted list to content pages.
 
 *Right column (45%):* `height: 100vh; max-height: 100vh; min-height: 0; overflow: hidden;` padding `4vw 6vw 5vh 4vw`. Same `min-height: 0` rule applies.
-- Key stat — Artifakt Legend, **6.5vw minimum**. Stat label: Artifakt Element, 12px, caps. **Always frame as a user-facing outcome, not a raw count.** The number describes what the user now experiences — prefer `0` stats ("0 panels that forget your preferences", "0 tab switches to check installed version") or specific outcome counts ("6 connector pin bugs fixed", "Every template has a visual preview"). The number itself can be a word (e.g. `Every`). Avoid labels like "N Feature Additions" or "N Pipeline Updates" — describe the result, not the work.
+- Key stat — Artifakt Legend, **6.5vw minimum**. Stat label: Artifakt Element, 12px, caps. **Always frame as a user-facing outcome, not a raw count.** The number describes what the user now experiences — a `0` stat ("0 tab switches to check your installed version") or a specific outcome count ("8 fixes for connector pins and pinned notes", "Every template shows a thumbnail or a placeholder icon"). The number itself can be a word (e.g. `Every`, `patch`). Avoid labels like "N Feature Additions" or "N Pipeline Updates" — describe the result, not the work. **The stat must be literally true from the source.** Use a `0` stat only when the notes say the thing was eliminated; never claim "0 remaining" bugs or gaps. Count the line items before you print a count.
 - Tech/stack tag — Artifakt Element pill (border, no fill). Show where the work happened (e.g. `CLR · Dispatcher · LibG`).
-- PR image (if available, no filter, no border-radius, no shadow, `width: 100%`, `max-height: 28vh`, `object-fit: cover`)
+- PR image (required on every highlight page; no filter, no border-radius, no shadow, `width: 100%`, `max-height: 38vh`, `object-fit: contain; object-position: left top` so the whole screenshot shows)
 - `<figcaption>` in Artifakt Element 11px below image
 - **Callout box** — background: 5% tint of text color; 4px solid left border (full text color); padding 20px 24px; `margin-top: auto`:
   - Label: `Artifakt Element 11px caps` — "WHAT THIS MEANS FOR YOU"
-  - Body: Artifakt Element `max(15px, 1.3vw)`, opacity 0.8 — a personalized note for a senior Dynamo developer at Autodesk (C#/.NET, WPF, open-source AEC platform). Be specific: name the feature/fix and explain the concrete workflow or codebase implication.
+  - Body: Artifakt Element `max(15px, 1.3vw)`, opacity 0.8 — a personalized note for a senior Dynamo developer at Autodesk (C#/.NET, WPF, open-source AEC platform). Be specific: name the feature/fix with its PR number and give one or two concrete actions. Do not speculate about side effects the source does not mention.
 
 **Page N+1 — Verdict (dark):**
 - No split layout. Full-width centered editorial verdict.
-- Artifakt Legend italic headline, 5vw — one punchy sentence, not a summary. **Always frame positively** — what the user gains, not what was broken. "The Release That Gives You Your Speed Back" not "The Release That Fixed What You Stopped Noticing."
+- Artifakt Legend italic headline, 5vw — one plain sentence or phrase, not a summary. **Always frame positively** — what the user gains, not what was broken. "A Faster, Steadier Dynamo for Large Graphs" not "The Release That Fixed What You Stopped Noticing."
 - Artifakt Element body, max(17px, 1.5vw), opacity 0.85, max-width 680px centered — **2–4 sentences maximum**. One sentence on what changed, one on who benefits most, one on whether to upgrade. No recap of individual features — the content pages covered those. Be direct.
 - Upgrade recommendation in Artifakt Element, large — a single terse verdict line, e.g. `UPGRADE — STABILITY FIXES JUSTIFY IT` or `HOLD — BREAKING CHANGES, REVIEW FIRST`
 
@@ -192,7 +211,7 @@ a.pr-link:hover { opacity: 1; text-decoration-style: solid; }
 ---
 
 #### Image placement
-Place PR images in the right column of the relevant content page, between the stat and the callout box. One image per page maximum. No filter — full color. If no image available, omit gracefully — the callout box fills the space with `margin-top: auto`. Add an `error` listener that hides any `img.pr-image` that fails to load.
+Place PR images in the right column of the relevant content page, between the stat and the callout box. Exactly one image per highlight page. No filter — full color. Only the closing roundup has no image; there the callout box fills the space with `margin-top: auto`. Add an `error` listener that hides any `img.pr-image` that fails to load.
 
 Save to `issues/YYYY-MM-DD-brief-title.html` (relative to the repo root).
 Where `YYYY-MM-DD` is today's date and `brief-title` is a 2–4 word kebab-case summary (e.g. `node-graph-performance`).
@@ -212,7 +231,7 @@ Among those, only fetch PRs likely to contain visual content. Look for these sig
 - Keywords: `icon`, `UI`, `panel`, `style`, `color`, `theme`, `preview`, `thumbnail`, `gizmo`, `drag`, `animation`, `splash`, `badge`, `button`, `menu`, `sidebar`, `tooltip`, `highlight`, `render`, `template`, `home screen`, `node`, `canvas`
 - Section type: Features, Templates, Bug Fixes with visual symptoms (rendering, bubbles, pins). Skip: Build & Infrastructure, PythonNet3, pure dependency bumps.
 
-Aim for 6–10 candidate PRs per release. Prioritize the most user-visible changes.
+Fetch every PR in the section that could be a customer win, not a sample. Skipping PRs here is how good images get missed.
 
 **Step 2 — Fetch each PR body.**
 
