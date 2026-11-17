@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamo Dispatch — 4.2.0</title>
+  <meta name="description" content="Dynamo Dispatch, Issue 02: an editorial review of the Dynamo 4.2.0 release.">
+  <style>
+    /* Artifakt Legend — display/headline */
+    @font-face { font-family: 'Artifakt Legend'; src: local('Artifakt Legend Thin');       font-weight: 100; font-style: normal; }
+    @font-face { font-family: 'Artifakt Legend'; src: local('Artifakt Legend Extra Light'); font-weight: 200; font-style: normal; }
+    @font-face { font-family: 'Artifakt Legend'; src: local('Artifakt Legend Light');       font-weight: 300; font-style: normal; }
+    @font-face { font-family: 'Artifakt Legend'; src: local('Artifakt Legend Regular');     font-weight: 400; font-style: normal; }
+    @font-face { font-family: 'Artifakt Legend'; src: local('Artifakt Legend Medium');      font-weight: 500; font-style: normal; }
+    @font-face { font-family: 'Artifakt Legend'; src: local('Artifakt Legend Semi Bold');   font-weight: 600; font-style: normal; }
+    @font-face { font-family: 'Artifakt Legend'; src: local('Artifakt Legend Bold');        font-weight: 700; font-style: normal; }
+    @font-face { font-family: 'Artifakt Legend'; src: local('Artifakt Legend Extra Bold');  font-weight: 800; font-style: normal; }
+    @font-face { font-family: 'Artifakt Legend'; src: local('Artifakt Legend Black');       font-weight: 900; font-style: normal; }
+    @font-face { font-family: 'Artifakt Legend'; src: local('Artifakt Legend Thin Italic');   font-weight: 100; font-style: italic; }
+    @font-face { font-family: 'Artifakt Legend'; src: local('Artifakt Legend Light Italic');  font-weight: 300; font-style: italic; }
+    @font-face { font-family: 'Artifakt Legend'; src: local('Artifakt Legend Italic');        font-weight: 400; font-style: italic; }
+    @font-face { font-family: 'Artifakt Legend'; src: local('Artifakt Legend Bold Italic');   font-weight: 700; font-style: italic; }
+    /* Artifakt Element — body/UI */
+    @font-face { font-family: 'Artifakt Element'; src: local('Artifakt Element Thin');       font-weight: 100; font-style: normal; }
+    @font-face { font-family: 'Artifakt Element'; src: local('Artifakt Element Extra Light'); font-weight: 200; font-style: normal; }
+    @font-face { font-family: 'Artifakt Element'; src: local('Artifakt Element Light');       font-weight: 300; font-style: normal; }
+    @font-face { font-family: 'Artifakt Element'; src: local('Artifakt Element Regular');     font-weight: 400; font-style: normal; }
+    @font-face { font-family: 'Artifakt Element'; src: local('Artifakt Element Medium');      font-weight: 500; font-style: normal; }
+    @font-face { font-family: 'Artifakt Element'; src: local('Artifakt Element Semi Bold');   font-weight: 600; font-style: normal; }
+    @font-face { font-family: 'Artifakt Element'; src: local('Artifakt Element Bold');        font-weight: 700; font-style: normal; }
+    @font-face { font-family: 'Artifakt Element'; src: local('Artifakt Element Extra Bold');  font-weight: 800; font-style: normal; }
+    @font-face { font-family: 'Artifakt Element'; src: local('Artifakt Element Black');       font-weight: 900; font-style: normal; }
+    @font-face { font-family: 'Artifakt Element'; src: local('Artifakt Element Thin Italic');   font-weight: 100; font-style: italic; }
+    @font-face { font-family: 'Artifakt Element'; src: local('Artifakt Element Light Italic');  font-weight: 300; font-style: italic; }
+    @font-face { font-family: 'Artifakt Element'; src: local('Artifakt Element Italic');        font-weight: 400; font-style: italic; }
+    @font-face { font-family: 'Artifakt Element'; src: local('Artifakt Element Bold Italic');   font-weight: 700; font-style: italic; }
+  </style>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:   #0a0a0a;
+      --paper: #f5f2ed;
+    }
+
+    html, body {
+      width: 100vw; height: 100vh;
+      overflow: hidden;
+      background: var(--ink);
+    }
+
+    #track {
+      display: flex;
+      width: 100vw; height: 100vh;
+      transition: transform 0.55s cubic-bezier(0.77,0,0.175,1);
+      will-change: transform;
+    }
+
+    .page {
+      flex: 0 0 100vw;
+      width: 100vw; height: 100vh;
+      overflow: hidden;
+      display: flex;
+    }
+    .dark  { background: var(--ink);   color: var(--paper); }
+    .light { background: var(--paper); color: var(--ink); }
+
+    /* ── Cover ── */
+    .cover-page {
+      flex-direction: column;
+      justify-content: flex-start;
+      padding: 5vh 6vw;
+      position: relative;
+    }
+    #cover-canvas {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+    }
+    .cover-logo  { width: clamp(160px, 22vw, 360px); display: block; margin-bottom: 4vh; }
+    .cover-title { font-family: 'Artifakt Legend', sans-serif; font-size: clamp(64px, 10vw, 160px); font-weight: 400; line-height: 0.95; letter-spacing: -0.02em; }
+    .cover-version { font-family: 'Artifakt Element', sans-serif; font-size: clamp(18px, 4vw, 64px); margin-top: 2.5vh; opacity: 0.6; }
+    .cover-tagline { font-family: 'Artifakt Element', sans-serif; font-style: italic; font-size: clamp(14px, 2vw, 32px); opacity: 0.75; margin-top: 2vh; max-width: 60vw; line-height: 1.4; }
+    .cover-meta { position: absolute; bottom: 5vh; left: 6vw; font-family: 'Artifakt Element', sans-serif; font-size: 11px; opacity: 0.4; line-height: 1.8; }
+
+    /* ── Content pages ── */
+    .content-page { flex-direction: row; overflow: hidden; }
+
+    .col-left {
+      width: 55%; height: 100vh; max-height: 100vh; min-height: 0;
+      padding: 4vw 3vw 5vh 6vw;
+      display: flex; flex-direction: column; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    .col-right {
+      width: 45%; height: 100vh; max-height: 100vh; min-height: 0;
+      padding: 4vw 6vw 5vh 4vw;
+      display: flex; flex-direction: column;
+      border-left: 1px solid currentColor;
+      overflow: hidden;
+    }
+    .dark  .col-right { border-left-color: rgba(245,242,237,0.12); }
+    .light .col-right { border-left-color: rgba(10,10,10,0.12); }
+
+    .ghost-rank {
+      position: absolute; font-family: 'Artifakt Legend', sans-serif;
+      font-size: 30vw; font-weight: 900; line-height: 1;
+      top: -2vw; left: -2vw; opacity: 0.06;
+      pointer-events: none; user-select: none; z-index: 0;
+    }
+    .cat-tag {
+      font-family: 'Artifakt Element', sans-serif; font-size: 11px;
+      letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.55;
+      margin-bottom: 1.2vh; position: relative; z-index: 1;
+      flex-shrink: 0;
+    }
+    .page-headline {
+      font-family: 'Artifakt Legend', sans-serif;
+      font-size: clamp(24px, 4.5vw, 72px); font-weight: 900;
+      line-height: 1.05; letter-spacing: -0.02em;
+      margin-bottom: 1.5vh; position: relative; z-index: 1;
+      flex-shrink: 0;
+    }
+    .section-path {
+      font-family: 'Artifakt Element', sans-serif; font-size: 13px;
+      opacity: 0.4; margin-bottom: 1.5vh; position: relative; z-index: 1;
+      flex-shrink: 0;
+    }
+    .page-summary {
+      font-family: 'Artifakt Element', sans-serif; font-size: max(15px, 1.3vw);
+      line-height: 1.6; opacity: 0.85;
+      position: relative; z-index: 1;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .page-summary + .page-summary { margin-top: 1.6vh; }
+
+    /* ── Right column elements ── */
+    .big-stat {
+      font-family: 'Artifakt Legend', sans-serif;
+      font-size: clamp(48px, 6.5vw, 120px); font-weight: 900;
+      line-height: 1; letter-spacing: -0.03em;
+      margin-bottom: 0.8vh; flex-shrink: 0;
+    }
+    .stat-label {
+      font-family: 'Artifakt Element', sans-serif; font-size: 12px;
+      letter-spacing: 0.15em; text-transform: uppercase; opacity: 0.55;
+      margin-bottom: 2vh; flex-shrink: 0;
+    }
+    .stack-tag {
+      font-family: 'Artifakt Element', sans-serif; font-size: 11px;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      border: 1px solid currentColor; display: inline-block;
+      padding: 4px 10px; opacity: 0.5; margin-bottom: 2vh; flex-shrink: 0;
+      align-self: flex-start;
+    }
+    .pr-image {
+      width: 100%; max-height: 38vh; object-fit: contain; object-position: left top;
+      display: block; margin-bottom: 0.6vh; flex-shrink: 0;
+    }
+    .pr-caption {
+      font-family: 'Artifakt Element', sans-serif; font-size: 11px;
+      opacity: 0.45; margin-bottom: 1.5vh; flex-shrink: 0;
+    }
+    .callout {
+      border-left: 4px solid currentColor;
+      padding: 20px 24px;
+      margin-top: auto; flex-shrink: 0;
+    }
+    .dark  .callout { background: rgba(245,242,237,0.05); }
+    .light .callout { background: rgba(10,10,10,0.05); }
+    .callout-label {
+      font-family: 'Artifakt Element', sans-serif; font-size: 11px;
+      letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.55;
+      margin-bottom: 10px;
+    }
+    .callout-body {
+      font-family: 'Artifakt Element', sans-serif; font-size: max(15px, 1.3vw);
+      line-height: 1.5; opacity: 0.8;
+    }
+
+    /* ── Verdict page ── */
+    .verdict-page {
+      flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 6vw;
+    }
+    .verdict-kicker {
+      font-family: 'Artifakt Element', sans-serif; font-size: 12px;
+      letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.4;
+      margin-bottom: 4vh;
+    }
+    .verdict-headline {
+      font-family: 'Artifakt Legend', sans-serif; font-style: italic;
+      font-size: clamp(28px, 5vw, 80px); font-weight: 400;
+      line-height: 1.1; max-width: 900px; margin-bottom: 4vh;
+    }
+    .verdict-body {
+      font-family: 'Artifakt Element', sans-serif; font-size: max(17px, 1.5vw);
+      line-height: 1.65; opacity: 0.85; max-width: 680px;
+      margin-bottom: 5vh;
+    }
+    .verdict-stamp {
+      font-family: 'Artifakt Element', sans-serif;
+      font-size: clamp(13px, 1.4vw, 22px); letter-spacing: 0.2em;
+      text-transform: uppercase; opacity: 0.9;
+      border-top: 2px solid currentColor;
+      padding-top: 2.5vh;
+    }
+
+    /* ── Back cover ── */
+    .back-cover {
+      flex-direction: column;
+      align-items: center; justify-content: center; gap: 2vh;
+    }
+    .back-cover-logo { height: 48px; filter: brightness(0) invert(1); opacity: 0.5; }
+    .back-cover-rule { width: 60px; height: 2px; background: currentColor; opacity: 0.3; }
+    .back-cover-title {
+      font-family: 'Artifakt Element', sans-serif; font-size: clamp(18px, 2.5vw, 40px);
+      letter-spacing: 0.3em; text-transform: uppercase; opacity: 0.7;
+    }
+    .back-cover-sub {
+      font-family: 'Artifakt Element', sans-serif; font-style: italic;
+      font-size: clamp(13px, 1.3vw, 20px); opacity: 0.4;
+    }
+
+    /* ── Navigation ── */
+    #dots {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 8px; z-index: 100;
+    }
+    .dot {
+      width: 7px; height: 7px; border-radius: 50%; padding: 0;
+      background: transparent; position: relative;
+      border: 1.5px solid rgba(245,242,237,0.6);
+      cursor: pointer; transition: background 0.2s, border-color 0.2s;
+    }
+    .dot::after { content: ''; position: absolute; inset: -8px -4px; } /* larger hit area */
+    .dot:focus-visible, .arrow-hint:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+    .dot.active { background: rgba(245,242,237,0.9); border-color: rgba(245,242,237,0.9); }
+    .dot.dark-dot { border-color: rgba(10,10,10,0.5); }
+    .dot.dark-dot.active { background: rgba(10,10,10,0.8); border-color: rgba(10,10,10,0.8); }
+
+    .arrow-hint {
+      position: fixed; top: 50%; transform: translateY(-50%);
+      font-size: 20px; opacity: 0.25; z-index: 100;
+      background: none; border: 0; padding: 12px 8px; cursor: pointer;
+      color: var(--paper); transition: color 0.3s, opacity 0.2s;
+    }
+    .arrow-hint:hover, .arrow-hint:focus-visible { opacity: 0.8; }
+    #arrow-left  { left: 10px; }
+    #arrow-right { right: 10px; }
+
+    /* ── PR links ── */
+    a.pr-link {
+      font-family: 'Artifakt Element', sans-serif; font-size: 0.88em;
+      color: inherit; text-decoration: underline;
+      text-decoration-style: dotted; text-underline-offset: 3px;
+      opacity: 0.85; transition: opacity 0.15s;
+    }
+    a.pr-link:hover { opacity: 1; text-decoration-style: solid; }
+
+    /* ── Narrow / portrait screens: stack the columns, let the page scroll ── */
+    @media (max-width: 820px), (orientation: portrait) {
+      .content-page { flex-direction: column; overflow-y: auto; }
+      .col-left, .col-right {
+        width: 100%; height: auto; max-height: none; flex: 0 0 auto;
+        overflow: visible; padding: 8vh 7vw 3vh;
+      }
+      .col-right { border-left: 0; padding-top: 2vh; padding-bottom: 72px; }
+      .callout { margin-top: 2vh; }
+      .ghost-rank { font-size: 50vw; }
+      .cover-tagline { max-width: none; }
+      .verdict-page { overflow-y: auto; padding: 10vh 7vw 72px; justify-content: flex-start; }
+      .arrow-hint { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #track { transition: none; }
+    }
+  </style>
+</head>
+<body>
+<div id="track">
+
+  <!-- ══ PAGE 1: COVER (DARK) ══ -->
+  <div class="page dark cover-page">
+    <canvas id="cover-canvas"></canvas>
+    <div style="position:relative;z-index:1;">
+      <img src="../assets/dynamo-logo.png" alt="Dynamo" class="cover-logo">
+      <h1 class="cover-title">Dynamo</h1>
+      <div class="cover-version">4.2.0</div>
+      <div class="cover-tagline">Autodesk Assistant arrives as a built-in package, Define Data works with values from Player, and long group style lists scroll.</div>
+    </div>
+    <div class="cover-meta">
+      Dynamo Dispatch · Issue 02<br>
+      August 2026 · github.com/DynamoDS/Dynamo
+    </div>
+  </div>
+
+  <!-- ══ PAGE 2: GROUPS (LIGHT) ══ -->
+  <div class="page light content-page">
+    <div class="col-left">
+      <div class="ghost-rank">01</div>
+      <div class="cat-tag">Groups</div>
+      <h2 class="page-headline">Long Group Style Lists Now Scroll</h2>
+      <div class="section-path">Enhancements</div>
+      <p class="page-summary">Group styles are the presets you apply to groups of nodes. When you had many styles, the list in the group menu was cut off. The list now scrolls, so you can reach every style.</p>
+    </div>
+    <div class="col-right">
+      <div class="big-stat">Every</div>
+      <div class="stat-label">Group Style Is Reachable in the List</div>
+      <div class="stack-tag">Groups · Context Menu</div>
+      <img src="https://github.com/user-attachments/assets/2ac236fe-1a62-4a8c-8e33-3ac23451f7c8" alt="Group Style list in the group context menu" class="pr-image">
+      <div class="pr-caption">#17205 — The Group Style list in the group context menu</div>
+      <div class="callout">
+        <div class="callout-label">What This Means for You</div>
+        <div class="callout-body">If your office uses many custom group styles, you no longer need to keep the list short. The change is PR #17205.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE 3: DEFINE DATA (DARK) ══ -->
+  <div class="page dark content-page">
+    <div class="col-left">
+      <div class="ghost-rank">02</div>
+      <div class="cat-tag">Define Data</div>
+      <h2 class="page-headline">Define Data Uses the Value You Give It in Player</h2>
+      <div class="section-path">Bug Fixes</div>
+      <p class="page-summary">A Define Data node declares the type of data that a graph expects. When a value came from Dynamo Player and the node's own input was not connected, the node ignored that value. It now uses the value from Player.</p>
+      <p class="page-summary">A second fix covers lists. Define Data rejected valid JSON list values from Player, such as [0.0, 1.0, 2.0], for inputs that expect a list. Those values are now accepted.</p>
+    </div>
+    <div class="col-right">
+      <div class="big-stat">2</div>
+      <div class="stat-label">Define Data Fixes for Values From Player</div>
+      <div class="stack-tag">Define Data · Player</div>
+      <img src="https://github.com/user-attachments/assets/6af89f63-1915-4133-bf76-0fc0d060e4f8" alt="Define Data node connected to a Watch node" class="pr-image">
+      <div class="pr-caption">#17154 — A Define Data node passing a value to a Watch node</div>
+      <div class="callout">
+        <div class="callout-label">What This Means for You</div>
+        <div class="callout-body">If you build graphs for other people to run in Player, test your Define Data inputs again after you upgrade. The fixes are PR #17154 and PR #17242.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE 4: PACKAGE MANAGER (LIGHT) ══ -->
+  <div class="page light content-page">
+    <div class="col-left">
+      <div class="ghost-rank">03</div>
+      <div class="cat-tag">Package Manager</div>
+      <h2 class="page-headline">Declining a Package Install Now Leaves Nothing Behind</h2>
+      <div class="section-path">Bug Fixes</div>
+      <p class="page-summary">Sometimes a package you want to install conflicts with a package that is already installed, and Dynamo asks what to do. If you declined the install, Dynamo could still copy the new package's files into your packages folder. Now, when you decline, no files are copied.</p>
+    </div>
+    <div class="col-right">
+      <div class="big-stat">0</div>
+      <div class="stat-label">Files Copied After You Decline an Install</div>
+      <div class="stack-tag">Package Manager · Install</div>
+      <img src="https://github.com/user-attachments/assets/fc709914-4f93-4611-83c5-faf202b45b08" alt="Message about a package conflict" class="pr-image">
+      <div class="pr-caption">#17099 — The message shown when a package conflicts with an installed package</div>
+      <div class="callout">
+        <div class="callout-label">What This Means for You</div>
+        <div class="callout-body">If you declined a conflicting install in an earlier version, check your packages folder for files you did not expect. The fix is PR #17099.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE 5: SAMPLES (DARK) ══ -->
+  <div class="page dark content-page">
+    <div class="col-left">
+      <div class="ghost-rank">04</div>
+      <div class="cat-tag">Samples</div>
+      <h2 class="page-headline">The Dynamo Player Sample Leaves the Revit Samples List</h2>
+      <div class="section-path">Bug Fixes</div>
+      <p class="page-summary">The Dynamo Player sample file appeared under the Revit sample files, where it did not belong. That is fixed, so it is easier to find the sample you need.</p>
+    </div>
+    <div class="col-right">
+      <div class="big-stat">1</div>
+      <div class="stat-label">Sample File Moved Out of the Revit List</div>
+      <div class="stack-tag">Home Screen · Samples</div>
+      <img src="https://github.com/user-attachments/assets/34617d7e-1c8c-4ad7-b376-4b485531aa7c" alt="Sample files on the Home screen" class="pr-image">
+      <div class="pr-caption">#17280 — Sample files on the Home screen</div>
+      <div class="callout">
+        <div class="callout-label">What This Means for You</div>
+        <div class="callout-body">If you point new users to the sample files, check where the Dynamo Player sample now appears. The fix is PR #17280.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE 6: ALSO IN THIS RELEASE (LIGHT) ══ -->
+  <div class="page light content-page">
+    <div class="col-left">
+      <div class="ghost-rank">05</div>
+      <div class="cat-tag">Also in This Release</div>
+      <h2 class="page-headline">Also in 4.2.0: Autodesk Assistant, New From Template, Crash Fixes</h2>
+      <div class="section-path">Features · Enhancements · Bug Fixes</div>
+      <p class="page-summary">Autodesk Assistant, the AI assistant for Dynamo, is now a built-in package. So is DynamoMCP, the package that provides its tools. Templates now open as a new editable workspace from File &gt; New &gt; From Template, which replaces File &gt; Open &gt; Template. New keyboard shortcuts show and hide the Library and Extensions sidebars.</p>
+      <p class="page-summary">Four crashes are fixed: a random crash while a graph re-evaluated, a crash when you exported a very large workspace as an image, a crash when you exported Graph Node Manager data from an empty workspace, and a splash screen crash. Nodes no longer run twice after you reconnect a wire.</p>
+    </div>
+    <div class="col-right">
+      <div class="big-stat">24</div>
+      <div class="stat-label">Entries in the 4.2.0 Bug Fix List</div>
+      <div class="stack-tag">Assistant · Templates · Stability</div>
+      <div class="callout">
+        <div class="callout-label">What This Means for You</div>
+        <div class="callout-body">One change breaks automation: the DynamoMCP tool getInstallationInfo is renamed get_installation_info. Update any script that calls the old name. The Assistant package is PR #17187, DynamoMCP is PR #17165, and the template change is PR #17098.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE 7: VERDICT (DARK) ══ -->
+  <div class="page dark verdict-page">
+    <div class="verdict-kicker">Editorial Verdict · Dynamo 4.2.0</div>
+    <div class="verdict-headline">A Built-In Assistant and Fixes You Will Notice</div>
+    <div class="verdict-body">
+      Dynamo 4.2.0 makes Autodesk Assistant and DynamoMCP built-in packages and moves templates to File &gt; New &gt; From Template. It also lists 24 bug fixes, including four crashes and two Define Data problems with values from Player. One DynamoMCP tool is renamed, which breaks automation that calls the old name.
+    </div>
+    <div class="verdict-stamp">Upgrade — Check DynamoMCP Automation First</div>
+  </div>
+
+  <!-- ══ PAGE 8: BACK COVER (DARK) ══ -->
+  <div class="page dark back-cover">
+    <img src="../assets/dynamo-logo.png" alt="Dynamo" class="back-cover-logo">
+    <div class="back-cover-rule"></div>
+    <div class="back-cover-title">Dynamo Dispatch</div>
+    <div class="back-cover-sub">Issue 02 · August 2026</div>
+  </div>
+
+</div><!-- /track -->
+
+<!-- Dot nav -->
+<nav id="dots" aria-label="Pages"></nav>
+<button type="button" class="arrow-hint" id="arrow-left" aria-label="Previous page">←</button>
+<button type="button" class="arrow-hint" id="arrow-right" aria-label="Next page">→</button>
+
+<script>
+(function(){
+  const TOTAL = 8;
+  const LIGHT_PAGES = new Set([1, 3, 5]);
+
+  let cur = 0;
+  const track = document.getElementById('track');
+  const dotsEl = document.getElementById('dots');
+  const arrowL = document.getElementById('arrow-left');
+  const arrowR = document.getElementById('arrow-right');
+
+  const pages = Array.from(track.children);
+  const dots = [];
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('button');
+    d.type = 'button';
+    d.className = 'dot';
+    d.setAttribute('aria-label', `Page ${i + 1} of ${TOTAL}`);
+    d.addEventListener('click', () => go(i));
+    dotsEl.appendChild(d);
+    dots.push(d);
+  }
+  arrowL.addEventListener('click', () => go(cur - 1));
+  arrowR.addEventListener('click', () => go(cur + 1));
+
+  function go(n) {
+    cur = Math.max(0, Math.min(TOTAL - 1, n));
+    track.style.transform = `translateX(calc(-100vw * ${cur}))`;
+    const isLight = LIGHT_PAGES.has(cur);
+    dots.forEach((d, i) => {
+      d.className = 'dot' + (isLight ? ' dark-dot' : '') + (i === cur ? ' active' : '');
+      if (i === cur) d.setAttribute('aria-current', 'page'); else d.removeAttribute('aria-current');
+    });
+    arrowL.style.color = isLight ? 'var(--ink)' : 'var(--paper)';
+    arrowR.style.color = isLight ? 'var(--ink)' : 'var(--paper)';
+    arrowL.style.visibility = cur === 0 ? 'hidden' : '';
+    arrowR.style.visibility = cur === TOTAL - 1 ? 'hidden' : '';
+    document.dispatchEvent(new CustomEvent('dispatch:page', { detail: cur }));
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    const onButton = e.target instanceof HTMLButtonElement;
+    switch (e.key) {
+      case 'ArrowRight': case 'PageDown': go(cur + 1); break;
+      case 'ArrowLeft':  case 'PageUp':   go(cur - 1); break;
+      case ' ': if (onButton) return; go(cur + (e.shiftKey ? -1 : 1)); break;
+      case 'Home': go(0); break;
+      case 'End':  go(TOTAL - 1); break;
+      default: return;
+    }
+    e.preventDefault();
+  });
+
+  // Wheel: one page per gesture. The lock holds until the wheel has been quiet
+  // for a moment, so trackpad inertia doesn't skip several pages.
+  let wheelLock = false, wheelTimer = 0;
+  document.addEventListener('wheel', e => {
+    if (e.ctrlKey) return;                       // pinch-zoom
+    const page = pages[cur];
+    const horizontal = Math.abs(e.deltaX) > Math.abs(e.deltaY);
+    // Stacked (narrow) layout: vertical wheel scrolls the page itself.
+    if (!horizontal && page.scrollHeight > page.clientHeight + 1) return;
+    const delta = horizontal ? e.deltaX : e.deltaY;
+    if (wheelLock) {
+      clearTimeout(wheelTimer);
+      wheelTimer = setTimeout(() => wheelLock = false, 250);
+      return;
+    }
+    if (Math.abs(delta) < 4) return;
+    wheelLock = true;
+    wheelTimer = setTimeout(() => wheelLock = false, 600);
+    go(cur + (delta > 0 ? 1 : -1));
+  }, { passive: true });
+
+  let tx = 0, ty = 0;
+  document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; ty = e.touches[0].clientY; }, { passive: true });
+  document.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - tx;
+    const dy = e.changedTouches[0].clientY - ty;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) go(dx < 0 ? cur + 1 : cur - 1);
+  }, { passive: true });
+
+  // A PR image that fails to load is dropped; its caption (with the PR link) stays.
+  document.querySelectorAll('img.pr-image').forEach(img => {
+    img.addEventListener('error', () => { img.style.display = 'none'; });
+  });
+
+  go(0);
+})();
+</script>
+
+<script>
+// ── COVER CANVAS — "DYNAMO DISPATCH" particle formation ──
+// Sequence: dots fly in to form text → connections bloom on 250 survivors → scatter + drift
+(function(){
+  const canvas = document.getElementById('cover-canvas');
+  const ctx    = canvas.getContext('2d');
+
+  const NODE_COUNT = 1000;
+  const KEEP       = 250;
+  const LINK_FORM  = 55;
+  const LINK_DRIFT = 170;
+  const MOUSE_DIST = 220;
+  const REPEL_DIST = 90;
+  const BASE_SPEED = 0.42;
+  const T_FLY      = 1500;   // dots fly into text positions — no connections
+  const T_CONNECT  = 1000;   // connections fade in on KEEP nodes
+  const T_HOLD     = 1200;   // hold with connections before scatter
+
+  let W, H, nodes = [], phase = 'fly', phaseStart = 0;
+  let linkDist = LINK_FORM, connAlpha = 0;
+  let mouseX = -9999, mouseY = -9999, onCover = true;
+
+  const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let running = false;
+
+  function resize() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = canvas.offsetWidth;
+    H = canvas.offsetHeight;
+    canvas.width  = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  window.addEventListener('resize', () => {
+    resize();
+    // Targets only matter while the text is forming; drifting nodes just re-clamp.
+    if (nodes.length && phase !== 'drift') sampleTargets();
+    if (REDUCED) drawStatic();
+  });
+
+  function sampleTargets() {
+    if (W < 1 || H < 1) return;
+    const off = document.createElement('canvas');
+    off.width = W; off.height = H;
+    const c = off.getContext('2d');
+    c.fillStyle = '#000';
+    c.fillRect(0, 0, W, H);
+
+    const sz1 = H * 0.30, sz2 = H * 0.20, gap = H * 0.03;
+    c.fillStyle = '#fff';
+    c.textAlign  = 'center';
+    c.textBaseline = 'alphabetic';
+    c.font = `400 ${sz1}px "Artifakt Legend", sans-serif`;
+    const y1 = H * 0.5 - gap / 2;
+    c.fillText('DYNAMO', W / 2, y1);
+    c.font = `400 ${sz2}px "Artifakt Legend", sans-serif`;
+    const y2 = y1 + gap + sz2 * 0.8;
+    c.fillText('DISPATCH', W / 2, y2);
+
+    const px = c.getImageData(0, 0, W, H).data;
+    const pts = [];
+    const step = 4;
+    for (let y = 0; y < H; y += step)
+      for (let x = 0; x < W; x += step)
+        if (px[(y * W + x) * 4] > 120) pts.push([x, y]);
+
+    for (let i = pts.length - 1; i > 0; i--) {
+      const j = Math.random() * (i + 1) | 0;
+      [pts[i], pts[j]] = [pts[j], pts[i]];
+    }
+    nodes.forEach((n, i) => {
+      if (i < pts.length) { n.tx = pts[i][0]; n.ty = pts[i][1]; }
+      else { n.tx = Math.random() * W; n.ty = Math.random() * H; }
+    });
+  }
+
+  function init() {
+    resize();
+    nodes = Array.from({ length: NODE_COUNT }, () => ({
+      sx: Math.random() * W * 1.8 - W * 0.4,
+      sy: Math.random() * H * 1.8 - H * 0.4,
+      tx: 0, ty: 0,
+      x: 0, y: 0,
+      vx: (Math.random() - 0.5) * BASE_SPEED,
+      vy: (Math.random() - 0.5) * BASE_SPEED,
+      r: 1.8 + Math.random() * 1.5,
+      alpha: 1,
+      dieAt: Infinity,
+      keep: false
+    }));
+    nodes.forEach((n, i) => { n.x = n.sx; n.y = n.sy; n.keep = i < KEEP; });
+    sampleTargets();
+    phase = 'fly'; phaseStart = performance.now();
+    linkDist = LINK_FORM; connAlpha = 0;
+  }
+
+  function buildGrid(active) {
+    const cs    = linkDist;
+    const gcols = Math.ceil(W / cs) + 1;
+    const grows = Math.ceil(H / cs) + 1;
+    const cells = Array.from({ length: gcols * grows }, () => []);
+    active.forEach(n => {
+      const ci = (n.x / cs | 0), ri = (n.y / cs | 0);
+      const idx = ri * gcols + ci;
+      if (idx >= 0 && idx < cells.length) cells[idx].push(n);
+    });
+    return { cells, gcols, grows };
+  }
+
+  function drawConnections(active) {
+    if (connAlpha <= 0) return;
+    const { cells, gcols, grows } = buildGrid(active);
+    const fwd = [[1,0],[-1,1],[0,1],[1,1]];
+    const ld2 = linkDist * linkDist;
+    const lw  = (phase === 'hold') ? 1.1 : 0.7;
+    ctx.lineWidth = lw;
+    for (let ri = 0; ri < grows; ri++) {
+      for (let ci = 0; ci < gcols; ci++) {
+        const cell = cells[ri * gcols + ci];
+        for (let a = 0; a < cell.length; a++) {
+          for (let b = a + 1; b < cell.length; b++) {
+            const dx = cell[a].x - cell[b].x, dy = cell[a].y - cell[b].y;
+            if (dx*dx + dy*dy > ld2) continue;
+            const al = Math.min(cell[a].alpha, cell[b].alpha);
+            ctx.strokeStyle = `rgba(245,242,237,${connAlpha * al})`;
+            ctx.beginPath(); ctx.moveTo(cell[a].x, cell[a].y); ctx.lineTo(cell[b].x, cell[b].y); ctx.stroke();
+          }
+        }
+        fwd.forEach(([dc, dr]) => {
+          const nc = ci + dc, nr = ri + dr;
+          if (nc < 0 || nc >= gcols || nr < 0 || nr >= grows) return;
+          const ncell = cells[nr * gcols + nc];
+          cell.forEach(a => {
+            ncell.forEach(b => {
+              const dx = a.x - b.x, dy = a.y - b.y;
+              if (dx*dx + dy*dy > ld2) return;
+              const al = Math.min(a.alpha, b.alpha);
+              ctx.strokeStyle = `rgba(245,242,237,${connAlpha * al})`;
+              ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+            });
+          });
+        });
+      }
+    }
+  }
+
+  function drawStatic() {
+    // Reduced motion: show the formed wordmark, no animation.
+    ctx.clearRect(0, 0, W, H);
+    nodes.forEach(n => {
+      ctx.beginPath();
+      ctx.arc(n.tx, n.ty, n.r * 1.5, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(245,242,237,1)';
+      ctx.fill();
+    });
+  }
+
+  function start() {
+    if (running || REDUCED) return;
+    running = true;
+    requestAnimationFrame(tick);
+  }
+
+  function tick(now) {
+    if (!onCover) { running = false; ctx.clearRect(0, 0, W, H); return; }
+    requestAnimationFrame(tick);
+    ctx.clearRect(0, 0, W, H);
+    if (!nodes.length) return;
+
+    const elapsed = now - phaseStart;
+
+    if (phase === 'fly') {
+      // dots only — no connections
+      const t = Math.min(elapsed / T_FLY, 1);
+      const e = 1 - Math.pow(1 - t, 3);
+      nodes.forEach(n => {
+        n.x = n.sx + (n.tx - n.sx) * e;
+        n.y = n.sy + (n.ty - n.sy) * e;
+      });
+      if (t >= 1) { phase = 'connect'; phaseStart = now; }
+
+    } else if (phase === 'connect') {
+      // connections fade in — only between KEEP nodes
+      const t = Math.min(elapsed / T_CONNECT, 1);
+      connAlpha = t * 0.62;
+      nodes.forEach(n => {
+        n.x = n.tx + (Math.random() - 0.5) * 1.2;
+        n.y = n.ty + (Math.random() - 0.5) * 1.2;
+      });
+      if (t >= 1) { connAlpha = 0.62; phase = 'hold'; phaseStart = now; }
+
+    } else if (phase === 'hold') {
+      nodes.forEach(n => {
+        n.x = n.tx + (Math.random() - 0.5) * 1.2;
+        n.y = n.ty + (Math.random() - 0.5) * 1.2;
+      });
+      if (elapsed >= T_HOLD) {
+        phase = 'drift'; phaseStart = now;
+        nodes.forEach(n => {
+          if (!n.keep) n.dieAt = now + Math.random() * 700;
+        });
+      }
+
+    } else {
+      // drift
+      const driftElapsed = now - phaseStart;
+      const lerpT = Math.min(driftElapsed / 1800, 1);
+      linkDist = LINK_FORM + (LINK_DRIFT - LINK_FORM) * lerpT;
+      connAlpha = 0.62 - lerpT * (0.62 - 0.22);
+
+      nodes.forEach(n => {
+        if (now >= n.dieAt) { n.alpha -= 0.025; }
+        if (n.alpha <= 0) return;
+        const dx = n.x - mouseX, dy = n.y - mouseY;
+        const d2 = dx*dx + dy*dy;
+        if (d2 < REPEL_DIST * REPEL_DIST && d2 > 0) {
+          const d = Math.sqrt(d2);
+          const f = (REPEL_DIST - d) / REPEL_DIST * 2;
+          n.vx += (dx / d) * f; n.vy += (dy / d) * f;
+        }
+        n.x += n.vx; n.y += n.vy;
+        if (n.x < 0 || n.x > W) n.vx *= -1;
+        if (n.y < 0 || n.y > H) n.vy *= -1;
+        n.x = Math.max(0, Math.min(W, n.x));
+        n.y = Math.max(0, Math.min(H, n.y));
+        const sp = Math.sqrt(n.vx*n.vx + n.vy*n.vy);
+        if (sp > BASE_SPEED * 3) { n.vx *= BASE_SPEED * 3 / sp; n.vy *= BASE_SPEED * 3 / sp; }
+      });
+      nodes = nodes.filter(n => n.alpha > 0);
+
+      if (mouseX > -9999) {
+        const md2 = MOUSE_DIST * MOUSE_DIST;
+        nodes.forEach(n => {
+          const dx = n.x - mouseX, dy = n.y - mouseY;
+          if (dx*dx + dy*dy < md2) {
+            ctx.strokeStyle = `rgba(245,242,237,${0.5 * n.alpha})`;
+            ctx.lineWidth = 0.8;
+            ctx.beginPath(); ctx.moveTo(mouseX, mouseY); ctx.lineTo(n.x, n.y); ctx.stroke();
+          }
+        });
+      }
+    }
+
+    // connections on keep-nodes only (skip during fly)
+    if (phase !== 'fly') {
+      const connNodes = (phase === 'connect' || phase === 'hold')
+        ? nodes.filter(n => n.keep)
+        : nodes;
+      drawConnections(connNodes);
+    }
+
+    // draw all nodes
+    nodes.forEach(n => {
+      const r = (phase === 'fly' || phase === 'connect' || phase === 'hold') ? n.r * 1.5 : n.r;
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(245,242,237,${n.alpha})`;
+      ctx.fill();
+    });
+  }
+
+  const coverPage = document.querySelector('.cover-page');
+  document.addEventListener('mousemove', e => {
+    if (!onCover) return;
+    const rect = canvas.getBoundingClientRect();
+    mouseX = e.clientX - rect.left;
+    mouseY = e.clientY - rect.top;
+  });
+  coverPage.addEventListener('mouseleave', () => { mouseX = -9999; mouseY = -9999; });
+
+  // Pause the loop off the cover; resume (and shift phase timing) on return.
+  let leftAt = 0;
+  document.addEventListener('dispatch:page', e => {
+    const was = onCover;
+    onCover = e.detail === 0;
+    if (was && !onCover) { leftAt = performance.now(); mouseX = -9999; mouseY = -9999; }
+    if (!was && onCover && nodes.length) {
+      const away = performance.now() - leftAt;
+      phaseStart += away;
+      nodes.forEach(n => { if (n.dieAt !== Infinity) n.dieAt += away; });
+      start();
+    }
+  });
+
+  document.fonts.ready.then(() => {
+    init();
+    if (REDUCED) drawStatic(); else if (onCover) start();
+  });
+})();
+</script>
+
+<script>
+  // Auto-linkify PR references: "PR #16754" and standalone "#16754"
+  (function() {
+    const BASE = 'https://github.com/DynamoDS/Dynamo/pull/';
+    const SCOPES = '.callout-body, .page-summary, .bullet-list, .pr-caption, .verdict-body';
+    const RE = /(?:\bPR\s+)?(?<![\w&#])#(\d{4,})\b/g;
+    function linkify(node) {
+      if (node.nodeType === 3) {
+        if (!RE.test(node.textContent)) return;
+        RE.lastIndex = 0;
+        const frag = document.createDocumentFragment();
+        let last = 0, m;
+        while ((m = RE.exec(node.textContent)) !== null) {
+          if (m.index > last) frag.appendChild(document.createTextNode(node.textContent.slice(last, m.index)));
+          const a = document.createElement('a');
+          a.href = BASE + m[1]; a.target = '_blank'; a.rel = 'noopener'; a.className = 'pr-link';
+          a.textContent = m[0]; frag.appendChild(a);
+          last = m.index + m[0].length;
+        }
+        if (last < node.textContent.length) frag.appendChild(document.createTextNode(node.textContent.slice(last)));
+        node.parentNode.replaceChild(frag, node);
+      } else if (node.nodeType === 1 && !['SCRIPT','STYLE','A'].includes(node.tagName)) {
+        Array.from(node.childNodes).forEach(linkify);
+      }
+    }
+    document.querySelectorAll(SCOPES).forEach(linkify);
+  })();
+</script>
+</body>
+</html>

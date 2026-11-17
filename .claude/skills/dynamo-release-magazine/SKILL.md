@@ -214,7 +214,7 @@ a.pr-link:hover { opacity: 1; text-decoration-style: solid; }
 Place PR images in the right column of the relevant content page, between the stat and the callout box. Exactly one image per highlight page. No filter — full color. Only the closing roundup has no image; there the callout box fills the space with `margin-top: auto`. Add an `error` listener that hides any `img.pr-image` that fails to load.
 
 Save to `issues/YYYY-MM-DD-brief-title.html` (relative to the repo root).
-Where `YYYY-MM-DD` is today's date and `brief-title` is a 2–4 word kebab-case summary (e.g. `node-graph-performance`).
+Where `YYYY-MM-DD` is the date the version was released, not today's date, and `brief-title` is a 2–4 word kebab-case summary (e.g. `dynamo-430-dispatch`). Get the release date with `gh api repos/DynamoDS/Dynamo/releases --jq '.[]|[.tag_name,.published_at]|@tsv'`. The cover and back cover show the same release month and year. Number issues in release order.
 
 After saving, add a row for the new issue to the table in `README.md`.
 
