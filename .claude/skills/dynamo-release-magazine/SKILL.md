@@ -71,7 +71,7 @@ Short editorial verdict.
 
 ### If asked for HTML
 
-Generate a single self-contained HTML file as a **horizontal-swipe editorial magazine**. The page count is dynamic — one content page per illustrated customer win (see "What earns a page"), one closing roundup, plus a fixed cover, verdict, and back cover.
+Generate a single self-contained HTML file as a **horizontal-swipe editorial magazine**. The page count is dynamic — one content page per illustrated customer win (see "What earns a page"), one closing roundup, plus a fixed Dispatch animation page, cover, verdict, and back cover.
 
 **Fonts** (Autodesk Artifakt, loaded with `@font-face { src: local(...) }` per weight — copy the `@font-face` block from the latest file in `issues/`; always end font stacks with `sans-serif` so machines without Artifakt degrade cleanly):
 - `Artifakt Legend` — headlines, stats, cover title
@@ -85,23 +85,26 @@ Generate a single self-contained HTML file as a **horizontal-swipe editorial mag
 
 #### Page Structure (dynamic total)
 
-**Total pages = 1 cover + N content pages + 1 verdict + 1 back cover.**
-N = highlight pages plus the closing roundup. If a release has 9 illustrated customer wins, N = 10 and the magazine has 13 pages total.
+**Total pages = 1 Dispatch animation page + 1 cover + N content pages + 1 verdict + 1 back cover.**
+N = highlight pages plus the closing roundup. If a release has 9 illustrated customer wins, N = 10 and the magazine has 14 pages total.
 
-Set `const TOTAL = <actual page count>` in the JS. Build `LIGHT_PAGES` as a `Set` of 0-indexed page numbers: page 0 = dark (cover), content pages alternate starting light at index 1, verdict = dark, back cover = dark.
+Set `const TOTAL = <actual page count>` in the JS. Build `LIGHT_PAGES` as a `Set` of 0-indexed page numbers: page 0 = dark (Dispatch animation), page 1 = dark (cover), content pages alternate starting light at index 2, verdict = dark, back cover = dark.
 
-**Page 1 — Dark cover:**
+**Page 1 — Dispatch animation (dark), on a page of its own:**
+- Only the full-bleed interactive canvas (`<canvas id="cover-canvas" role="img" aria-label="Dynamo Dispatch">`, `position: absolute; inset: 0; pointer-events: none`) inside `<div class="page dark intro-page">` with `position: relative`. No text, logo, or other content on this page, so nothing overlaps the wordmark. The animation is specified under "Cover canvas animation" below.
+
+**Page 2 — Dark cover:**
 - `../assets/dynamo-logo.png` top-left, `width: clamp(160px, 22vw, 360px)`, **no CSS filter** (the logo is multicolored — display its natural colors)
 - Product name in Artifakt Legend, huge (10vw+)
 - Version number in Artifakt Element, 4vw
 - Tagline (release headline) in Artifakt Element italic, 2vw
 - Date + issue metadata in Artifakt Element, bottom-left, small
-- **Full-bleed interactive canvas behind all content** (`position: absolute; inset: 0; pointer-events: none`). Add `position: relative` to the cover page div; wrap all cover text content in a `<div style="position:relative;z-index:1;">`.
+- No canvas on the cover. The animation lives on page 1 only.
 
 **Cover canvas animation — "DYNAMO DISPATCH" particle formation:**
 
 1000 nodes animate through four phases:
-1. **Fly-in (1.5s):** 1000 nodes scatter in from random offscreen positions and ease into pixel positions sampled from "DYNAMO DISPATCH" rendered in `400 Npx "Artifakt Legend", sans-serif` on an offscreen canvas. Font sizes: `H * 0.30` for "DYNAMO", `H * 0.20` for "DISPATCH", gap `H * 0.03`. Sample step: 4px, alpha threshold: 120. **No connections during fly-in — dots only.**
+1. **Fly-in (1.5s):** 1000 nodes scatter in from random offscreen positions and ease into pixel positions sampled from "DYNAMO DISPATCH" rendered in `400 Npx "Artifakt Legend", sans-serif` on an offscreen canvas. Font sizes: `min(H * 0.30, W * 0.20)` for "DYNAMO", two thirds of that for "DISPATCH", gap one tenth of the "DYNAMO" size, so the wordmark fits narrow screens. Sample step: 4px, alpha threshold: 120. **No connections during fly-in — dots only.**
 2. **Connect (1.0s):** connections fade in (alpha 0 → 0.62) between only the first KEEP=250 nodes (the "survivors"). Non-survivors are visible but unconnected. Nodes hold text positions with 1.2px jitter.
 3. **Hold (1.2s):** all nodes jitter at text positions. Connections bright (0.62) on the 250.
 4. **Scatter → drift:** non-keep nodes get staggered `dieAt` and fade out. Surviving 250 drift freely, bouncing off walls. Mouse repels nearby nodes (90px radius) and draws bright connection lines to nodes within 220px. `linkDist` expands from 55 → 170px over 1800ms; `connAlpha` falls from 0.62 → 0.22.

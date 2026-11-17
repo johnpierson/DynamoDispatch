@@ -65,6 +65,9 @@
     .dark  { background: var(--ink);   color: var(--paper); }
     .light { background: var(--paper); color: var(--ink); }
 
+    /* ── Dispatch animation page ── */
+    .intro-page { position: relative; }
+
     /* ── Cover ── */
     .cover-page {
       flex-direction: column;
@@ -283,9 +286,13 @@
 <body>
 <div id="track">
 
-  <!-- ══ PAGE 1: COVER (DARK) ══ -->
+  <!-- ══ PAGE 1: DISPATCH ANIMATION (DARK) ══ -->
+  <div class="page dark intro-page">
+    <canvas id="cover-canvas" role="img" aria-label="Dynamo Dispatch"></canvas>
+  </div>
+
+  <!-- ══ PAGE 2: COVER (DARK) ══ -->
   <div class="page dark cover-page">
-    <canvas id="cover-canvas"></canvas>
     <div style="position:relative;z-index:1;">
       <img src="../assets/dynamo-logo.png" alt="Dynamo" class="cover-logo">
       <h1 class="cover-title">Dynamo</h1>
@@ -298,7 +305,7 @@
     </div>
   </div>
 
-  <!-- ══ PAGE 2: CANVAS (LIGHT) ══ -->
+  <!-- ══ PAGE 3: CANVAS (LIGHT) ══ -->
   <div class="page light content-page">
     <div class="col-left">
       <div class="ghost-rank">01</div>
@@ -320,7 +327,7 @@
     </div>
   </div>
 
-  <!-- ══ PAGE 3: NAVIGATION (DARK) ══ -->
+  <!-- ══ PAGE 4: NAVIGATION (DARK) ══ -->
   <div class="page dark content-page">
     <div class="col-left">
       <div class="ghost-rank">02</div>
@@ -342,7 +349,7 @@
     </div>
   </div>
 
-  <!-- ══ PAGE 4: EXTENSIONS (LIGHT) ══ -->
+  <!-- ══ PAGE 5: EXTENSIONS (LIGHT) ══ -->
   <div class="page light content-page">
     <div class="col-left">
       <div class="ghost-rank">03</div>
@@ -364,7 +371,7 @@
     </div>
   </div>
 
-  <!-- ══ PAGE 5: DOCUMENTATION BROWSER (DARK) ══ -->
+  <!-- ══ PAGE 6: DOCUMENTATION BROWSER (DARK) ══ -->
   <div class="page dark content-page">
     <div class="col-left">
       <div class="ghost-rank">04</div>
@@ -386,7 +393,7 @@
     </div>
   </div>
 
-  <!-- ══ PAGE 6: PACKAGE MANAGER (LIGHT) ══ -->
+  <!-- ══ PAGE 7: PACKAGE MANAGER (LIGHT) ══ -->
   <div class="page light content-page">
     <div class="col-left">
       <div class="ghost-rank">05</div>
@@ -408,7 +415,7 @@
     </div>
   </div>
 
-  <!-- ══ PAGE 7: TEMPLATES (DARK) ══ -->
+  <!-- ══ PAGE 8: TEMPLATES (DARK) ══ -->
   <div class="page dark content-page">
     <div class="col-left">
       <div class="ghost-rank">06</div>
@@ -431,7 +438,7 @@
     </div>
   </div>
 
-  <!-- ══ PAGE 8: CONNECTOR PINS (LIGHT) ══ -->
+  <!-- ══ PAGE 9: CONNECTOR PINS (LIGHT) ══ -->
   <div class="page light content-page">
     <div class="col-left">
       <div class="ghost-rank">07</div>
@@ -454,7 +461,7 @@
     </div>
   </div>
 
-  <!-- ══ PAGE 9: GEOMETRY (DARK) ══ -->
+  <!-- ══ PAGE 10: GEOMETRY (DARK) ══ -->
   <div class="page dark content-page">
     <div class="col-left">
       <div class="ghost-rank">08</div>
@@ -477,7 +484,7 @@
     </div>
   </div>
 
-  <!-- ══ PAGE 10: PACKAGE MANAGER (LIGHT) ══ -->
+  <!-- ══ PAGE 11: PACKAGE MANAGER (LIGHT) ══ -->
   <div class="page light content-page">
     <div class="col-left">
       <div class="ghost-rank">09</div>
@@ -500,7 +507,7 @@
     </div>
   </div>
 
-  <!-- ══ PAGE 11: ALSO IN THIS RELEASE (DARK) ══ -->
+  <!-- ══ PAGE 12: ALSO IN THIS RELEASE (DARK) ══ -->
   <div class="page dark content-page">
     <div class="col-left">
       <div class="ghost-rank">10</div>
@@ -521,7 +528,7 @@
     </div>
   </div>
 
-  <!-- ══ PAGE 12: VERDICT (DARK) ══ -->
+  <!-- ══ PAGE 13: VERDICT (DARK) ══ -->
   <div class="page dark verdict-page">
     <div class="verdict-kicker">Editorial Verdict · Dynamo 4.1.0</div>
     <div class="verdict-headline">A Faster, Steadier Dynamo for Large Graphs</div>
@@ -531,7 +538,7 @@
     <div class="verdict-stamp">Upgrade — Performance and Stability Fixes Justify It</div>
   </div>
 
-  <!-- ══ PAGE 13: BACK COVER (DARK) ══ -->
+  <!-- ══ PAGE 14: BACK COVER (DARK) ══ -->
   <div class="page dark back-cover">
     <img src="../assets/dynamo-logo.png" alt="Dynamo" class="back-cover-logo">
     <div class="back-cover-rule"></div>
@@ -548,8 +555,8 @@
 
 <script>
 (function(){
-  const TOTAL = 13;
-  const LIGHT_PAGES = new Set([1, 3, 5, 7, 9]);
+  const TOTAL = 14;
+  const LIGHT_PAGES = new Set([2, 4, 6, 8, 10]);
 
   let cur = 0;
   const track = document.getElementById('track');
@@ -657,6 +664,7 @@
   const T_HOLD     = 1200;   // hold with connections before scatter
 
   let W, H, nodes = [], phase = 'fly', phaseStart = 0;
+  let scale = 1;   // 1 at 720px-tall text size; smaller when the wordmark is smaller
   let linkDist = LINK_FORM, connAlpha = 0;
   let mouseX = -9999, mouseY = -9999, onCover = true;
 
@@ -671,11 +679,18 @@
     canvas.height = Math.round(H * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
+  // A real size change (rotation, window resize) replays the formation at the new size,
+  // so the wordmark is never left sized or positioned for the old viewport.
+  let resizeTimer = 0;
   window.addEventListener('resize', () => {
-    resize();
-    // Targets only matter while the text is forming; drifting nodes just re-clamp.
-    if (nodes.length && phase !== 'drift') sampleTargets();
-    if (REDUCED) drawStatic();
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      const pw = W, ph = H;
+      resize();
+      if (!nodes.length) return;
+      if (W !== pw || Math.abs(H - ph) > 120) init();
+      if (REDUCED) drawStatic(); else if (onCover) start();
+    }, 150);
   });
 
   function sampleTargets() {
@@ -686,7 +701,9 @@
     c.fillStyle = '#000';
     c.fillRect(0, 0, W, H);
 
-    const sz1 = H * 0.30, sz2 = H * 0.20, gap = H * 0.03;
+    // Sized by height, but capped by width so the wordmark fits narrow screens.
+    const sz1 = Math.min(H * 0.30, W * 0.20), sz2 = sz1 * 2 / 3, gap = sz1 * 0.1;
+    scale = Math.max(0.3, Math.min(1, sz1 / 216));
     c.fillStyle = '#fff';
     c.textAlign  = 'center';
     c.textBaseline = 'alphabetic';
@@ -699,7 +716,7 @@
 
     const px = c.getImageData(0, 0, W, H).data;
     const pts = [];
-    const step = 4;
+    const step = Math.max(2, Math.round(4 * scale));
     for (let y = 0; y < H; y += step)
       for (let x = 0; x < W; x += step)
         if (px[(y * W + x) * 4] > 120) pts.push([x, y]);
@@ -731,7 +748,7 @@
     nodes.forEach((n, i) => { n.x = n.sx; n.y = n.sy; n.keep = i < KEEP; });
     sampleTargets();
     phase = 'fly'; phaseStart = performance.now();
-    linkDist = LINK_FORM; connAlpha = 0;
+    linkDist = LINK_FORM * scale; connAlpha = 0;
   }
 
   function buildGrid(active) {
@@ -789,7 +806,7 @@
     ctx.clearRect(0, 0, W, H);
     nodes.forEach(n => {
       ctx.beginPath();
-      ctx.arc(n.tx, n.ty, n.r * 1.5, 0, Math.PI * 2);
+      ctx.arc(n.tx, n.ty, n.r * 1.5 * scale, 0, Math.PI * 2);
       ctx.fillStyle = 'rgba(245,242,237,1)';
       ctx.fill();
     });
@@ -845,11 +862,15 @@
       // drift
       const driftElapsed = now - phaseStart;
       const lerpT = Math.min(driftElapsed / 1800, 1);
-      linkDist = LINK_FORM + (LINK_DRIFT - LINK_FORM) * lerpT;
+      // Shorter links on narrow screens so the drifting network stays open.
+      const formDist = LINK_FORM * scale;
+      const driftDist = Math.min(LINK_DRIFT, Math.max(formDist, W * 0.13));
+      linkDist = formDist + (driftDist - formDist) * lerpT;
       connAlpha = 0.62 - lerpT * (0.62 - 0.22);
 
       nodes.forEach(n => {
-        if (now >= n.dieAt) { n.alpha -= 0.025; }
+        // Time-based fade, so slow frame rates do not leave the extra nodes on screen.
+        if (now >= n.dieAt) { n.alpha = Math.max(0, 1 - (now - n.dieAt) / 500); }
         if (n.alpha <= 0) return;
         const dx = n.x - mouseX, dy = n.y - mouseY;
         const d2 = dx*dx + dy*dy;
@@ -883,15 +904,14 @@
 
     // connections on keep-nodes only (skip during fly)
     if (phase !== 'fly') {
-      const connNodes = (phase === 'connect' || phase === 'hold')
-        ? nodes.filter(n => n.keep)
-        : nodes;
+      // Only the survivors are ever linked; linking the fading nodes too floods the page white.
+      const connNodes = nodes.filter(n => n.keep);
       drawConnections(connNodes);
     }
 
     // draw all nodes
     nodes.forEach(n => {
-      const r = (phase === 'fly' || phase === 'connect' || phase === 'hold') ? n.r * 1.5 : n.r;
+      const r = (phase === 'fly' || phase === 'connect' || phase === 'hold') ? n.r * 1.5 * scale : n.r * Math.max(scale, 0.6);
       ctx.beginPath();
       ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
       ctx.fillStyle = `rgba(245,242,237,${n.alpha})`;
@@ -899,7 +919,7 @@
     });
   }
 
-  const coverPage = document.querySelector('.cover-page');
+  const coverPage = document.querySelector('.intro-page');
   document.addEventListener('mousemove', e => {
     if (!onCover) return;
     const rect = canvas.getBoundingClientRect();
